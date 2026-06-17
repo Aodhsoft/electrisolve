@@ -86,7 +86,7 @@
         <div class="quick-search">
           <i class="ti ti-search" style="color:var(--hint);font-size:20px;flex-shrink:0"></i>
           <input type="text" placeholder="Describe your electrical issue..." id="hero-search">
-          <a href="post-job.html" class="btn btn-primary btn-lg">Get estimates</a>
+          <a href="post-job.html" class="btn btn-primary btn-lg" id="hero-cta">Get estimates</a>
         </div>
         <p style="font-size:13px;color:var(--hint);margin-top:.9rem">Free for homeowners · No obligation to hire</p>
         <div id="tips-panel" class="tips-panel"></div>
@@ -207,7 +207,10 @@ function goToPostJob() {
   window.location.href = url;
 }
 
-document.querySelector('.quick-search .btn').addEventListener('click', goToPostJob);
+document.querySelector('.quick-search .btn').addEventListener('click', e => {
+  e.preventDefault();
+  goToPostJob();
+});
 
 async function fetchTips(query) {
   if (query === lastQuery) return;
