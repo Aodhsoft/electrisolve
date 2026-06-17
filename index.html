@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ElectriSolve — Find a Local Electrician Fast</title>
+  <meta name="description" content="Describe your electrical problem, get an instant AI diagnosis, and connect with vetted local electricians who bid on your job. Free for homeowners.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Hero ── */
+    .hero { padding: 5rem 0 4rem; border-bottom: 1px solid var(--border); }
+    .hero-inner { max-width: 640px; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--blue); background: var(--blue-light); padding: 5px 12px; border-radius: 20px; margin-bottom: 1.25rem; letter-spacing: .03em; }
+    .hero h1 { font-size: clamp(2.2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.1; letter-spacing: -.03em; color: var(--text); margin-bottom: 1rem; }
+    .hero p  { font-size: 18px; color: var(--muted); line-height: 1.65; margin-bottom: 2rem; max-width: 500px; }
+
+    /* ── Quick search ── */
+    .quick-search { background: var(--white); border: 2px solid var(--border2); border-radius: var(--radius-lg); padding: 6px 6px 6px 20px; display: flex; align-items: center; gap: 8px; max-width: 580px; box-shadow: var(--shadow-md); }
+    .quick-search input { flex: 1; border: none; outline: none; font-size: 16px; font-family: var(--font); color: var(--text); background: transparent; padding: 8px 0; }
+    .quick-search input::placeholder { color: var(--hint); }
+    .quick-search .btn { flex-shrink: 0; white-space: nowrap; }
+
+    /* ── Trust bar ── */
+    .trust-section { padding: 1.5rem 0; border-bottom: 1px solid var(--border); background: var(--off); }
+
+    /* ── How it works ── */
+    .how-section { padding: 4rem 0; border-bottom: 1px solid var(--border); }
+    .how-section h2 { font-size: 1.75rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: .4rem; }
+    .how-section .sub { font-size: 16px; color: var(--muted); margin-bottom: 2.5rem; }
+    .how-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+    .how-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; }
+    .how-num  { width: 36px; height: 36px; border-radius: 50%; background: var(--blue); color: white; font-size: 15px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+    .how-card h3 { font-size: 16px; font-weight: 700; margin-bottom: .4rem; }
+    .how-card p  { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── Jobs preview ── */
+    .jobs-section { padding: 4rem 0; border-bottom: 1px solid var(--border); }
+    .jobs-section h2 { font-size: 1.75rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: .4rem; }
+    .jobs-section .sub { font-size: 16px; color: var(--muted); margin-bottom: 2rem; }
+    .jobs-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 1.5rem; }
+
+    /* ── Contractor CTA ── */
+    .contractor-section { padding: 4rem 0; }
+    .contractor-inner { background: var(--off); border: 1px solid var(--border); border-radius: 16px; padding: 3rem; display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: center; }
+    .contractor-inner h2 { font-size: 1.6rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: .5rem; }
+    .contractor-inner p  { font-size: 15px; color: var(--muted); line-height: 1.6; max-width: 480px; }
+    .contractor-right { display: flex; flex-direction: column; gap: 10px; min-width: 200px; }
+
+    @media (max-width: 768px) {
+      .how-grid { grid-template-columns: 1fr; }
+      .contractor-inner { grid-template-columns: 1fr; }
+      .quick-search { flex-direction: column; padding: 12px; align-items: stretch; }
+      .quick-search input { padding: 4px 0; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon"><i class="ti ti-bolt" aria-hidden="true"></i></div>
+      <span class="logo-text">Electri<span>Solve</span></span>
+    </a>
+    <nav class="header-nav">
+      <a href="jobs.html" class="nav-link">Browse jobs</a>
+      <a href="estimate.html" class="nav-link">Estimate costs</a>
+      <a href="contractor.html" class="nav-link">For contractors</a>
+      <a href="post-job.html" class="btn btn-primary">Get free estimates</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-eyebrow"><i class="ti ti-map-pin"></i> Serving Denver Metro</div>
+        <h1>Electrical problem?<br>Get it fixed fast.</h1>
+        <p>Describe your issue, get an instant diagnosis, and receive bids from licensed local electricians — all for free.</p>
+        <div class="quick-search">
+          <i class="ti ti-search" style="color:var(--hint);font-size:20px;flex-shrink:0"></i>
+          <input type="text" placeholder="Describe your electrical issue..." id="hero-search">
+          <a href="post-job.html" class="btn btn-primary btn-lg">Get estimates</a>
+        </div>
+        <p style="font-size:13px;color:var(--hint);margin-top:.9rem">Free for homeowners · No obligation to hire</p>
+        <div id="tips-panel" class="tips-panel"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <div class="trust-section">
+    <div class="container">
+      <div class="trust-bar">
+        <div class="trust-item"><i class="ti ti-shield-check"></i> Licensed &amp; insured contractors only</div>
+        <div class="trust-item"><i class="ti ti-clock"></i> Bids within a few hours</div>
+        <div class="trust-item"><i class="ti ti-currency-dollar"></i> Free to post — no hidden fees</div>
+        <div class="trust-item"><i class="ti ti-star"></i> Rated &amp; reviewed electricians</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section">
+    <div class="container">
+      <h2>How it works</h2>
+      <p class="sub">Three steps from problem to fixed</p>
+      <div class="how-grid">
+        <div class="how-card">
+          <div class="how-num">1</div>
+          <h3>Describe your issue</h3>
+          <p>Tell us what's happening or upload a photo. Our AI identifies the problem, how serious it is, and what it should cost to fix.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-num">2</div>
+          <h3>Receive bids</h3>
+          <p>Licensed electricians in your area review your job and send competitive bids — usually within a few hours.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-num">3</div>
+          <h3>Hire the right pro</h3>
+          <p>Compare bids, check ratings, and hire with confidence. Pay the contractor directly — we never touch your money.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECENT JOBS -->
+  <section class="jobs-section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <h2>Open jobs near you</h2>
+          <p class="sub">Real jobs posted by Denver Metro homeowners</p>
+        </div>
+        <a href="jobs.html" class="btn btn-secondary">View all jobs</a>
+      </div>
+      <div class="jobs-list" id="preview-jobs"></div>
+    </div>
+  </section>
+
+  <!-- CONTRACTOR CTA -->
+  <section class="contractor-section">
+    <div class="container">
+      <div class="contractor-inner">
+        <div>
+          <h2>Are you a local electrician?</h2>
+          <p>Get access to pre-qualified job leads in your service area. Every job has already been diagnosed — you know the scope before you bid. Flat monthly subscription, no per-lead fees.</p>
+        </div>
+        <div class="contractor-right">
+          <a href="contractor.html" class="btn btn-primary btn-lg">View plans</a>
+          <a href="contractor.html" class="btn btn-secondary btn-lg">Sign in</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span style="font-weight:700;color:var(--text)">ElectriSolve</span>
+    <span>© 2026 · Denver Metro · For reference only — verify contractor licensing before hiring</span>
+    <div style="display:flex;gap:1.25rem"><a href="#">Terms</a><a href="#">Privacy</a><a href="contractor.html">Contractors</a></div>
+  </div>
+</footer>
+
+<style>
+.tips-panel{background:white;border:1.5px solid var(--border);border-top:none;border-radius:0 0 var(--radius-lg) var(--radius-lg);padding:1.25rem 1.5rem;max-width:580px;display:none;box-shadow:var(--shadow-md)}
+.tips-panel.visible{display:block}
+.tip-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--text);line-height:1.55}
+.tip-item:last-child{border-bottom:none}
+.tip-num{min-width:22px;height:22px;border-radius:50%;background:var(--blue);color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.tips-summary{font-size:14px;color:var(--muted);margin-bottom:.9rem;line-height:1.6;padding-bottom:.9rem;border-bottom:1px solid var(--border)}
+.tips-severity{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:.75rem}
+.tips-footer{margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.tips-pro-note{font-size:13px;color:var(--muted);line-height:1.5;flex:1}
+.tips-loading{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);padding:.5rem 0}
+.quick-search.active{border-radius:var(--radius-lg) var(--radius-lg) 0 0;border-bottom-color:var(--border)}
+</style>
+<script>
+const searchInput = document.getElementById('hero-search');
+const tipsPanel = document.getElementById('tips-panel');
+const searchBox = document.querySelector('.quick-search');
+let debounceTimer = null;
+let lastQuery = '';
+
+searchInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') goToPostJob();
+});
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.trim();
+  clearTimeout(debounceTimer);
+  if (q.length < 8) { hideTips(); return; }
+  debounceTimer = setTimeout(() => fetchTips(q), 600);
+});
+
+function goToPostJob() {
+  const q = searchInput.value.trim();
+  const url = q ? 'post-job.html?q=' + encodeURIComponent(q) : 'post-job.html';
+  window.location.href = url;
+}
+
+document.querySelector('.quick-search .btn').addEventListener('click', goToPostJob);
+
+async function fetchTips(query) {
+  if (query === lastQuery) return;
+  lastQuery = query;
+  showLoading();
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 600,
+        messages: [{
+          role: 'user',
+          content: `You are a helpful electrician assistant. A homeowner typed: "${query}"
+
+Respond ONLY with valid JSON — no markdown, no explanation:
+{
+  "isElectrical": true,
+  "severity": "high|medium|low",
+  "summary": "One sentence plain-English explanation of what's likely happening",
+  "tips": [
+    "First quick thing to check or try yourself (specific, actionable)",
+    "Second quick check (specific, actionable)",
+    "Third quick check (specific, actionable)"
+  ],
+  "callPro": true,
+  "callProReason": "One sentence on when to call a pro vs handle yourself"
+}
+
+If the query is not electrical, set isElectrical to false and all other fields to null.
+Keep tips short — one sentence each. Focus on safe, simple checks a homeowner can do.`
+        }]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content.map(c => c.text || '').join('').replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(raw);
+    if (!parsed.isElectrical || !parsed.tips) { hideTips(); return; }
+    showTips(parsed, query);
+  } catch(e) { hideTips(); }
+}
+
+function showLoading() {
+  tipsPanel.innerHTML = '<div class="tips-loading"><div class="spinner" style="width:16px;height:16px;border-width:2px"></div> Checking that...</div>';
+  tipsPanel.classList.add('visible');
+  searchBox.classList.add('active');
+}
+
+function showTips(data, query) {
+  const bgMap = { high:'#fef2f2', medium:'#fffbeb', low:'#f0fdf4' };
+  const fgMap = { high:'#dc2626',  medium:'#d97706', low:'#16a34a' };
+  const sevLabel = data.severity === 'high' ? '⚠ Urgent — call a pro soon' : data.severity === 'medium' ? 'Medium severity' : '✓ Low severity — likely DIY';
+  const bg = bgMap[data.severity] || bgMap.low;
+  const fg = fgMap[data.severity] || fgMap.low;
+  const tipsHtml = data.tips.map((t, i) => `<div class="tip-item"><div class="tip-num">${i+1}</div><span>${t}</span></div>`).join('');
+  tipsPanel.innerHTML =
+    '<span class="tips-severity" style="background:' + bg + ';color:' + fg + '">' + sevLabel + '</span>' +
+    '<div class="tips-summary">' + data.summary + '</div>' +
+    '<div style="font-size:11px;font-weight:700;color:var(--hint);letter-spacing:.06em;margin-bottom:.6rem">THINGS TO CHECK FIRST</div>' +
+    tipsHtml +
+    '<div class="tips-footer"><div class="tips-pro-note">' + data.callProReason + '</div>' +
+    '<a href="post-job.html?q=' + encodeURIComponent(query) + '" class="btn btn-primary" style="padding:9px 18px;font-size:13px;flex-shrink:0">' + (data.callPro ? 'Get pro estimates' : 'Still need help?') + ' →</a></div>';
+  tipsPanel.classList.add('visible');
+  searchBox.classList.add('active');
+}
+
+function hideTips() {
+  tipsPanel.classList.remove('visible');
+  searchBox.classList.remove('active');
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.quick-search') && !e.target.closest('#tips-panel')) hideTips();
+});
+
+const JOBS = [
+  { id:1, sev:"high",   sevLabel:"Urgent",  title:"Panel upgrade — Federal Pacific needs replacing", city:"Lakewood", est:"$1,800–2,400", bids:3, posted:"2h ago" },
+  { id:2, sev:"medium", sevLabel:"Standard", title:"GFCI outlets — kitchen and two bathrooms",        city:"Aurora",   est:"$280–420",    bids:5, posted:"5h ago" },
+  { id:3, sev:"low",    sevLabel:"Standard", title:"Level 2 EV charger installation — garage",        city:"Denver",   est:"$450–700",    bids:4, posted:"8h ago" },
+];
+
+document.getElementById('preview-jobs').innerHTML = JOBS.map(j => `
+  <div class="job-card${j.sev==='high'?' urgent':''}">
+    <div class="job-meta">
+      <span class="badge badge-${j.sev==='high'?'red':j.sev==='medium'?'amber':'green'}">${j.sevLabel}</span>
+      <span class="job-stat"><i class="ti ti-map-pin"></i>${j.city}, CO</span>
+    </div>
+    <div class="job-title">${j.title}</div>
+    <div class="job-footer">
+      <div style="display:flex;gap:1.25rem">
+        <span class="job-stat"><i class="ti ti-currency-dollar"></i>${j.est}</span>
+        <span class="job-stat"><i class="ti ti-users"></i>${j.bids} bids</span>
+        <span class="job-stat"><i class="ti ti-clock"></i>${j.posted}</span>
+      </div>
+      <a href="jobs.html" class="btn btn-secondary" style="padding:8px 16px;font-size:13px">View &amp; bid</a>
+    </div>
+  </div>
+`).join('');
+</script>
+</body>
+</html>

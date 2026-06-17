@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For Contractors — ElectriSolve</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .page{display:none}.page.active{display:block}
+    .onboard-hero{background:var(--blue);color:white;padding:4rem 0 3rem;text-align:center}
+    .onboard-hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-.03em;margin-bottom:.75rem}
+    .onboard-hero p{font-size:17px;opacity:.88;max-width:520px;margin:0 auto 2rem;line-height:1.6}
+    .onboard-steps{display:flex;justify-content:center;flex-wrap:wrap;margin-top:2rem;border-top:1px solid rgba(255,255,255,.2);padding-top:2rem}
+    .onboard-step{text-align:center;padding:.75rem 2rem;border-right:1px solid rgba(255,255,255,.2)}
+    .onboard-step:last-child{border-right:none}
+    .onboard-step .num{font-size:28px;font-weight:800;opacity:.6;line-height:1;margin-bottom:.25rem}
+    .onboard-step .label{font-size:13px;font-weight:600;opacity:.85}
+    .value-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem;margin:2.5rem 0}
+    .value-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.4rem}
+    .value-card .icon{width:44px;height:44px;border-radius:var(--radius);background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--blue);margin-bottom:1rem}
+    .value-card h3{font-size:15px;font-weight:700;margin-bottom:.35rem}
+    .value-card p{font-size:14px;color:var(--muted);line-height:1.55}
+    .auth-layout{display:grid;grid-template-columns:1fr 400px;gap:2.5rem;align-items:start}
+    .auth-toggle{display:flex;gap:0;border:1.5px solid var(--border2);border-radius:var(--radius);overflow:hidden;margin-bottom:1.5rem}
+    .auth-toggle button{flex:1;padding:11px;font-size:15px;font-family:var(--font);font-weight:600;background:transparent;border:none;color:var(--muted);cursor:pointer;transition:all .15s}
+    .auth-toggle button.active{background:var(--blue);color:white}
+    .pricing-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+    .plan-tag{font-size:11px;font-weight:700;background:var(--blue);color:white;padding:3px 10px;border-radius:20px;letter-spacing:.04em}
+    .calc-section{background:var(--off);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;margin:2.5rem 0}
+    .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start}
+    .calc-inputs{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1rem}
+    .calc-inputs h3{font-size:15px;font-weight:700;margin-bottom:1.1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+    .calc-row{display:flex;align-items:center;gap:8px;margin-bottom:.85rem}
+    .calc-row label{font-size:13px;font-weight:600;color:var(--text);flex:1;min-width:0}
+    .calc-row input[type=number],.calc-row select{width:110px;padding:8px 10px;border:1.5px solid var(--border2);border-radius:var(--radius);font-size:14px;font-family:var(--font);color:var(--text);background:white;text-align:right;flex-shrink:0}
+    .calc-row select{text-align:left;width:160px}
+    .calc-row input:focus,.calc-row select:focus{outline:none;border-color:var(--blue)}
+    .calc-row .prefix{font-size:13px;color:var(--hint);margin-right:-4px}
+    .calc-row .suffix{font-size:13px;color:var(--hint);margin-left:-4px}
+    .calc-divider{height:1px;background:var(--border);margin:1rem 0}
+    .calc-section-label{font-size:11px;font-weight:700;color:var(--hint);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.75rem;margin-top:1.1rem}
+    .calc-results{position:sticky;top:80px}
+    .result-card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1rem}
+    .result-card h3{font-size:12px;font-weight:700;color:var(--hint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
+    .result-big{font-size:42px;font-weight:800;color:var(--blue);letter-spacing:-.03em;line-height:1;margin-bottom:.25rem}
+    .result-sub{font-size:13px;color:var(--muted)}
+    .result-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:14px}
+    .result-row:last-child{border-bottom:none}
+    .result-row span:first-child{color:var(--muted)}
+    .result-row span:last-child{font-weight:700;color:var(--text)}
+    .result-row.total span{font-size:16px;font-weight:800;color:var(--blue)}
+    .rate-band{display:flex;align-items:center;justify-content:space-between;background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:var(--radius);padding:.75rem 1rem;margin-top:.9rem}
+    .rate-band span:first-child{font-size:13px;color:var(--blue);font-weight:600}
+    .rate-band span:last-child{font-size:17px;color:var(--blue);font-weight:800}
+    .area-badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:.75rem}
+    .sub-bar{display:flex;align-items:center;justify-content:space-between;background:var(--green-light);border:1.5px solid #bbf7d0;border-radius:var(--radius);padding:.9rem 1.1rem;margin-bottom:1rem}
+    .sub-bar span:first-child{font-size:14px;font-weight:700;color:var(--green);display:flex;align-items:center;gap:7px}
+    .sub-bar span:last-child{font-size:13px;color:var(--muted)}
+    .profile-header{display:flex;align-items:center;gap:14px;margin-bottom:.9rem}
+    .avatar{width:52px;height:52px;border-radius:50%;background:var(--blue-light);border:2px solid var(--blue-mid);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--blue);flex-shrink:0}
+    .bid-form{background:var(--off);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-top:.9rem;display:none}
+    .bid-form.open{display:block}
+    .bid-locked{background:var(--off);border:1.5px dashed var(--border2);border-radius:var(--radius);padding:1rem;text-align:center;margin-top:.9rem}
+    @media(max-width:768px){.auth-layout{grid-template-columns:1fr}.pricing-grid-3{grid-template-columns:1fr}.calc-grid{grid-template-columns:1fr}.calc-results{position:static}.onboard-step{padding:.5rem 1rem}}
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon"><i class="ti ti-bolt"></i></div>
+      <span class="logo-text">Electri<span>Solve</span></span>
+    </a>
+    <nav class="header-nav">
+      <a href="jobs.html" class="nav-link">Browse jobs</a>
+      <a href="estimate.html" class="nav-link">Estimate costs</a>
+      <a href="contractor.html" class="nav-link" style="color:var(--blue)">For contractors</a>
+      <a href="post-job.html" class="btn btn-primary">Get free estimates</a>
+    </nav>
+  </div>
+</header>
+
+<!-- PAGE 1: ONBOARDING -->
+<div class="page active" id="page-onboard">
+  <div class="onboard-hero">
+    <div class="container">
+      <h1>The smarter way to find electrical work</h1>
+      <p>ElectriSolve routes AI-qualified job leads directly to licensed electricians in their service area. One flat monthly rate — no per-lead fees, no commissions.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-lg" style="background:white;color:var(--blue);border-color:white;font-size:16px" onclick="showPage('page-signup')">Create my account <i class="ti ti-arrow-right"></i></button>
+        <button class="btn btn-lg" style="background:transparent;color:white;border-color:rgba(255,255,255,.5);font-size:16px" onclick="showPage('page-calc')"><i class="ti ti-calculator"></i> Calculate my labor rate first</button>
+      </div>
+      <div class="onboard-steps">
+        <div class="onboard-step"><div class="num">1</div><div class="label">Homeowner posts job</div></div>
+        <div class="onboard-step"><div class="num">2</div><div class="label">AI qualifies the scope</div></div>
+        <div class="onboard-step"><div class="num">3</div><div class="label">You see it in your dashboard</div></div>
+        <div class="onboard-step"><div class="num">4</div><div class="label">You bid and win the job</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="container" style="padding:3rem 0">
+    <div style="text-align:center;margin-bottom:2rem">
+      <h2 style="font-size:1.6rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.35rem">Why ElectriSolve?</h2>
+      <p style="font-size:16px;color:var(--muted)">Every job is AI-diagnosed before you see it — scope, severity, and cost range already defined.</p>
+    </div>
+    <div class="value-grid">
+      <div class="value-card"><div class="icon"><i class="ti ti-robot"></i></div><h3>AI-qualified scope</h3><p>Every job comes with a severity rating, estimated cost range, scope of work, and permit requirement — before you touch it.</p></div>
+      <div class="value-card"><div class="icon"><i class="ti ti-map-pin"></i></div><h3>Your area, your jobs</h3><p>Set your service ZIP codes and radius. You only see jobs in the area you actually work — no wasted time on out-of-range calls.</p></div>
+      <div class="value-card"><div class="icon"><i class="ti ti-currency-dollar"></i></div><h3>No per-lead fees</h3><p>Flat monthly subscription. Whether you win 2 jobs or 20, your cost stays the same. No auction pricing, no commissions.</p></div>
+      <div class="value-card"><div class="icon"><i class="ti ti-star"></i></div><h3>Priority placement</h3><p>Pro and Company subscribers appear first in homeowner results in their service area — ahead of Starter listings.</p></div>
+      <div class="value-card"><div class="icon"><i class="ti ti-calculator"></i></div><h3>Labor rate calculator</h3><p>Built-in tool to calculate your true cost per hour based on wages, burden, overhead, and your local area cost index.</p></div>
+      <div class="value-card"><div class="icon"><i class="ti ti-trending-up"></i></div><h3>Bid analytics</h3><p>Track your win rate, average bid value, and which job types you land most — Pro and Company plans included.</p></div>
+    </div>
+    <div style="text-align:center;margin:3rem 0 2rem"><h2 style="font-size:1.6rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.35rem">Simple, flat pricing</h2><p style="font-size:16px;color:var(--muted)">Cancel anytime. No contracts, no setup fees.</p></div>
+    <div class="pricing-grid-3">
+      <div class="pricing-card"><div class="pricing-name">Starter</div><div class="pricing-price">$79<span>/mo</span></div><div class="pricing-desc">One service area. Great for solo operators.</div><ul class="pricing-features"><li><i class="ti ti-check"></i>1 service area (15-mile radius)</li><li><i class="ti ti-check"></i>Up to 20 job leads/month</li><li><i class="ti ti-check"></i>Basic contractor profile</li><li><i class="ti ti-check"></i>Email job alerts</li><li><i class="ti ti-check"></i>Labor rate calculator</li></ul><button class="btn btn-secondary btn-full" onclick="showPage('page-signup')">Get started</button></div>
+      <div class="pricing-card featured"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem"><div class="pricing-name">Pro</div><span class="plan-tag">MOST POPULAR</span></div><div class="pricing-price">$179<span>/mo</span></div><div class="pricing-desc">Unlimited leads. Priority placement.</div><ul class="pricing-features"><li><i class="ti ti-check"></i>3 service areas (25-mile radius each)</li><li><i class="ti ti-check"></i>Unlimited job leads</li><li><i class="ti ti-check"></i>Priority listing placement</li><li><i class="ti ti-check"></i>Enhanced profile + reviews</li><li><i class="ti ti-check"></i>SMS + email job alerts</li><li><i class="ti ti-check"></i>Full bid analytics</li><li><i class="ti ti-check"></i>Labor rate calculator</li></ul><button class="btn btn-primary btn-full" onclick="showPage('page-signup')">Get started</button></div>
+      <div class="pricing-card"><div class="pricing-name">Company</div><div class="pricing-price">$349<span>/mo</span></div><div class="pricing-desc">Multi-truck. Full metro coverage.</div><ul class="pricing-features"><li><i class="ti ti-check"></i>Unlimited service areas</li><li><i class="ti ti-check"></i>Up to 5 technician profiles</li><li><i class="ti ti-check"></i>Top priority placement</li><li><i class="ti ti-check"></i>Dedicated account manager</li><li><i class="ti ti-check"></i>Custom reporting &amp; exports</li><li><i class="ti ti-check"></i>Labor rate calculator (all roles)</li></ul><button class="btn btn-secondary btn-full" onclick="showPage('page-signup')">Get started</button></div>
+    </div>
+    <div style="text-align:center;margin-top:2rem">
+      <button class="btn btn-primary btn-lg" onclick="showPage('page-signup')">Create your contractor account</button>
+      <p style="font-size:13px;color:var(--hint);margin-top:.75rem">Already have an account? <a href="#" onclick="showPage('page-signup');setTimeout(()=>document.getElementById('login-tab').click(),50);return false;" style="color:var(--blue);font-weight:600">Sign in</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: LABOR CALCULATOR -->
+<div class="page" id="page-calc">
+  <div style="border-bottom:1px solid var(--border);padding:1.25rem 0;background:var(--off)">
+    <div class="container" style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+      <button class="btn btn-ghost" onclick="showPage('page-onboard')" style="padding:6px 10px"><i class="ti ti-arrow-left"></i> Back</button>
+      <div><div style="font-size:18px;font-weight:800">Labor rate calculator</div><div style="font-size:13px;color:var(--muted)">Find your true cost per hour before you bid</div></div>
+    </div>
+  </div>
+  <div class="container" style="padding:2rem 0 4rem">
+    <div style="background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:var(--radius-lg);padding:1.1rem 1.25rem;margin-bottom:2rem;font-size:14px;color:var(--blue);line-height:1.6">
+      <strong>How this works:</strong> Enter your wages, labor burden, and overhead costs. The calculator adjusts for your local area cost index — a contractor in rural Colorado has lower overhead than one in Denver metro — and outputs your true cost per billable hour plus a recommended bid rate that covers your target margin. Material costs are estimated separately by the platform.
+    </div>
+    <div class="calc-grid">
+      <div>
+        <div class="calc-inputs">
+          <h3><i class="ti ti-map-pin" style="color:var(--blue)"></i> Location &amp; company size</h3>
+          <div class="calc-row"><label>Area type</label><select id="area-type" onchange="calc()"><option value="rural">Rural / small town</option><option value="suburban" selected>Suburban / mid-size city</option><option value="urban">Urban / large metro</option><option value="premium">Premium metro (Denver, Boulder)</option></select></div>
+          <div class="calc-row"><label>Company size</label><select id="company-size" onchange="calc()"><option value="solo">Solo (1 tech)</option><option value="small" selected>Small (2–4 techs)</option><option value="medium">Medium (5–10 techs)</option><option value="large">Large (10+ techs)</option></select></div>
+          <div id="area-indicator" style="margin-top:.5rem"></div>
+        </div>
+        <div class="calc-inputs">
+          <h3><i class="ti ti-users" style="color:var(--blue)"></i> Employee wages</h3>
+          <div class="calc-section-label" style="margin-top:0">Journeyman electricians</div>
+          <div class="calc-row"><label>Number of journeymen</label><input type="number" id="j-count" value="2" min="0" max="50" oninput="calc()"></div>
+          <div class="calc-row"><label>Hourly wage</label><span class="prefix">$</span><input type="number" id="j-wage" value="32" min="0" step="0.50" oninput="calc()"><span class="suffix">/hr</span></div>
+          <div class="calc-divider"></div>
+          <div class="calc-section-label" style="margin-top:0">Apprentices / helpers</div>
+          <div class="calc-row"><label>Number of apprentices</label><input type="number" id="a-count" value="1" min="0" max="50" oninput="calc()"></div>
+          <div class="calc-row"><label>Hourly wage</label><span class="prefix">$</span><input type="number" id="a-wage" value="18" min="0" step="0.50" oninput="calc()"><span class="suffix">/hr</span></div>
+          <div class="calc-divider"></div>
+          <div class="calc-section-label" style="margin-top:0">Master / foreman</div>
+          <div class="calc-row"><label>Number of masters</label><input type="number" id="m-count" value="0" min="0" max="20" oninput="calc()"></div>
+          <div class="calc-row"><label>Hourly wage</label><span class="prefix">$</span><input type="number" id="m-wage" value="55" min="0" step="0.50" oninput="calc()"><span class="suffix">/hr</span></div>
+        </div>
+        <div class="calc-inputs">
+          <h3><i class="ti ti-file-dollar" style="color:var(--blue)"></i> Labor burden (% of wages)</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:1rem;line-height:1.55">Burden covers payroll taxes, workers comp, health insurance, and benefits. Typically 28–40% of base wages.</p>
+          <div class="calc-row"><label>Payroll taxes (FICA, FUTA, SUTA)</label><input type="number" id="burden-tax" value="11" min="0" max="30" step="0.5" oninput="calc()"><span class="suffix">%</span></div>
+          <div class="calc-row"><label>Workers' compensation</label><input type="number" id="burden-wc" value="8" min="0" max="30" step="0.5" oninput="calc()"><span class="suffix">%</span></div>
+          <div class="calc-row"><label>Health / dental insurance</label><input type="number" id="burden-health" value="9" min="0" max="30" step="0.5" oninput="calc()"><span class="suffix">%</span></div>
+          <div class="calc-row"><label>Paid time off / holidays</label><input type="number" id="burden-pto" value="5" min="0" max="20" step="0.5" oninput="calc()"><span class="suffix">%</span></div>
+          <div class="calc-row" style="border-top:1px solid var(--border);padding-top:.75rem;margin-top:.25rem"><label style="font-weight:700">Total burden rate</label><span style="font-size:16px;font-weight:800;color:var(--blue)" id="burden-total">33%</span></div>
+        </div>
+        <div class="calc-inputs">
+          <h3><i class="ti ti-building" style="color:var(--blue)"></i> Monthly overhead</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:1rem;line-height:1.55">Fixed costs to run the business regardless of how many jobs you complete. Scaled automatically by company size.</p>
+          <div class="calc-row"><label>Vehicles (payments, insurance, fuel)</label><span class="prefix">$</span><input type="number" id="oh-vehicles" value="1800" min="0" step="50" oninput="calc()"><span class="suffix">/mo</span></div>
+          <div class="calc-row"><label>Tools &amp; equipment</label><span class="prefix">$</span><input type="number" id="oh-tools" value="400" min="0" step="50" oninput="calc()"><span class="suffix">/mo</span></div>
+          <div class="calc-row"><label>General liability insurance</label><span class="prefix">$</span><input type="number" id="oh-insurance" value="350" min="0" step="50" oninput="calc()"><span class="suffix">/mo</span></div>
+          <div class="calc-row"><label>Office / shop / storage</label><span class="prefix">$</span><input type="number" id="oh-office" value="500" min="0" step="50" oninput="calc()"><span class="suffix">/mo</span></div>
+          <div class="calc-row"><label>Software, licenses, misc.</label><span class="prefix">$</span><input type="number" id="oh-misc" value="250" min="0" step="50" oninput="calc()"><span class="suffix">/mo</span></div>
+          <div class="calc-row" style="border-top:1px solid var(--border);padding-top:.75rem;margin-top:.25rem"><label style="font-weight:700">Total monthly overhead</label><span style="font-size:16px;font-weight:800;color:var(--blue)" id="oh-total">$3,300/mo</span></div>
+          <div class="calc-divider"></div>
+          <div class="calc-row"><label>Target profit margin</label><input type="number" id="margin" value="20" min="0" max="60" oninput="calc()"><span class="suffix">%</span></div>
+          <div class="calc-row"><label>Billable hours per tech per week</label><input type="number" id="billable-hrs" value="32" min="1" max="60" oninput="calc()"><span class="suffix">hrs</span></div>
+        </div>
+      </div>
+      <div class="calc-results">
+        <div class="result-card" style="margin-bottom:1rem;border-left:4px solid var(--blue)">
+          <h3>Area adjustment</h3>
+          <div id="area-adj-display"></div>
+        </div>
+        <div class="result-card" style="margin-bottom:1rem">
+          <h3>Wage &amp; burden per hour</h3>
+          <div class="result-row"><span>Avg. blended wage</span><span id="r-blended-wage">—</span></div>
+          <div class="result-row"><span>Labor burden cost</span><span id="r-burden-cost">—</span></div>
+          <div class="result-row total"><span>Burdened labor cost</span><span id="r-burdened">—</span></div>
+        </div>
+        <div class="result-card" style="margin-bottom:1rem">
+          <h3>True cost per billable hour</h3>
+          <div class="result-row"><span>Burdened labor</span><span id="r2-burdened">—</span></div>
+          <div class="result-row"><span>Overhead allocation</span><span id="r-overhead-hr">—</span></div>
+          <div class="result-row"><span>Area cost adjustment</span><span id="r-area-adj">—</span></div>
+          <div class="result-row total"><span>True cost/hr</span><span id="r-true-cost">—</span></div>
+        </div>
+        <div class="result-card">
+          <h3>Recommended bid rate</h3>
+          <div class="result-big" id="r-bid-rate">—</div>
+          <div class="result-sub" style="margin-bottom:.5rem">per billable hour including <span id="r-margin-label">20%</span> margin</div>
+          <div class="rate-band"><span>Conservative range</span><span id="r-range">—</span></div>
+          <p style="font-size:12px;color:var(--hint);margin-top:.75rem;line-height:1.55">This rate covers wages, burden, overhead, and your target margin. Material costs are estimated by the platform and added on top of your labor rate.</p>
+          <button class="btn btn-primary btn-full" style="margin-top:1.25rem" onclick="showPage('page-signup')">Use this rate — create my account <i class="ti ti-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: SIGNUP / LOGIN -->
+<div class="page" id="page-signup">
+  <div style="border-bottom:1px solid var(--border);padding:1.25rem 0;background:var(--off)">
+    <div class="container" style="display:flex;align-items:center;gap:1rem">
+      <button class="btn btn-ghost" onclick="showPage('page-onboard')" style="padding:6px 10px"><i class="ti ti-arrow-left"></i> Back</button>
+      <div><div style="font-size:18px;font-weight:800">Contractor account</div><div style="font-size:13px;color:var(--muted)">Create your account or sign in</div></div>
+    </div>
+  </div>
+  <div class="container" style="padding:2.5rem 0 4rem">
+    <div class="auth-layout">
+      <div>
+        <div class="auth-toggle">
+          <button class="active" id="signup-tab">Create account</button>
+          <button id="login-tab">Sign in</button>
+        </div>
+        <div id="signup-form">
+          <div class="card">
+            <div class="card-title">Contractor signup</div>
+            <div class="form-row"><div class="form-group"><label>First name</label><input type="text" placeholder="Mike"></div><div class="form-group"><label>Last name</label><input type="text" placeholder="Torres"></div></div>
+            <div class="form-group"><label>Business name</label><input type="text" placeholder="Torres Electric LLC"></div>
+            <div class="form-row"><div class="form-group"><label>Email</label><input type="email" placeholder="mike@torreselectric.com"></div><div class="form-group"><label>Phone</label><input type="tel" placeholder="(720) 555-0100"></div></div>
+            <div class="form-row"><div class="form-group"><label>License number</label><input type="text" placeholder="EC.0123456"></div><div class="form-group"><label>License type</label><select><option>Journeyman electrician</option><option>Master electrician</option><option>Electrical contractor</option></select></div></div>
+            <div class="form-row"><div class="form-group"><label>Primary ZIP code</label><input type="text" placeholder="80203"></div><div class="form-group"><label>Service radius</label><select><option>10 miles</option><option selected>25 miles</option><option>50 miles</option></select></div></div>
+            <div class="form-row"><div class="form-group"><label>Password</label><input type="password" placeholder="••••••••"></div><div class="form-group"><label>Confirm password</label><input type="password" placeholder="••••••••"></div></div>
+            <p class="input-hint" style="margin-bottom:1rem">License verified within 1–2 business days before activation.</p>
+            <button class="btn btn-primary btn-full btn-lg" id="signup-btn">Continue to choose a plan</button>
+          </div>
+        </div>
+        <div id="login-form" style="display:none">
+          <div class="card">
+            <div class="card-title">Sign in</div>
+            <div class="form-group"><label>Email</label><input type="email" placeholder="mike@torreselectric.com"></div>
+            <div class="form-group"><label>Password</label><input type="password" placeholder="••••••••"></div>
+            <button class="btn btn-primary btn-full btn-lg" id="login-btn">Sign in</button>
+            <p style="text-align:center;font-size:13px;color:var(--hint);margin-top:.9rem"><a href="#" style="color:var(--blue)">Forgot password?</a></p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-size:16px;font-weight:800;margin-bottom:1rem">Choose your plan</h3>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="pricing-card"><div class="pricing-name">Starter</div><div class="pricing-price">$79<span>/mo</span></div><div class="pricing-desc">1 service area · Up to 20 leads/month</div><button class="btn btn-secondary btn-full" style="margin-top:.75rem" onclick="alert('Starter plan — connects to Stripe in production')">Select Starter</button></div>
+          <div class="pricing-card featured"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem"><div class="pricing-name">Pro</div><span class="plan-tag">MOST POPULAR</span></div><div class="pricing-price">$179<span>/mo</span></div><div class="pricing-desc">3 service areas · Unlimited leads · Priority</div><button class="btn btn-primary btn-full" style="margin-top:.75rem" onclick="alert('Pro plan — connects to Stripe in production')">Select Pro</button></div>
+          <div class="pricing-card"><div class="pricing-name">Company</div><div class="pricing-price">$349<span>/mo</span></div><div class="pricing-desc">Unlimited areas · 5 techs · Account manager</div><button class="btn btn-secondary btn-full" style="margin-top:.75rem" onclick="alert('Company plan — connects to Stripe in production')">Select Company</button></div>
+        </div>
+        <p style="font-size:12px;color:var(--hint);margin-top:1rem;text-align:center">Cancel anytime · No setup fees · Billed monthly</p>
+        <div style="margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem"><button class="btn btn-ghost btn-full" onclick="showPage('page-calc')" style="font-size:13px"><i class="ti ti-calculator"></i> Calculate my labor rate first</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4: DASHBOARD -->
+<div class="page" id="page-dash">
+  <div class="container" style="padding:2rem 0 4rem">
+    <div class="dash-grid">
+      <div>
+        <div class="card" style="margin-bottom:1rem">
+          <div class="profile-header"><div class="avatar">MT</div><div><div style="font-weight:800;font-size:16px">Mike Torres</div><div style="font-size:14px;color:var(--muted)">Torres Electric LLC</div></div></div>
+          <span class="badge badge-green"><i class="ti ti-shield-check"></i> Licensed &amp; verified</span>
+        </div>
+        <div class="card" style="margin-bottom:1rem">
+          <div class="sub-bar"><span><i class="ti ti-check"></i> Pro plan — active</span><span>$179/mo</span></div>
+          <div style="font-size:12px;color:var(--hint)">Renews July 15, 2026 · <a href="#" style="color:var(--muted)">Manage</a></div>
+        </div>
+        <div class="card">
+          <ul class="dash-nav">
+            <li><a href="#" class="active" onclick="showDTab('available',this)"><i class="ti ti-bolt"></i> Available jobs</a></li>
+            <li><a href="#" onclick="showDTab('bids',this)"><i class="ti ti-file-invoice"></i> My bids</a></li>
+            <li><a href="#" onclick="showDTab('calc-tab',this)"><i class="ti ti-calculator"></i> Labor calculator</a></li>
+            <li><a href="#" onclick="showDTab('profile',this)"><i class="ti ti-user"></i> My profile</a></li>
+            <li><a href="#" id="logout-btn"><i class="ti ti-logout"></i> Sign out</a></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="stat-grid">
+          <div class="stat-card"><div class="stat-label">New today</div><div class="stat-value blue">7</div></div>
+          <div class="stat-card"><div class="stat-label">Active bids</div><div class="stat-value">3</div></div>
+          <div class="stat-card"><div class="stat-label">Won this month</div><div class="stat-value green">2</div></div>
+          <div class="stat-card"><div class="stat-label">Value won</div><div class="stat-value">$4.2k</div></div>
+        </div>
+        <div id="dtab-available">
+          <div class="section-header"><h2>Jobs in your area</h2><span class="badge badge-blue">7 new</span></div>
+          <div class="jobs-list" id="dash-jobs"></div>
+        </div>
+        <div id="dtab-bids" style="display:none">
+          <div class="section-header"><h2>My bids</h2></div>
+          <div class="jobs-list">
+            <div class="job-card"><div class="job-meta"><span class="badge badge-blue">Submitted</span><span class="job-stat"><i class="ti ti-clock"></i>1d ago</span></div><div class="job-title">GFCI outlets · Aurora, CO</div><div class="job-footer"><span class="job-stat">Bid: <strong>$340</strong> · Awaiting decision</span><span class="badge badge-amber">Pending</span></div></div>
+            <div class="job-card"><div class="job-meta"><span class="badge badge-green">Accepted</span><span class="job-stat"><i class="ti ti-clock"></i>3d ago</span></div><div class="job-title">EV charger · Denver, CO</div><div class="job-footer"><span class="job-stat">Bid: <strong>$580</strong> · June 20</span><span class="badge badge-green">Won</span></div></div>
+          </div>
+        </div>
+        <div id="dtab-calc-tab" style="display:none">
+          <div class="section-header"><h2>Your labor rate</h2></div>
+          <div class="card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+            <div><div style="font-size:12px;font-weight:700;color:var(--hint);letter-spacing:.05em;margin-bottom:.25rem">CURRENT BID RATE</div><div style="font-size:36px;font-weight:800;color:var(--blue)" id="dash-rate">—</div><div style="font-size:13px;color:var(--muted)">Based on your calculator settings</div></div>
+            <button class="btn btn-secondary" onclick="showPage('page-calc')"><i class="ti ti-edit"></i> Recalculate</button>
+          </div>
+        </div>
+        <div id="dtab-profile" style="display:none">
+          <div class="section-header"><h2>My profile</h2></div>
+          <div class="card">
+            <div class="form-group"><label>Business name</label><input type="text" value="Torres Electric LLC"></div>
+            <div class="form-row"><div class="form-group"><label>License number</label><input type="text" value="EC.0123456"></div><div class="form-group"><label>Years in business</label><input type="number" value="12"></div></div>
+            <div class="form-group"><label>About your business</label><textarea>Residential and light commercial electrical service in Denver metro.</textarea></div>
+            <div class="form-group"><label>Service area ZIPs</label><input type="text" value="80203, 80204, 80205, 80206, 80209, 80210"></div>
+            <button class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span style="font-weight:700;color:var(--text)">ElectriSolve</span>
+    <span>Subscriptions renew monthly · Cancel anytime</span>
+    <div style="display:flex;gap:1.25rem"><a href="#">Terms</a><a href="#">Privacy</a></div>
+  </div>
+</footer>
+
+<script>
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+document.getElementById('signup-tab').addEventListener('click',()=>{document.getElementById('signup-tab').classList.add('active');document.getElementById('login-tab').classList.remove('active');document.getElementById('signup-form').style.display='block';document.getElementById('login-form').style.display='none';});
+document.getElementById('login-tab').addEventListener('click',()=>{document.getElementById('login-tab').classList.add('active');document.getElementById('signup-tab').classList.remove('active');document.getElementById('login-form').style.display='block';document.getElementById('signup-form').style.display='none';});
+document.getElementById('signup-btn').addEventListener('click',()=>showPage('page-dash'));
+document.getElementById('login-btn').addEventListener('click',()=>showPage('page-dash'));
+document.getElementById('logout-btn').addEventListener('click',e=>{e.preventDefault();showPage('page-onboard');});
+function showDTab(name,el){event.preventDefault();['available','bids','calc-tab','profile'].forEach(t=>{const e=document.getElementById('dtab-'+t);if(e)e.style.display='none';});document.getElementById('dtab-'+name).style.display='block';document.querySelectorAll('.dash-nav a').forEach(a=>a.classList.remove('active'));if(el)el.classList.add('active');}
+const DASH_JOBS=[{id:1,title:"Panel upgrade · Lakewood",sev:"high",desc:"Federal Pacific replacement. Est. $1,800–2,400. Permit required.",est:"$1,800–2,400",bids:3,posted:"2h ago"},{id:7,title:"Flickering lights · Centennial",sev:"high",desc:"Possible loose neutral. Only 1 bid.",est:"$200–600",bids:1,posted:"3h ago"},{id:2,title:"GFCI outlets · Aurora",sev:"medium",desc:"6 outlets, 2–4 hrs.",est:"$280–420",bids:5,posted:"5h ago"},{id:3,title:"EV charger · Denver",sev:"low",desc:"60A circuit, 35 ft run.",est:"$450–700",bids:4,posted:"8h ago"}];
+let activeBid=null;
+function renderDashJobs(){document.getElementById('dash-jobs').innerHTML=DASH_JOBS.map(j=>`<div class="job-card${j.sev==='high'?' urgent':''}"><div class="job-meta"><span class="badge badge-${j.sev==='high'?'red':j.sev==='medium'?'amber':'green'}">${j.sev==='high'?'Urgent':j.sev==='medium'?'Standard':'Minor'}</span><span class="job-stat"><i class="ti ti-users"></i>${j.bids} bid${j.bids!==1?'s':''}</span></div><div class="job-title">${j.title}</div><div class="job-footer"><span class="job-stat"><i class="ti ti-currency-dollar"></i>${j.est}</span><button class="btn btn-primary" style="padding:8px 16px;font-size:13px" onclick="toggleBid(${j.id})"><i class="ti ti-send"></i> Bid</button></div><div class="bid-form" id="bid-${j.id}"><div class="form-row" style="margin-bottom:.75rem"><div class="form-group" style="margin-bottom:0"><label>Your bid ($)</label><input type="number" placeholder="450" id="amt-${j.id}"></div><div class="form-group" style="margin-bottom:0"><label>Est. hours</label><input type="number" placeholder="4" id="hrs-${j.id}"></div></div><div class="form-group" style="margin-bottom:.75rem"><label>Note to homeowner</label><textarea placeholder="Brief intro..." id="note-${j.id}" style="min-height:60px"></textarea></div><div style="display:flex;gap:8px"><button class="btn btn-ghost" onclick="toggleBid(${j.id})">Cancel</button><button class="btn btn-primary" style="flex:1" onclick="submitBid(${j.id})">Submit bid</button></div></div></div>`).join('');}
+function toggleBid(id){if(activeBid&&activeBid!==id)document.getElementById('bid-'+activeBid).classList.remove('open');const f=document.getElementById('bid-'+id);f.classList.toggle('open');activeBid=f.classList.contains('open')?id:null;}
+function submitBid(id){const amt=document.getElementById('amt-'+id).value;if(!amt){alert('Enter a bid amount.');return;}document.getElementById('bid-'+id).innerHTML=`<p style="color:var(--green);font-size:14px;font-weight:600;padding:.4rem 0;display:flex;align-items:center;gap:7px"><i class="ti ti-circle-check" style="font-size:18px"></i>Bid of $${amt} submitted!</p>`;}
+renderDashJobs();
+
+/* LABOR CALCULATOR */
+const AREA_CONFIG={rural:{label:'Rural / small town',color:'green',multiplier:0.82,desc:'Lower cost of living means lower prevailing wages and overhead. Your competitive rate is lower, but so are your costs.'},suburban:{label:'Suburban / mid-size city',color:'blue',multiplier:1.00,desc:'Baseline cost index. Most contractors in mid-size Colorado markets fall in this range.'},urban:{label:'Urban / large metro',color:'amber',multiplier:1.18,desc:'Higher wages, insurance, and shop costs. Both your rate and your overhead are elevated.'},premium:{label:'Premium metro (Denver / Boulder)',color:'red',multiplier:1.32,desc:'Top-tier labor market. Significantly higher wages and overhead — but homeowners in this market expect to pay more.'}};
+const SIZE_CONFIG={solo:{ohMultiplier:0.75,desc:'Solo: all overhead burden falls on one tech, lower fixed costs.'},small:{ohMultiplier:1.00,desc:'Small company (2–4 techs): standard overhead split.'},medium:{ohMultiplier:1.20,desc:'Medium company (5–10 techs): higher fixed overhead, more specialization.'},large:{ohMultiplier:1.45,desc:'Large company (10+ techs): significant overhead spread across many techs.'}};
+function g(id){return parseFloat(document.getElementById(id).value)||0;}
+function calc(){
+  const area=AREA_CONFIG[document.getElementById('area-type').value]||AREA_CONFIG.suburban;
+  const size=SIZE_CONFIG[document.getElementById('company-size').value]||SIZE_CONFIG.small;
+  const jCount=g('j-count'),jWage=g('j-wage'),aCount=g('a-count'),aWage=g('a-wage'),mCount=g('m-count'),mWage=g('m-wage');
+  const totalTechs=jCount+aCount+mCount||1;
+  const totalWageCost=(jCount*jWage)+(aCount*aWage)+(mCount*mWage);
+  const blendedWage=totalWageCost/totalTechs;
+  const burdenPct=(g('burden-tax')+g('burden-wc')+g('burden-health')+g('burden-pto'))/100;
+  const burdenCostPerHr=blendedWage*burdenPct;
+  const burdenedHr=blendedWage+burdenCostPerHr;
+  const billableHrsPerMonth=g('billable-hrs')*4.33*totalTechs;
+  const monthlyOH=(g('oh-vehicles')+g('oh-tools')+g('oh-insurance')+g('oh-office')+g('oh-misc'))*size.ohMultiplier;
+  const overheadPerHr=billableHrsPerMonth>0?monthlyOH/billableHrsPerMonth:0;
+  const baseTrue=burdenedHr+overheadPerHr;
+  const areaAdj=baseTrue*(area.multiplier-1);
+  const trueCost=baseTrue+areaAdj;
+  const margin=g('margin')/100;
+  const bidRate=margin<1?trueCost/(1-margin):trueCost*2;
+  const rangeLow=Math.round(bidRate*0.92/5)*5;
+  const rangeHigh=Math.round(bidRate*1.08/5)*5;
+  document.getElementById('burden-total').textContent=Math.round(burdenPct*100)+'%';
+  document.getElementById('oh-total').textContent='$'+Math.round(monthlyOH).toLocaleString()+'/mo';
+  const colorMap={green:'green',blue:'blue',amber:'amber',red:'red'};
+  const ac=colorMap[area.color]||'blue';
+  document.getElementById('area-adj-display').innerHTML=`<span class="area-badge badge-${ac}"><i class="ti ti-map-pin"></i>${area.label}</span><div style="font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:.5rem">${area.desc}</div><div style="font-size:13px;color:var(--muted)">${size.desc}</div><div style="margin-top:.75rem;display:flex;justify-content:space-between;font-size:14px"><span style="color:var(--muted)">Area cost index</span><strong style="color:var(--text)">${Math.round(area.multiplier*100)}% of baseline</strong></div>`;
+  const fmt=n=>'$'+n.toFixed(2)+'/hr';
+  document.getElementById('r-blended-wage').textContent=fmt(blendedWage);
+  document.getElementById('r-burden-cost').textContent=fmt(burdenCostPerHr);
+  document.getElementById('r-burdened').textContent=fmt(burdenedHr);
+  document.getElementById('r2-burdened').textContent=fmt(burdenedHr);
+  document.getElementById('r-overhead-hr').textContent=fmt(overheadPerHr);
+  document.getElementById('r-area-adj').textContent=(areaAdj>=0?'+':'')+fmt(areaAdj);
+  document.getElementById('r-true-cost').textContent=fmt(trueCost);
+  document.getElementById('r-bid-rate').textContent='$'+Math.round(bidRate);
+  document.getElementById('r-margin-label').textContent=Math.round(margin*100)+'%';
+  document.getElementById('r-range').textContent='$'+rangeLow+'–$'+rangeHigh+'/hr';
+  document.getElementById('dash-rate').textContent='$'+Math.round(bidRate)+'/hr';
+}
+calc();
+</script>
+</body>
+</html>

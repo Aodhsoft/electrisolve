@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cost Estimator — ElectriSolve Denver</title>
+  <meta name="description" content="Get a realistic cost estimate for common electrical jobs in Denver. Based on local electrician rates and current Home Depot material prices.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Rate bar ── */
+    .rate-bar { background: var(--off); border-bottom: 1px solid var(--border); padding: .9rem 0; }
+    .rate-bar-inner { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+    .rate-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+    .rate-item .label { color: var(--muted); font-weight: 500; }
+    .rate-item .value { font-weight: 700; color: var(--text); }
+    .rate-item .badge { font-size: 11px; font-weight: 700; background: var(--blue-light); color: var(--blue); padding: 2px 8px; border-radius: 10px; }
+    .rate-sep { width: 1px; height: 20px; background: var(--border); }
+
+    /* ── Layout ── */
+    .page-header { padding: 2.5rem 0 2rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+    .page-header h1 { font-size: 2rem; font-weight: 800; letter-spacing: -.025em; margin-bottom: .35rem; }
+    .page-header p  { font-size: 16px; color: var(--muted); }
+    .estimate-layout { display: grid; grid-template-columns: 1fr 360px; gap: 2rem; align-items: start; }
+
+    /* ── Job selector ── */
+    .job-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
+    .job-btn { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-lg); padding: .9rem 1rem; cursor: pointer; text-align: left; transition: border-color .15s, background .15s; font-family: var(--font); }
+    .job-btn:hover { border-color: var(--blue); }
+    .job-btn.active { border-color: var(--blue); background: var(--blue-light); }
+    .job-btn .jb-icon { font-size: 20px; color: var(--hint); margin-bottom: .35rem; display: block; }
+    .job-btn.active .jb-icon { color: var(--blue); }
+    .job-btn .jb-name { font-size: 14px; font-weight: 700; color: var(--text); display: block; margin-bottom: 2px; }
+    .job-btn .jb-range { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+    /* ── Material table ── */
+    .mat-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+    .mat-table th { font-size: 11px; font-weight: 700; color: var(--hint); letter-spacing: .06em; text-transform: uppercase; padding: 0 0 8px; border-bottom: 2px solid var(--border); text-align: left; }
+    .mat-table th:last-child, .mat-table th:nth-child(3), .mat-table th:nth-child(2) { text-align: right; }
+    .mat-table td { padding: 9px 0; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .mat-table tr:last-child td { border-bottom: none; }
+    .mat-table td:nth-child(2) { text-align: right; color: var(--muted); font-size: 13px; }
+    .mat-table td:nth-child(3) { text-align: right; }
+    .mat-table td:last-child { text-align: right; font-weight: 700; color: var(--text); }
+    .qty-input { width: 52px; padding: 5px 7px; border: 1.5px solid var(--border2); border-radius: 6px; font-size: 13px; font-family: var(--font); text-align: center; background: white; }
+    .qty-input:focus { outline: none; border-color: var(--blue); }
+    .mat-name { font-weight: 500; color: var(--text); display: block; }
+    .mat-sub  { font-size: 12px; color: var(--hint); }
+    .hd-link  { font-size: 11px; color: var(--blue); text-decoration: none; display: inline-flex; align-items: center; gap: 3px; margin-top: 2px; }
+    .hd-link:hover { text-decoration: underline; }
+    .add-mat-btn { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--blue); font-weight: 600; background: none; border: 1.5px dashed var(--blue-mid); border-radius: var(--radius); padding: 8px 14px; cursor: pointer; font-family: var(--font); width: 100%; justify-content: center; transition: background .15s; }
+    .add-mat-btn:hover { background: var(--blue-light); }
+    .custom-mat-row { display: grid; grid-template-columns: 1fr 80px 80px 36px; gap: 6px; align-items: center; margin-bottom: 6px; }
+    .custom-mat-row input { padding: 7px 10px; border: 1.5px solid var(--border2); border-radius: 6px; font-size: 13px; font-family: var(--font); background: white; }
+    .custom-mat-row input:focus { outline: none; border-color: var(--blue); }
+    .remove-row { background: none; border: none; color: var(--hint); cursor: pointer; font-size: 18px; line-height: 1; }
+    .remove-row:hover { color: var(--red); }
+
+    /* ── Summary card ── */
+    .summary-sticky { position: sticky; top: 76px; }
+    .summary-card { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .summary-header { background: var(--blue); color: white; padding: 1.1rem 1.25rem; }
+    .summary-header h3 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+    .summary-header p  { font-size: 13px; opacity: .85; }
+    .summary-body { padding: 1.25rem; }
+    .sum-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; gap: 8px; }
+    .sum-row:last-child { border-bottom: none; }
+    .sum-row .key { color: var(--muted); font-weight: 500; }
+    .sum-row .val { font-weight: 700; color: var(--text); text-align: right; }
+    .sum-total { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-top: 2px solid var(--border); background: var(--off); }
+    .sum-total .key { font-size: 15px; font-weight: 700; color: var(--text); }
+    .sum-total .val { font-size: 22px; font-weight: 800; color: var(--blue); }
+    .sum-range { font-size: 12px; color: var(--muted); text-align: right; margin-top: 2px; }
+
+    /* ── Labor section ── */
+    .labor-section { background: var(--off); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1.5rem; }
+    .labor-section h3 { font-size: 15px; font-weight: 700; margin-bottom: 1rem; }
+    .labor-row { display: flex; align-items: center; gap: 10px; margin-bottom: .75rem; flex-wrap: wrap; }
+    .labor-row label { font-size: 13px; font-weight: 600; color: var(--text); min-width: 140px; }
+    .labor-row select,
+    .labor-row input[type=number] { padding: 8px 10px; border: 1.5px solid var(--border2); border-radius: var(--radius); font-size: 14px; font-family: var(--font); background: white; color: var(--text); }
+    .labor-row select:focus,
+    .labor-row input:focus { outline: none; border-color: var(--blue); }
+    .labor-row input[type=number] { width: 80px; text-align: right; }
+    .labor-row .rate-display { font-size: 14px; font-weight: 700; color: var(--blue); }
+
+    /* ── Disclaimer ── */
+    .disclaimer { font-size: 12px; color: var(--hint); line-height: 1.6; padding: .9rem 0; border-top: 1px solid var(--border); margin-top: 1.5rem; }
+    .hd-note { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--hint); background: var(--off); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; margin-bottom: .75rem; }
+    .hd-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; background: #f96302; color: white; padding: 2px 8px; border-radius: 4px; }
+
+    @media (max-width: 768px) {
+      .estimate-layout { grid-template-columns: 1fr; }
+      .summary-sticky { position: static; }
+      .job-grid { grid-template-columns: 1fr; }
+      .rate-bar-inner { gap: .75rem; }
+      .rate-sep { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon"><i class="ti ti-bolt"></i></div>
+      <span class="logo-text">Electri<span>Solve</span></span>
+    </a>
+    <nav class="header-nav">
+      <a href="jobs.html" class="nav-link">Browse jobs</a>
+      <a href="estimate.html" class="nav-link" style="color:var(--blue)">Estimate costs</a>
+      <a href="contractor.html" class="nav-link">For contractors</a>
+      <a href="post-job.html" class="btn btn-primary">Get free estimates</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Denver rates banner -->
+<div class="rate-bar">
+  <div class="container">
+    <div class="rate-bar-inner">
+      <div class="rate-item"><span class="label">Denver service call</span><span class="value">$125–$175</span><span class="badge">1st hr incl.</span></div>
+      <div class="rate-sep"></div>
+      <div class="rate-item"><span class="label">Standard labor</span><span class="value">$85–$120/hr</span></div>
+      <div class="rate-sep"></div>
+      <div class="rate-item"><span class="label">Complex / master</span><span class="value">$150–$200/hr</span></div>
+      <div class="rate-sep"></div>
+      <div class="rate-item"><span class="label">Emergency / after-hours</span><span class="value">$200–$350/hr</span></div>
+      <div class="rate-sep"></div>
+      <div class="rate-item" style="color:var(--hint);font-size:12px"><i class="ti ti-info-circle" style="font-size:14px"></i> Based on 2026 Denver metro averages</div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="page-header">
+    <div class="container">
+      <h1>Estimate your job cost</h1>
+      <p>Select a common job type or build your own material list. Material prices from Home Depot · Labor rates from Denver metro averages.</p>
+    </div>
+  </div>
+
+  <div class="container" style="padding-bottom:4rem">
+    <div class="estimate-layout">
+
+      <!-- LEFT: BUILDER -->
+      <div>
+        <!-- JOB SELECTOR -->
+        <div class="card" style="margin-bottom:1.5rem">
+          <div class="card-title">Start with a common job type <span style="font-weight:400;color:var(--hint);font-size:13px">(or build from scratch below)</span></div>
+          <div class="job-grid" id="job-grid"></div>
+        </div>
+
+        <!-- MATERIALS -->
+        <div class="card" style="margin-bottom:1.5rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:8px">
+            <div class="card-title" style="margin-bottom:0">Materials</div>
+            <div class="hd-note"><span class="hd-badge"><i class="ti ti-building-store"></i> Home Depot</span> Prices reflect current HD retail — updated 2026</div>
+          </div>
+
+          <table class="mat-table" id="mat-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Unit price</th>
+                <th>Qty</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody id="mat-body"></tbody>
+          </table>
+
+          <!-- Custom add rows -->
+          <div id="custom-rows"></div>
+          <button class="add-mat-btn" id="add-mat-btn"><i class="ti ti-plus"></i> Add custom material</button>
+        </div>
+
+        <!-- LABOR -->
+        <div class="labor-section">
+          <h3><i class="ti ti-user-check" style="color:var(--blue)"></i> Labor estimate</h3>
+          <div class="labor-row">
+            <label>Job type</label>
+            <select id="labor-type" onchange="updateLabor()">
+              <option value="standard">Standard residential</option>
+              <option value="complex">Complex / specialty</option>
+              <option value="emergency">Emergency / after-hours</option>
+            </select>
+            <span class="rate-display" id="labor-rate-display">$100/hr</span>
+          </div>
+          <div class="labor-row">
+            <label>Service call</label>
+            <select id="service-call">
+              <option value="150">Yes — include trip charge ($150 avg)</option>
+              <option value="0">No — already on-site</option>
+            </select>
+          </div>
+          <div class="labor-row">
+            <label>Estimated hours</label>
+            <input type="number" id="labor-hours" value="2" min="0.5" step="0.5" oninput="updateSummary()">
+          </div>
+          <div class="labor-row">
+            <label>Permit fee</label>
+            <select id="permit-fee" onchange="updateSummary()">
+              <option value="0">No permit needed</option>
+              <option value="75">Simple permit (~$75)</option>
+              <option value="150">Standard permit (~$150)</option>
+              <option value="250">Complex permit (~$250)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="disclaimer">
+          <strong>About these estimates:</strong> Labor rates are based on 2026 Denver metro averages from Angi, HomeAdvisor, and local contractor data ($85–$200/hr depending on job complexity). Material prices reflect current Home Depot retail pricing and may vary by store location and availability. This tool provides a planning estimate — actual quotes from licensed electricians may differ based on home age, accessibility, and local code requirements. Always get 2–3 quotes before hiring.
+          <br><br>
+          <strong>Sources:</strong> Angi Denver electrician cost data (2026) · HomeAdvisor national rate survey · JM Electric Denver rate guide · Home Depot retail pricing
+        </div>
+      </div>
+
+      <!-- RIGHT: SUMMARY -->
+      <div class="summary-sticky">
+        <div class="summary-card">
+          <div class="summary-header">
+            <h3>Cost summary</h3>
+            <p>Denver metro · <span id="selected-job-label">Custom estimate</span></p>
+          </div>
+          <div class="summary-body" id="summary-body"></div>
+          <div class="sum-total">
+            <div>
+              <div class="key">Estimated total</div>
+              <div class="sum-range" id="sum-range"></div>
+            </div>
+            <div class="val" id="sum-total-val">$0</div>
+          </div>
+        </div>
+
+        <div style="margin-top:1rem">
+          <a href="post-job.html" class="btn btn-primary btn-full btn-lg">
+            <i class="ti ti-send"></i> Get real quotes from local electricians
+          </a>
+          <p style="font-size:12px;color:var(--hint);text-align:center;margin-top:.6rem">Free · No obligation · Licensed contractors only</p>
+        </div>
+
+        <!-- Rate reference card -->
+        <div class="card" style="margin-top:1rem">
+          <div class="card-title" style="font-size:13px">Denver rate reference</div>
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 0;color:var(--muted)">Trip / first hour</td><td style="padding:6px 0;font-weight:700;text-align:right">$125–$175</td></tr>
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 0;color:var(--muted)">Standard (/hr after)</td><td style="padding:6px 0;font-weight:700;text-align:right">$85–$120</td></tr>
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 0;color:var(--muted)">Complex / master</td><td style="padding:6px 0;font-weight:700;text-align:right">$150–$200</td></tr>
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 0;color:var(--muted)">Emergency call</td><td style="padding:6px 0;font-weight:700;text-align:right">$200–$350</td></tr>
+            <tr><td style="padding:6px 0;color:var(--muted)">Avg project total</td><td style="padding:6px 0;font-weight:700;text-align:right">$350 (range $167–$554)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span style="font-weight:700;color:var(--text)">ElectriSolve</span>
+    <span>Estimates for planning purposes only · Always verify with a licensed electrician</span>
+    <div style="display:flex;gap:1.25rem"><a href="post-job.html">Post a job</a><a href="contractor.html">Contractors</a></div>
+  </div>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════
+   DATA
+══════════════════════════════════════════ */
+
+// Material catalog — Home Depot retail prices (2026)
+const HD_MATERIALS = {
+  // Outlets & switches
+  'outlet-15a':    { name:'15A duplex outlet', sub:'Leviton or equiv.', unit:'ea', lo:2.50, hi:4.50, url:'https://www.homedepot.com/s/15%20amp%20duplex%20outlet' },
+  'outlet-20a':    { name:'20A duplex outlet', sub:'Commercial grade', unit:'ea', lo:5.00, hi:8.50, url:'https://www.homedepot.com/s/20%20amp%20duplex%20outlet' },
+  'gfci-15a':      { name:'GFCI outlet 15A', sub:'Leviton SmartlockPro or equiv.', unit:'ea', lo:14.00, hi:18.00, url:'https://www.homedepot.com/s/GFCI%2015%20amp%20outlet' },
+  'gfci-20a':      { name:'GFCI outlet 20A', sub:'Leviton or equiv.', unit:'ea', lo:17.00, hi:25.00, url:'https://www.homedepot.com/s/GFCI%2020%20amp%20outlet' },
+  'afci-gfci-20a': { name:'AFCI/GFCI combo outlet 20A', sub:'Leviton or Pass & Seymour', unit:'ea', lo:35.00, hi:52.00, url:'https://www.homedepot.com/s/AFCI%20GFCI%20combo%20outlet' },
+  'switch-15a':    { name:'Standard single-pole switch 15A', sub:'Leviton or equiv.', unit:'ea', lo:2.00, hi:4.50, url:'https://www.homedepot.com/s/single%20pole%20switch' },
+  'switch-3way':   { name:'3-way switch', sub:'Leviton or equiv.', unit:'ea', lo:4.50, hi:8.00, url:'https://www.homedepot.com/s/3%20way%20switch' },
+  'dimmer-led':    { name:'LED-compatible dimmer switch', sub:'Lutron Diva or equiv.', unit:'ea', lo:16.00, hi:32.00, url:'https://www.homedepot.com/s/LED%20dimmer%20switch' },
+  // Breakers
+  'breaker-15a':   { name:'15A single-pole breaker', sub:'Square D QO or Siemens', unit:'ea', lo:8.00, hi:14.00, url:'https://www.homedepot.com/s/15%20amp%20breaker' },
+  'breaker-20a':   { name:'20A single-pole breaker', sub:'Square D QO or Siemens', unit:'ea', lo:10.00, hi:16.00, url:'https://www.homedepot.com/s/20%20amp%20breaker' },
+  'breaker-30a':   { name:'30A double-pole breaker', sub:'Square D QO or Siemens', unit:'ea', lo:14.00, hi:22.00, url:'https://www.homedepot.com/s/30%20amp%20double%20pole%20breaker' },
+  'breaker-50a':   { name:'50A double-pole breaker', sub:'Square D QO or Siemens', unit:'ea', lo:18.00, hi:28.00, url:'https://www.homedepot.com/s/50%20amp%20double%20pole%20breaker' },
+  'afci-20a':      { name:'AFCI breaker 20A', sub:'Square D or Siemens', unit:'ea', lo:32.00, hi:48.00, url:'https://www.homedepot.com/s/AFCI%20breaker%2020%20amp' },
+  'gfci-breaker':  { name:'GFCI breaker 20A', sub:'Square D or Siemens', unit:'ea', lo:36.00, hi:55.00, url:'https://www.homedepot.com/s/GFCI%20breaker%2020%20amp' },
+  // Wire
+  'romex-14-2':    { name:'Romex 14-2 NM-B wire', sub:'Southwire — per foot', unit:'ft', lo:0.52, hi:0.80, url:'https://www.homedepot.com/s/Romex%2014-2' },
+  'romex-12-2':    { name:'Romex 12-2 NM-B wire', sub:'Southwire — per foot', unit:'ft', lo:0.82, hi:1.10, url:'https://www.homedepot.com/s/Romex%2012-2' },
+  'romex-10-2':    { name:'Romex 10-2 NM-B wire', sub:'Southwire — per foot', unit:'ft', lo:1.20, hi:1.65, url:'https://www.homedepot.com/s/Romex%2010-2' },
+  'romex-6-3':     { name:'Romex 6-3 NM-B wire (range/dryer)', sub:'Southwire — per foot', unit:'ft', lo:2.40, hi:3.20, url:'https://www.homedepot.com/s/Romex%206-3' },
+  // Boxes & accessories
+  'junction-box':  { name:'Junction box (plastic)', sub:'1-gang or 2-gang', unit:'ea', lo:1.50, hi:3.50, url:'https://www.homedepot.com/s/electrical%20junction%20box' },
+  'outdoor-box':   { name:'Weatherproof outlet box', sub:'In-use cover included', unit:'ea', lo:8.00, hi:14.00, url:'https://www.homedepot.com/s/outdoor%20electrical%20box' },
+  'fan-brace':     { name:'Ceiling fan brace & box', sub:'Old-work rated, no attic access', unit:'ea', lo:12.00, hi:19.00, url:'https://www.homedepot.com/s/ceiling%20fan%20brace%20box' },
+  'wire-nuts':     { name:'Wire connectors (assorted pack)', sub:'Ideal or 3M', unit:'pk', lo:3.50, hi:6.00, url:'https://www.homedepot.com/s/wire%20connectors' },
+  'conduit-1in':   { name:'1-inch EMT conduit (per 10 ft)', sub:'Rigid metallic', unit:'10ft', lo:8.00, hi:13.00, url:'https://www.homedepot.com/s/1%20inch%20EMT%20conduit' },
+  'panel-200a':    { name:'200A main panel (box only)', sub:'Square D QO or Eaton', unit:'ea', lo:280.00, hi:520.00, url:'https://www.homedepot.com/s/200%20amp%20main%20panel' },
+  'ev-outlet':     { name:'NEMA 14-50 outlet (EV/range)', sub:'Leviton or equiv.', unit:'ea', lo:14.00, hi:22.00, url:'https://www.homedepot.com/s/NEMA%2014-50%20outlet' },
+  'tape':          { name:'Electrical tape (3-pack)', sub:'3M Scotch or equiv.', unit:'pk', lo:4.50, hi:7.00, url:'https://www.homedepot.com/s/electrical%20tape' },
+};
+
+// Preset jobs with default materials, labor hours, and type
+const PRESET_JOBS = [
+  {
+    id:'gfci', icon:'ti-plug', name:'GFCI outlet installation', range:'$175–$320',
+    laborType:'standard', laborHours:1.5, serviceCall:150, permit:0,
+    mats:[{key:'gfci-20a',qty:1},{key:'junction-box',qty:1},{key:'wire-nuts',qty:1}],
+    note:'Per outlet. Batch multiple outlets in one visit to save on the service call.'
+  },
+  {
+    id:'breaker-swap', icon:'ti-circuit-switchboard', name:'Breaker replacement', range:'$180–$360',
+    laborType:'standard', laborHours:1.5, serviceCall:150, permit:0,
+    mats:[{key:'breaker-20a',qty:1}],
+    note:'Single breaker swap — same brand panel required.'
+  },
+  {
+    id:'outlet-add', icon:'ti-plug-connected', name:'Add new outlet / circuit', range:'$280–$550',
+    laborType:'standard', laborHours:2.5, serviceCall:150, permit:0,
+    mats:[{key:'outlet-20a',qty:1},{key:'breaker-20a',qty:1},{key:'romex-12-2',qty:30},{key:'junction-box',qty:1},{key:'wire-nuts',qty:1}],
+    note:'Includes new circuit from panel. Assumes accessible wall cavity.'
+  },
+  {
+    id:'panel-upgrade', icon:'ti-building-skyscraper', name:'Panel upgrade 100A→200A', range:'$2,800–$5,500',
+    laborType:'complex', laborHours:10, serviceCall:150, permit:150,
+    mats:[{key:'panel-200a',qty:1},{key:'breaker-20a',qty:4},{key:'breaker-15a',qty:4},{key:'wire-nuts',qty:2},{key:'tape',qty:1}],
+    note:'Includes permit and utility coordination. Denver permit typically $150–$250.'
+  },
+  {
+    id:'ev-charger', icon:'ti-ev-plug', name:'Level 2 EV charger (50A circuit)', range:'$450–$750',
+    laborType:'standard', laborHours:3.5, serviceCall:150, permit:75,
+    mats:[{key:'breaker-50a',qty:1},{key:'romex-6-3',qty:35},{key:'ev-outlet',qty:1},{key:'junction-box',qty:1},{key:'wire-nuts',qty:1}],
+    note:'Assumes panel has open slots, ~35 ft run to garage.'
+  },
+  {
+    id:'ceiling-fan', icon:'ti-wind', name:'Ceiling fan installation', range:'$150–$280',
+    laborType:'standard', laborHours:1.5, serviceCall:150, permit:0,
+    mats:[{key:'fan-brace',qty:1},{key:'wire-nuts',qty:1}],
+    note:'Old-work install without attic access. Fan not included.'
+  },
+  {
+    id:'dimmer', icon:'ti-brightness', name:'Dimmer switch upgrade', range:'$130–$240',
+    laborType:'standard', laborHours:1.0, serviceCall:150, permit:0,
+    mats:[{key:'dimmer-led',qty:1},{key:'wire-nuts',qty:1}],
+    note:'LED-compatible dimmer. Batch multiple switches for savings.'
+  },
+  {
+    id:'outdoor-outlet', icon:'ti-plug', name:'Outdoor GFCI outlet (new)', range:'$320–$560',
+    laborType:'standard', laborHours:2.5, serviceCall:150, permit:0,
+    mats:[{key:'gfci-20a',qty:1},{key:'outdoor-box',qty:1},{key:'romex-12-2',qty:20},{key:'wire-nuts',qty:1}],
+    note:'New circuit run from panel. Weatherproof cover included.'
+  },
+];
+
+// Labor rates
+const LABOR_RATES = {
+  standard:  { lo:85, hi:120, label:'$85–$120/hr' },
+  complex:   { lo:150, hi:200, label:'$150–$200/hr' },
+  emergency: { lo:200, hi:350, label:'$200–$350/hr' },
+};
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+let activeMaterials = []; // [{key, qty, customName, customUnitLo, customUnitHi}]
+let customRows = [];
+let selectedJob = null;
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+function init() {
+  // Render job buttons
+  document.getElementById('job-grid').innerHTML = PRESET_JOBS.map(j => `
+    <button class="job-btn" data-id="${j.id}" onclick="selectJob('${j.id}')">
+      <i class="ti ${j.icon} jb-icon"></i>
+      <span class="jb-name">${j.name}</span>
+      <span class="jb-range">${j.range}</span>
+    </button>
+  `).join('');
+
+  // Default: no preset, empty table
+  renderMaterials();
+  updateSummary();
+}
+
+function selectJob(id) {
+  const job = PRESET_JOBS.find(j => j.id === id);
+  if (!job) return;
+  selectedJob = job;
+
+  // Highlight button
+  document.querySelectorAll('.job-btn').forEach(b => b.classList.toggle('active', b.dataset.id === id));
+  document.getElementById('selected-job-label').textContent = job.name;
+
+  // Load materials
+  activeMaterials = job.mats.map(m => ({ key: m.key, qty: m.qty }));
+  customRows = [];
+  document.getElementById('custom-rows').innerHTML = '';
+
+  // Load labor
+  document.getElementById('labor-type').value = job.laborType;
+  document.getElementById('labor-hours').value = job.laborHours;
+  document.getElementById('service-call').value = job.serviceCall;
+  document.getElementById('permit-fee').value = job.permit;
+  updateLabor();
+
+  renderMaterials();
+  updateSummary();
+}
+
+/* ══════════════════════════════════════════
+   MATERIALS
+══════════════════════════════════════════ */
+function renderMaterials() {
+  const body = document.getElementById('mat-body');
+  if (!activeMaterials.length) {
+    body.innerHTML = '<tr><td colspan="4" style="padding:1rem 0;color:var(--hint);font-size:14px">Select a job type above or add materials below.</td></tr>';
+    updateSummary(); return;
+  }
+  body.innerHTML = activeMaterials.map((m, i) => {
+    const d = HD_MATERIALS[m.key];
+    if (!d) return '';
+    const mid = (d.lo + d.hi) / 2;
+    const sub = (mid * m.qty).toFixed(2);
+    return `
+      <tr>
+        <td>
+          <span class="mat-name">${d.name}</span>
+          <span class="mat-sub">${d.sub}</span>
+          <a class="hd-link" href="${d.url}" target="_blank" rel="noopener"><i class="ti ti-external-link" style="font-size:11px"></i> Home Depot</a>
+        </td>
+        <td>$${d.lo.toFixed(2)}–$${d.hi.toFixed(2)}<br><span style="font-size:11px;color:var(--hint)">per ${d.unit}</span></td>
+        <td><input type="number" class="qty-input" value="${m.qty}" min="0" oninput="updateQty(${i}, this.value)"></td>
+        <td>$${sub}</td>
+      </tr>`;
+  }).join('');
+  updateSummary();
+}
+
+function updateQty(index, val) {
+  activeMaterials[index].qty = parseFloat(val) || 0;
+  // Update just the subtotal cell
+  const rows = document.querySelectorAll('#mat-body tr');
+  if (rows[index]) {
+    const d = HD_MATERIALS[activeMaterials[index].key];
+    const mid = (d.lo + d.hi) / 2;
+    const cells = rows[index].querySelectorAll('td');
+    cells[3].textContent = '$' + (mid * activeMaterials[index].qty).toFixed(2);
+  }
+  updateSummary();
+}
+
+/* ── Custom material add ── */
+document.getElementById('add-mat-btn').addEventListener('click', () => {
+  const id = Date.now();
+  customRows.push({ id, name: '', unitLo: 0, unitHi: 0, qty: 1 });
+  renderCustomRows();
+});
+
+function renderCustomRows() {
+  document.getElementById('custom-rows').innerHTML = customRows.map(r => `
+    <div class="custom-mat-row" id="cr-${r.id}">
+      <input type="text" placeholder="Item name (e.g. Wire staples)" value="${r.name}" oninput="updateCustom(${r.id},'name',this.value)" style="min-width:0">
+      <input type="number" placeholder="$ unit" value="${r.unitLo||''}" min="0" step="0.01" oninput="updateCustom(${r.id},'unitLo',this.value)" style="text-align:right">
+      <input type="number" placeholder="Qty" value="${r.qty}" min="0" oninput="updateCustom(${r.id},'qty',this.value)" style="text-align:right">
+      <button class="remove-row" onclick="removeCustom(${r.id})">×</button>
+    </div>
+  `).join('');
+}
+
+function updateCustom(id, key, val) {
+  const r = customRows.find(r => r.id === id);
+  if (!r) return;
+  r[key] = key === 'name' ? val : parseFloat(val) || 0;
+  updateSummary();
+}
+
+function removeCustom(id) {
+  customRows = customRows.filter(r => r.id !== id);
+  renderCustomRows();
+  updateSummary();
+}
+
+/* ══════════════════════════════════════════
+   LABOR
+══════════════════════════════════════════ */
+function updateLabor() {
+  const type = document.getElementById('labor-type').value;
+  const rate = LABOR_RATES[type];
+  document.getElementById('labor-rate-display').textContent = rate.label;
+  updateSummary();
+}
+
+/* ══════════════════════════════════════════
+   SUMMARY
+══════════════════════════════════════════ */
+function updateSummary() {
+  // Material cost (midpoint)
+  let matLoTotal = 0, matHiTotal = 0;
+  activeMaterials.forEach(m => {
+    const d = HD_MATERIALS[m.key]; if (!d) return;
+    matLoTotal += d.lo * m.qty;
+    matHiTotal += d.hi * m.qty;
+  });
+  customRows.forEach(r => {
+    matLoTotal += r.unitLo * r.qty;
+    matHiTotal += r.unitLo * r.qty;
+  });
+  const matMid = (matLoTotal + matHiTotal) / 2;
+
+  // Labor
+  const type = document.getElementById('labor-type')?.value || 'standard';
+  const rate = LABOR_RATES[type];
+  const hours = parseFloat(document.getElementById('labor-hours')?.value) || 0;
+  const laborLo = rate.lo * hours;
+  const laborHi = rate.hi * hours;
+  const laborMid = (laborLo + laborHi) / 2;
+
+  // Service call
+  const serviceCall = parseFloat(document.getElementById('service-call')?.value) || 0;
+
+  // Permit
+  const permit = parseFloat(document.getElementById('permit-fee')?.value) || 0;
+
+  // Markup on materials (contractors typically add 15–20%)
+  const matWithMarkupLo = matLoTotal * 1.15;
+  const matWithMarkupHi = matHiTotal * 1.20;
+  const matWithMarkupMid = (matWithMarkupLo + matWithMarkupHi) / 2;
+
+  const totalLo = matWithMarkupLo + laborLo + serviceCall + permit;
+  const totalHi = matWithMarkupHi + laborHi + serviceCall + permit;
+  const totalMid = (totalLo + totalHi) / 2;
+
+  const fmt = n => '$' + Math.round(n).toLocaleString();
+
+  // Build summary rows
+  const rows = [
+    { key: 'Materials (HD retail)', val: fmt(matMid) },
+    { key: 'Contractor markup (~15–20%)', val: fmt(matWithMarkupMid - matMid) },
+    { key: `Labor (${hours} hrs × $${Math.round((rate.lo+rate.hi)/2)}/hr avg)`, val: fmt(laborMid) },
+  ];
+  if (serviceCall > 0) rows.push({ key: 'Service call / trip charge', val: fmt(serviceCall) });
+  if (permit > 0)       rows.push({ key: 'Permit fee (est.)', val: fmt(permit) });
+
+  document.getElementById('summary-body').innerHTML = rows.map(r => `
+    <div class="sum-row"><span class="key">${r.key}</span><span class="val">${r.val}</span></div>
+  `).join('');
+
+  document.getElementById('sum-total-val').textContent = fmt(totalMid);
+  document.getElementById('sum-range').textContent = `Range: ${fmt(totalLo)} – ${fmt(totalHi)}`;
+
+  // Job note
+  if (selectedJob?.note) {
+    document.getElementById('summary-body').innerHTML += `
+      <div style="margin-top:.75rem;padding:.75rem;background:var(--off);border-radius:var(--radius);font-size:13px;color:var(--muted);line-height:1.55">
+        <i class="ti ti-info-circle" style="color:var(--blue)"></i> ${selectedJob.note}
+      </div>`;
+  }
+}
+
+/* ── Init ── */
+init();
+</script>
+</body>
+</html>

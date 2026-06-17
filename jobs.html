@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open Electrical Jobs — Denver Metro | ElectriSolve</title>
+  <meta name="description" content="Browse open electrical jobs in Denver Metro. AI-qualified listings with scope, severity, and cost range.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .page-hero { padding: 2.5rem 0 2rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+    .page-hero h1 { font-size: 2rem; font-weight: 800; letter-spacing: -.025em; margin-bottom: .35rem; }
+    .page-hero p  { font-size: 16px; color: var(--muted); }
+    .board-layout { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; align-items: start; }
+    .detail-sticky { position: sticky; top: 80px; }
+    .detail-empty { background: var(--off); border: 1.5px dashed var(--border2); border-radius: var(--radius-lg); padding: 2.5rem; text-align: center; color: var(--hint); }
+    .detail-empty i { font-size: 36px; display: block; margin-bottom: .75rem; }
+    .detail-empty p { font-size: 14px; }
+    .sort-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px; }
+    .sort-row span { font-size: 14px; color: var(--muted); font-weight: 500; }
+    .sort-row select { background: var(--white); border: 1.5px solid var(--border2); border-radius: var(--radius); color: var(--text); font-size: 14px; font-family: var(--font); padding: 7px 12px; font-weight: 500; }
+    .jobs-list { display: flex; flex-direction: column; gap: 10px; }
+    .detail-finding { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 14px; gap: 12px; }
+    .detail-finding:last-child { border-bottom: none; }
+    .detail-finding span:first-child { color: var(--muted); font-weight: 500; }
+    .detail-finding span:last-child  { color: var(--text); font-weight: 700; text-align: right; }
+    @media (max-width: 768px) { .board-layout { grid-template-columns: 1fr; } .detail-sticky { position: static; } }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon"><i class="ti ti-bolt"></i></div>
+      <span class="logo-text">Electri<span>Solve</span></span>
+    </a>
+    <nav class="header-nav">
+      <a href="jobs.html" class="nav-link" style="color:var(--blue)">Browse jobs</a>
+      <a href="contractor.html" class="nav-link">For contractors</a>
+      <a href="post-job.html" class="btn btn-primary">Get free estimates</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero">
+    <div class="container">
+      <h1>Open jobs · Denver Metro</h1>
+      <p>Every job has been AI-diagnosed — scope, severity, and cost range included.</p>
+    </div>
+  </div>
+
+  <div class="container" style="padding-bottom:4rem">
+    <div class="filter-bar">
+      <button class="filter-btn active" data-f="all">All jobs</button>
+      <button class="filter-btn" data-f="high">Urgent only</button>
+      <button class="filter-btn" data-f="medium">Standard</button>
+      <button class="filter-btn" data-f="low">Minor</button>
+      <button class="filter-btn" data-f="permit">Permit required</button>
+    </div>
+
+    <div class="board-layout">
+      <div>
+        <div class="sort-row">
+          <span id="job-count"></span>
+          <select id="sort-select">
+            <option value="newest">Newest first</option>
+            <option value="severity">Highest severity</option>
+            <option value="bids-low">Fewest bids</option>
+          </select>
+        </div>
+        <div class="jobs-list" id="jobs-list"></div>
+      </div>
+
+      <div class="detail-sticky">
+        <div id="detail-panel">
+          <div class="detail-empty">
+            <i class="ti ti-hand-click"></i>
+            <p>Select a job to see the full AI diagnosis and scope of work</p>
+          </div>
+        </div>
+        <div class="card" style="margin-top:1rem;background:var(--blue);border-color:var(--blue);color:white">
+          <div style="font-size:16px;font-weight:700;margin-bottom:.4rem">Ready to bid?</div>
+          <p style="font-size:13px;color:rgba(255,255,255,.8);margin-bottom:1rem;line-height:1.55">Subscribe to access all jobs in your service area with no per-lead fees.</p>
+          <a href="contractor.html" class="btn btn-full" style="background:white;color:var(--blue);border-color:white;font-size:14px">View subscription plans</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span style="font-weight:700;color:var(--text)">ElectriSolve</span>
+    <span>Verify contractor licensing before hiring</span>
+  </div>
+</footer>
+
+<script>
+const JOBS=[
+  {id:1,title:"Breaker panel upgrade — 100A to 200A service",city:"Lakewood",sev:"high",desc:"Federal Pacific Stab-Lok panel flagged by home inspector. Full replacement needed with permit and utility coordination.",scope:"Replace panel, new 200A main breaker, updated grounding",est:"$1,800–2,400",time:"1–2 days",trade:"Master electrician",permit:true,bids:3,posted:"2h ago"},
+  {id:7,title:"Flickering lights — suspected loose neutral",city:"Centennial",sev:"high",desc:"Multiple circuits flickering simultaneously. AI flagged possible main service neutral fault — a potentially dangerous condition.",scope:"Inspect service entrance, torque all panel connections",est:"$200–600",time:"2–4 hours",trade:"Master electrician",permit:false,bids:1,posted:"3h ago"},
+  {id:4,title:"Aluminum wiring remediation — whole house",city:"Westminster",sev:"high",desc:"1968 construction with aluminum branch-circuit wiring. Insurance carrier requiring documented remediation before renewal.",scope:"Pigtail all outlets and switches with AlumiConn connectors",est:"$2,200–3,800",time:"2–3 days",trade:"Master electrician",permit:true,bids:2,posted:"12h ago"},
+  {id:2,title:"GFCI outlet upgrades — kitchen and bathrooms",city:"Aurora",sev:"medium",desc:"Six outlets in wet areas lack GFCI protection. NEC 210.8 non-compliance flagged.",scope:"Install 6 GFCI outlets, verify circuit integrity",est:"$280–420",time:"2–4 hours",trade:"Journeyman electrician",permit:false,bids:5,posted:"5h ago"},
+  {id:3,title:"Level 2 EV charger installation — garage",city:"Denver",sev:"low",desc:"Dedicated 60A/240V circuit needed. Panel has 2 open slots. Approximately 35 ft run to garage.",scope:"Run 6 AWG wire, install 60A circuit, mount outlet",est:"$450–700",time:"3–5 hours",trade:"Journeyman electrician",permit:true,bids:4,posted:"8h ago"},
+  {id:5,title:"Outdoor GFCI outlets — back patio",city:"Arvada",sev:"low",desc:"Two weatherproof GFCI outlets needed on back patio. No existing outdoor circuits on that side of the house.",scope:"Run 12 AWG circuit, install 2 weatherproof GFCI outlets",est:"$320–520",time:"4–6 hours",trade:"Journeyman electrician",permit:false,bids:6,posted:"1d ago"},
+];
+
+let activeFilter='all';
+let selectedId=null;
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter=btn.dataset.f;
+    renderJobs();
+  });
+});
+document.getElementById('sort-select').addEventListener('change',renderJobs);
+
+function filtered(){
+  return JOBS.filter(j=>{
+    if(activeFilter==='all') return true;
+    if(activeFilter==='high') return j.sev==='high';
+    if(activeFilter==='medium') return j.sev==='medium';
+    if(activeFilter==='low') return j.sev==='low';
+    if(activeFilter==='permit') return j.permit;
+    return true;
+  });
+}
+
+function sorted(jobs){
+  const s=document.getElementById('sort-select').value;
+  return [...jobs].sort((a,b)=>{
+    if(s==='severity'){const o={high:0,medium:1,low:2};return o[a.sev]-o[b.sev];}
+    if(s==='bids-low')return a.bids-b.bids;
+    return 0;
+  });
+}
+
+function renderJobs(){
+  const jobs=sorted(filtered());
+  document.getElementById('job-count').textContent=`${jobs.length} job${jobs.length!==1?'s':''}`;
+  document.getElementById('jobs-list').innerHTML=jobs.map(j=>`
+    <div class="job-card${j.sev==='high'?' urgent':''}${selectedId===j.id?' selected':''}" data-id="${j.id}">
+      <div class="job-meta">
+        <span class="badge badge-${j.sev==='high'?'red':j.sev==='medium'?'amber':'green'}">${j.sev==='high'?'Urgent':j.sev==='medium'?'Standard':'Minor'}</span>
+        ${j.permit?'<span class="badge badge-blue">Permit req.</span>':''}
+        <span class="job-stat"><i class="ti ti-map-pin"></i>${j.city}, CO</span>
+      </div>
+      <div class="job-title">${j.title}</div>
+      <div class="job-desc">${j.desc}</div>
+      <div class="job-footer">
+        <div style="display:flex;gap:1.25rem">
+          <span class="job-stat"><i class="ti ti-currency-dollar"></i>${j.est}</span>
+          <span class="job-stat"><i class="ti ti-users"></i>${j.bids} bid${j.bids!==1?'s':''}</span>
+          <span class="job-stat"><i class="ti ti-clock"></i>${j.posted}</span>
+        </div>
+        <span style="font-size:13px;color:var(--blue);font-weight:600">View details →</span>
+      </div>
+    </div>
+  `).join('')||'<p style="color:var(--muted);padding:1rem 0;font-size:14px">No jobs match this filter.</p>';
+
+  document.querySelectorAll('.job-card[data-id]').forEach(card=>{
+    card.addEventListener('click',()=>{selectedId=parseInt(card.dataset.id);renderJobs();showDetail(JOBS.find(j=>j.id===selectedId));});
+  });
+}
+
+function showDetail(j){
+  document.getElementById('detail-panel').innerHTML=`
+    <div class="card">
+      <div class="job-meta" style="margin-bottom:.75rem">
+        <span class="badge badge-${j.sev==='high'?'red':j.sev==='medium'?'amber':'green'}">${j.sev==='high'?'Urgent':j.sev==='medium'?'Standard':'Minor'}</span>
+        ${j.permit?'<span class="badge badge-blue">Permit req.</span>':''}
+      </div>
+      <div class="job-title" style="font-size:17px;margin-bottom:.75rem">${j.title}</div>
+      <p style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:1rem">${j.desc}</p>
+      <div class="ai-label" style="margin-bottom:.75rem"><i class="ti ti-robot"></i> AI-QUALIFIED SCOPE</div>
+      <div class="detail-finding"><span>Scope</span><span>${j.scope}</span></div>
+      <div class="detail-finding"><span>Cost range</span><span>${j.est}</span></div>
+      <div class="detail-finding"><span>Time needed</span><span>${j.time}</span></div>
+      <div class="detail-finding"><span>Trade required</span><span>${j.trade}</span></div>
+      <div class="detail-finding"><span>Current bids</span><span>${j.bids}</span></div>
+      <div class="bid-locked" style="margin-top:1rem">
+        <i class="ti ti-lock"></i>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:.3rem">Sign in to bid</div>
+        <a href="contractor.html" style="font-size:13px;color:var(--blue);font-weight:600;text-decoration:none">Subscribe for access →</a>
+      </div>
+    </div>`;
+}
+
+renderJobs();
+</script>
+</body>
+</html>

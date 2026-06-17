@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post a Job — ElectriSolve</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .page-hero{padding:2.5rem 0 2rem;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+    .page-hero h1{font-size:2rem;font-weight:800;letter-spacing:-.025em;margin-bottom:.35rem}
+    .page-hero p{font-size:16px;color:var(--muted)}
+    .layout{display:grid;grid-template-columns:1fr 320px;gap:2rem;align-items:start}
+    .progress{display:flex;align-items:center;gap:0;margin-bottom:2rem}
+    .progress-step{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--hint)}
+    .progress-step .num{width:28px;height:28px;border-radius:50%;background:var(--border);color:var(--hint);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .progress-step.active .num{background:var(--blue);color:white}
+    .progress-step.active{color:var(--text)}
+    .progress-step.done .num{background:var(--green);color:white}
+    .progress-step.done{color:var(--green)}
+    .progress-line{flex:1;height:2px;background:var(--border);margin:0 12px}
+    .progress-line.done{background:var(--green)}
+    .step-panel{display:none}
+    .step-panel.active{display:block}
+    .img-preview{position:relative;margin-top:.75rem}
+    .img-preview img{width:100%;border-radius:var(--radius);border:1px solid var(--border);max-height:240px;object-fit:cover}
+    .img-preview button{position:absolute;top:8px;right:8px;background:white;border:1px solid var(--border);color:var(--muted);border-radius:50%;width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+
+    /* B&B success card */
+    .bb-card{background:white;border:2px solid var(--blue);border-radius:var(--radius-lg);overflow:hidden}
+    .bb-header{background:var(--blue);padding:1.5rem;color:white;text-align:center}
+    .bb-header h2{font-size:1.5rem;font-weight:800;margin-bottom:.35rem}
+    .bb-header p{font-size:14px;opacity:.9}
+    .bb-body{padding:1.75rem}
+    .bb-contact-row{display:flex;align-items:center;gap:12px;padding:.9rem 0;border-bottom:1px solid var(--border);font-size:15px}
+    .bb-contact-row:last-child{border-bottom:none}
+    .bb-contact-row i{font-size:22px;color:var(--blue);flex-shrink:0;width:28px}
+    .bb-contact-row a{color:var(--blue);text-decoration:none;font-weight:600}
+    .bb-contact-row a:hover{text-decoration:underline}
+    .bb-badge{display:inline-flex;align-items:center;gap:5px;background:var(--green-light);color:var(--green);font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:1rem}
+    .job-summary-pill{display:inline-flex;align-items:center;gap:6px;background:var(--off);border:1px solid var(--border);border-radius:var(--radius);padding:6px 12px;font-size:13px;color:var(--muted);margin:3px}
+    @media(max-width:768px){.layout{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon"><i class="ti ti-bolt"></i></div>
+      <span class="logo-text">Electri<span>Solve</span></span>
+    </a>
+    <nav class="header-nav">
+      <a href="jobs.html" class="nav-link">Browse jobs</a>
+      <a href="estimate.html" class="nav-link">Estimate costs</a>
+      <a href="contractor.html" class="nav-link">For contractors</a>
+      <a href="post-job.html" class="btn btn-primary">Get free estimates</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero">
+    <div class="container">
+      <h1>Get free estimates</h1>
+      <p>Describe the problem and we'll match you with licensed local electricians.</p>
+    </div>
+  </div>
+
+  <div class="container" style="padding-bottom:4rem">
+    <div class="layout">
+      <div>
+        <div class="progress" id="progress">
+          <div class="progress-step active" id="ps-1"><div class="num">1</div> Describe issue</div>
+          <div class="progress-line" id="pl-1"></div>
+          <div class="progress-step" id="ps-2"><div class="num">2</div> AI diagnosis</div>
+          <div class="progress-line" id="pl-2"></div>
+          <div class="progress-step" id="ps-3"><div class="num">3</div> Your details</div>
+        </div>
+
+        <!-- STEP 1 -->
+        <div class="step-panel active" id="step-1">
+          <div class="card" style="margin-bottom:1rem">
+            <div class="card-title">Add a photo <span style="font-weight:400;color:var(--hint);font-size:14px">(optional but helpful)</span></div>
+            <div class="upload-zone" id="upload-zone">
+              <i class="ti ti-camera-up"></i>
+              <p>Tap to upload a photo of the issue</p>
+              <span>JPG or PNG · Max 10 MB</span>
+            </div>
+            <div class="img-preview" id="img-preview" style="display:none">
+              <img id="preview-img" src="" alt="Uploaded photo">
+              <button id="remove-img"><i class="ti ti-x"></i></button>
+            </div>
+            <input type="file" id="file-input" accept="image/*" style="display:none">
+          </div>
+          <div class="card">
+            <div class="card-title">What's happening?</div>
+            <div class="form-group">
+              <label for="issue-desc">Describe the problem</label>
+              <textarea id="issue-desc" placeholder="e.g. Breaker keeps tripping when I run the dishwasher. It's the 20A breaker in the kitchen. Started last week."></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="issue-location">Where in the home?</label>
+                <select id="issue-location">
+                  <option value="">Select location</option>
+                  <option>Kitchen</option><option>Bathroom</option><option>Bedroom</option>
+                  <option>Living room</option><option>Garage</option><option>Basement</option>
+                  <option>Outdoor / exterior</option><option>Electrical panel</option>
+                  <option>Multiple areas</option><option>Whole house</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="issue-age">How long has this been happening?</label>
+                <select id="issue-age">
+                  <option value="">Select timeframe</option>
+                  <option>Just started</option><option>A few days</option>
+                  <option>1–2 weeks</option><option>1–3 months</option>
+                  <option>6+ months</option><option>Always been this way</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-full btn-lg" id="diagnose-btn">
+              <i class="ti ti-robot"></i> Analyze my issue
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step-panel" id="step-2">
+          <div class="card" style="margin-bottom:1rem">
+            <div class="ai-label"><i class="ti ti-robot"></i> AI DIAGNOSIS</div>
+            <div id="ai-thinking" class="ai-thinking" style="display:none"><div class="spinner"></div> Analyzing your issue...</div>
+            <div id="ai-output" style="display:none">
+              <p id="diagnosis-summary" style="font-size:15px;line-height:1.7;color:var(--text);margin-bottom:1.25rem"></p>
+              <div id="diagnosis-findings"></div>
+              <div class="warn-box" id="diagnosis-warn" style="display:none">
+                <i class="ti ti-alert-triangle"></i><span id="warn-text"></span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-secondary" id="back-btn-1">Back</button>
+            <button class="btn btn-primary btn-lg" id="confirm-btn" style="flex:1">Post this job <i class="ti ti-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step-panel" id="step-3">
+          <div class="card" style="margin-bottom:1rem">
+            <div class="card-title">Your contact info</div>
+            <div class="form-row">
+              <div class="form-group"><label>First name</label><input type="text" id="fname" placeholder="Sarah"></div>
+              <div class="form-group"><label>Last name</label><input type="text" id="lname" placeholder="Johnson"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Email</label><input type="email" id="email" placeholder="sarah@email.com"></div>
+              <div class="form-group"><label>Phone</label><input type="tel" id="phone" placeholder="(720) 555-0100"></div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:1rem">
+            <div class="card-title">Job location</div>
+            <div class="form-group"><label>Street address</label><input type="text" id="address" placeholder="123 Main St"></div>
+            <div class="form-row">
+              <div class="form-group"><label>City</label><input type="text" id="city" placeholder="Denver"></div>
+              <div class="form-group"><label>ZIP code</label><input type="text" id="zip" placeholder="80203"></div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:1rem">
+            <div class="card-title">When do you need this done?</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Availability</label>
+                <select id="avail"><option>As soon as possible</option><option>Within 1 week</option><option>Within 2 weeks</option><option>I'm flexible</option></select>
+              </div>
+              <div class="form-group">
+                <label>Urgency level</label>
+                <select id="urgency"><option>Normal — no rush</option><option>Urgent — this week</option><option>Emergency — safety hazard</option></select>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-secondary" id="back-btn-2">Back</button>
+            <button class="btn btn-primary btn-lg" id="post-btn" style="flex:1"><i class="ti ti-send"></i> Submit request</button>
+          </div>
+        </div>
+
+        <!-- SUCCESS → B&B REDIRECT -->
+        <div class="step-panel" id="step-success">
+          <div class="bb-card">
+            <div class="bb-header">
+              <div style="font-size:48px;margin-bottom:.5rem">⚡</div>
+              <h2>Request received!</h2>
+              <p>We're connecting you with a licensed electrician now</p>
+            </div>
+            <div class="bb-body">
+              <div class="bb-badge"><i class="ti ti-shield-check"></i> Verified · Licensed · Insured</div>
+              <div style="font-size:18px;font-weight:800;color:var(--text);margin-bottom:.25rem">B&amp;B Electrical</div>
+              <div style="font-size:14px;color:var(--muted);margin-bottom:1.25rem">Frederick, CO · Serving Northern Colorado</div>
+
+              <div id="job-summary-display" style="margin-bottom:1.25rem"></div>
+
+              <p style="font-size:14px;color:var(--muted);margin-bottom:1.1rem;line-height:1.6">
+                B&amp;B Electrical is your assigned local electrician for this inquiry. Contact them directly to schedule — they typically respond within a few hours.
+              </p>
+
+              <div class="bb-contact-row">
+                <i class="ti ti-phone"></i>
+                <div><div style="font-size:12px;color:var(--hint);font-weight:600;margin-bottom:2px">CALL OR TEXT</div><a href="tel:7205018715">(720) 501-8715</a></div>
+              </div>
+              <div class="bb-contact-row">
+                <i class="ti ti-mail"></i>
+                <div><div style="font-size:12px;color:var(--hint);font-weight:600;margin-bottom:2px">EMAIL</div><a href="mailto:info@bbelectricalco.com">info@bbelectricalco.com</a></div>
+              </div>
+              <div class="bb-contact-row">
+                <i class="ti ti-map-pin"></i>
+                <div><div style="font-size:12px;color:var(--hint);font-weight:600;margin-bottom:2px">ADDRESS</div><span style="color:var(--text);font-weight:500">3752 Imperial St Unit C, Frederick, CO</span></div>
+              </div>
+              <div class="bb-contact-row">
+                <i class="ti ti-world"></i>
+                <div><div style="font-size:12px;color:var(--hint);font-weight:600;margin-bottom:2px">WEBSITE</div><a href="https://www.bbelectricalco.com" target="_blank" rel="noopener">bbelectricalco.com</a></div>
+              </div>
+
+              <a href="https://www.bbelectricalco.com" target="_blank" rel="noopener" class="btn btn-primary btn-full btn-lg" style="margin-top:1.5rem">
+                Visit B&amp;B Electrical <i class="ti ti-external-link"></i>
+              </a>
+              <a href="index.html" class="btn btn-secondary btn-full" style="margin-top:.75rem">Back to home</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div>
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-title"><i class="ti ti-shield-check" style="color:var(--green)"></i> You're protected</div>
+          <ul style="list-style:none">
+            <li style="display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)"><i class="ti ti-check" style="color:var(--green);flex-shrink:0;margin-top:3px;font-size:16px"></i>All contractors licensed &amp; verified</li>
+            <li style="display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)"><i class="ti ti-check" style="color:var(--green);flex-shrink:0;margin-top:3px;font-size:16px"></i>AI reviews your job before routing</li>
+            <li style="display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)"><i class="ti ti-check" style="color:var(--green);flex-shrink:0;margin-top:3px;font-size:16px"></i>Your address is never shown publicly</li>
+            <li style="display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--muted);padding:6px 0"><i class="ti ti-check" style="color:var(--green);flex-shrink:0;margin-top:3px;font-size:16px"></i>No obligation to hire</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-bottom:1rem;background:var(--off)">
+          <div style="font-size:28px;font-weight:800;color:var(--text);margin-bottom:.25rem">Free</div>
+          <div style="font-size:14px;color:var(--muted);line-height:1.6">Posting a job costs nothing. ElectriSolve is funded by contractor subscriptions, not homeowner fees.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">What to expect</div>
+          <ol class="step-list">
+            <li>AI analyzes and rates your issue</li>
+            <li>Request routes to a local electrician</li>
+            <li>They contact you directly</li>
+            <li>Review and hire your pick</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span style="font-weight:700;color:var(--text)">ElectriSolve</span>
+    <span>Free for homeowners · Licensed contractors only</span>
+  </div>
+</footer>
+
+<script>
+// Pre-fill from homepage search
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get('q');
+  if (q) {
+    document.getElementById('issue-desc').value = decodeURIComponent(q);
+    document.getElementById('issue-desc').dispatchEvent(new Event('input'));
+  }
+});
+
+const zone=document.getElementById('upload-zone'),fileInput=document.getElementById('file-input'),preview=document.getElementById('img-preview'),previewImg=document.getElementById('preview-img'),removeBtn=document.getElementById('remove-img');
+let uploadedFile=null,uploadedB64=null;
+zone.addEventListener('click',()=>fileInput.click());
+zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
+zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
+zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag-over');handleFile(e.dataTransfer.files[0]);});
+fileInput.addEventListener('change',()=>handleFile(fileInput.files[0]));
+removeBtn.addEventListener('click',()=>{uploadedFile=null;uploadedB64=null;preview.style.display='none';zone.style.display='block';});
+function handleFile(file){if(!file||!file.type.startsWith('image/'))return;uploadedFile=file;const r=new FileReader();r.onload=e=>{previewImg.src=e.target.result;uploadedB64=e.target.result.split(',')[1];preview.style.display='block';zone.style.display='none';};r.readAsDataURL(file);}
+
+function setStep(n){
+  ['step-1','step-2','step-3','step-success'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById(n==='success'?'step-success':'step-'+n).classList.add('active');
+  [1,2,3].forEach(i=>{
+    const s=document.getElementById('ps-'+i),l=document.getElementById('pl-'+i);
+    s.className='progress-step'+(i<n?' done':i===n?' active':'');
+    if(l)l.className='progress-line'+(i<n?' done':'');
+  });
+}
+
+document.getElementById('diagnose-btn').addEventListener('click',async()=>{
+  const desc=document.getElementById('issue-desc').value.trim();
+  const loc=document.getElementById('issue-location').value;
+  const age=document.getElementById('issue-age').value;
+  if(!desc&&!uploadedB64){alert('Please describe the issue or upload a photo.');return;}
+  setStep(2);
+  document.getElementById('ai-thinking').style.display='flex';
+  document.getElementById('ai-output').style.display='none';
+  try{
+    const body={description:desc,location:loc,duration:age};
+    if(uploadedB64&&uploadedFile){body.imageBase64=uploadedB64;body.imageType=uploadedFile.type;}
+    const res=await fetch('/api/diagnose',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!res.ok)throw new Error('API error '+res.status);
+    const diag=await res.json();
+    document.getElementById('ai-thinking').style.display='none';
+    document.getElementById('ai-output').style.display='block';
+    document.getElementById('diagnosis-summary').textContent=diag.summary;
+    const sc=diag.severity==='high'?'red':diag.severity==='medium'?'amber':'green';
+    const sl=diag.severity==='high'?'Urgent':diag.severity==='medium'?'Standard':'Minor';
+    document.getElementById('diagnosis-findings').innerHTML=`
+      <div class="finding-row"><span class="finding-key">Job title</span><span class="finding-val">${diag.title}</span></div>
+      <div class="finding-row"><span class="finding-key">Severity</span><span class="finding-val"><span class="badge badge-${sc}">${sl}</span></span></div>
+      <div class="finding-row"><span class="finding-key">Scope</span><span class="finding-val">${diag.scope}</span></div>
+      <div class="finding-row"><span class="finding-key">Estimated cost</span><span class="finding-val">${diag.estimatedCost}</span></div>
+      <div class="finding-row"><span class="finding-key">Time to complete</span><span class="finding-val">${diag.timeToComplete}</span></div>
+      <div class="finding-row"><span class="finding-key">Permit needed</span><span class="finding-val">${diag.permitRequired?'Yes':'No'}</span></div>`;
+    if(diag.safetyWarning&&diag.safetyWarning!=='null'){document.getElementById('diagnosis-warn').style.display='flex';document.getElementById('warn-text').textContent=diag.safetyWarning;}
+    window._diagnosis=diag;
+  }catch(e){
+    document.getElementById('ai-thinking').style.display='none';
+    document.getElementById('ai-output').style.display='block';
+    document.getElementById('diagnosis-summary').textContent='Analysis unavailable — your request will still be routed to a local electrician.';
+  }
+});
+
+document.getElementById('back-btn-1').addEventListener('click',()=>setStep(1));
+document.getElementById('confirm-btn').addEventListener('click',()=>setStep(3));
+document.getElementById('back-btn-2').addEventListener('click',()=>setStep(2));
+document.getElementById('post-btn').addEventListener('click',()=>{
+  const fname=document.getElementById('fname').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const zip=document.getElementById('zip').value.trim();
+  if(!fname||!email||!zip){alert('Please fill in your name, email, and ZIP code.');return;}
+  // Build job summary pills
+  const d=window._diagnosis||{};
+  const city=document.getElementById('city').value||'';
+  const pills=[
+    d.title?`<span class="job-summary-pill"><i class="ti ti-bolt"></i>${d.title}</span>`:'',
+    d.estimatedCost?`<span class="job-summary-pill"><i class="ti ti-currency-dollar"></i>${d.estimatedCost}</span>`:'',
+    city?`<span class="job-summary-pill"><i class="ti ti-map-pin"></i>${city}, CO</span>`:'',
+    d.severity?`<span class="badge badge-${d.severity==='high'?'red':d.severity==='medium'?'amber':'green'}" style="margin:3px">${d.severity==='high'?'Urgent':d.severity==='medium'?'Standard':'Minor'}</span>`:'',
+  ].filter(Boolean).join('');
+  if(pills)document.getElementById('job-summary-display').innerHTML=`<div style="margin-bottom:.25rem;font-size:12px;font-weight:700;color:var(--hint);letter-spacing:.04em">YOUR JOB</div><div style="display:flex;flex-wrap:wrap;gap:2px">${pills}</div>`;
+  setStep('success');
+  [1,2,3].forEach(i=>{document.getElementById('ps-'+i).className='progress-step done';const l=document.getElementById('pl-'+i);if(l)l.className='progress-line done';});
+});
+</script>
+</body>
+</html>
