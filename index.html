@@ -225,8 +225,14 @@ async function fetchTips(query) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query })
     });
+    if (res.status === 429) {
+      const d = await res.json().catch(() => ({}));
+      tipsPanel.innerHTML = '<div class="tips-loading" style="color:var(--amber)"><i class="ti ti-clock"></i> ' + (d.message || 'Too many requests — please wait a moment.') + '</div>';
+      tipsPanel.classList.add('visible');
+      return;
+    }
     const data = await res.json();
-    if (data.error || !data.isElectrical || !data.tips) { hideTips(); return; }
+    if (data.filtered || data.error || !data.isElectrical || !data.tips) { hideTips(); return; }
     showTips(data, query);
   } catch(e) { hideTips(); }
 }

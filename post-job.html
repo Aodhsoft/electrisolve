@@ -58,6 +58,17 @@
     .qf-callpro{margin-top:1rem;display:flex;gap:10px;background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:var(--radius);padding:.85rem 1rem;font-size:13px;color:var(--blue);line-height:1.55}
     .qf-callpro i{flex-shrink:0;font-size:18px;margin-top:1px}
     .qf-callpro strong{color:var(--text)}
+    /* Verification gate modal */
+    .verify-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;z-index:300;padding:1rem}
+    .verify-overlay.open{display:flex}
+    .verify-modal{background:white;border-radius:var(--radius-lg);max-width:400px;width:100%;padding:2rem;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
+    .verify-icon{width:56px;height:56px;border-radius:50%;background:var(--blue-light);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 1rem}
+    .verify-modal h3{font-size:19px;font-weight:800;margin-bottom:.5rem}
+    .verify-modal p{font-size:14px;color:var(--muted);line-height:1.55;margin-bottom:1.25rem}
+    .verify-modal input{width:100%;text-align:center;font-size:24px;font-weight:700;letter-spacing:.3em;padding:.75rem;border:1.5px solid var(--border2);border-radius:var(--radius);font-family:var(--font);color:var(--text)}
+    .verify-modal input:focus{outline:none;border-color:var(--blue)}
+    .verify-error{color:var(--red);font-size:13px;font-weight:600;margin-top:.6rem;display:flex;align-items:center;justify-content:center;gap:5px}
+    .verify-demo-note{font-size:11px!important;color:var(--hint)!important;margin:1rem 0 0!important;font-style:italic}
   </style>
 </head>
 <body>
@@ -279,6 +290,22 @@
   </div>
 </main>
 
+<!-- Verification gate modal (demo) -->
+<div class="verify-overlay" id="verify-overlay">
+  <div class="verify-modal">
+    <div class="verify-icon"><i class="ti ti-shield-lock"></i></div>
+    <h3>Verify your phone number</h3>
+    <p>To keep ElectriSolve free of spam and protect contractors from fake jobs, we verify every request. We sent a 6-digit code by text to the number ending in <strong>•••<span id="verify-phone-last4">0100</span></strong>.</p>
+    <input type="text" id="verify-code" maxlength="6" inputmode="numeric" placeholder="Enter 6-digit code" autocomplete="one-time-code">
+    <div class="verify-error" id="verify-error" style="display:none"><i class="ti ti-alert-circle"></i> Enter the 6-digit code to continue.</div>
+    <div style="display:flex;gap:10px;margin-top:1rem">
+      <button class="btn btn-secondary" onclick="closeVerifyGate()">Cancel</button>
+      <button class="btn btn-primary btn-lg" style="flex:1" onclick="submitVerifyCode()"><i class="ti ti-check"></i> Verify &amp; post job</button>
+    </div>
+    <p class="verify-demo-note">Demo: enter any 6 digits to continue. Live version sends a real SMS code.</p>
+  </div>
+</div>
+
 <footer class="site-footer">
   <div class="container footer-inner">
     <span style="font-weight:700;color:var(--text)">ElectriSolve</span>
@@ -401,12 +428,12 @@ document.getElementById('diagnose-btn').addEventListener('click',async()=>{
 document.getElementById('back-btn-1').addEventListener('click',()=>setStep(1));
 document.getElementById('confirm-btn').addEventListener('click',()=>setStep(3));
 document.getElementById('back-btn-2').addEventListener('click',()=>setStep(2));
-document.getElementById('post-btn').addEventListener('click',()=>{
-  const fname=document.getElementById('fname').value.trim();
-  const email=document.getElementById('email').value.trim();
-  const zip=document.getElementById('zip').value.trim();
-  if(!fname||!email||!zip){alert('Please fill in your name, email, and ZIP code.');return;}
-  // Build job summary pills
+// Validation helpers
+function validPhone(p){const d=(p||'').replace(/\D/g,'');return d.length===10||(d.length===11&&d[0]==='1');}
+function validZip(z){return /^\d{5}$/.test((z||'').trim());}
+function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((e||'').trim());}
+
+function completeSubmission(){
   const d=window._diagnosis||{};
   const city=document.getElementById('city').value||'';
   const pills=[
@@ -418,7 +445,46 @@ document.getElementById('post-btn').addEventListener('click',()=>{
   if(pills)document.getElementById('job-summary-display').innerHTML=`<div style="margin-bottom:.25rem;font-size:12px;font-weight:700;color:var(--hint);letter-spacing:.04em">YOUR JOB</div><div style="display:flex;flex-wrap:wrap;gap:2px">${pills}</div>`;
   setStep('success');
   [1,2,3].forEach(i=>{document.getElementById('ps-'+i).className='progress-step done';const l=document.getElementById('pl-'+i);if(l)l.className='progress-line done';});
+}
+
+document.getElementById('post-btn').addEventListener('click',()=>{
+  const fname=document.getElementById('fname').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const address=document.getElementById('address').value.trim();
+  const zip=document.getElementById('zip').value.trim();
+  // Format validation before anything else
+  if(!fname){alert('Please enter your name.');return;}
+  if(!validEmail(email)){alert('Please enter a valid email address.');return;}
+  if(!validPhone(phone)){alert('Please enter a valid 10-digit phone number so we can verify your request.');return;}
+  if(!address){alert('Please enter the job street address.');return;}
+  if(!validZip(zip)){alert('Please enter a valid 5-digit ZIP code.');return;}
+  // Open the verification gate
+  openVerifyGate(phone);
 });
+
+/* Demo verification gate — prevents spam job posts.
+   NOTE: real SMS/address checks require a paid backend (Twilio + address API);
+   this is the interface + format layer. Code shown is for demo only. */
+function openVerifyGate(phone){
+  const last4=phone.replace(/\D/g,'').slice(-4);
+  document.getElementById('verify-phone-last4').textContent=last4;
+  document.getElementById('verify-code').value='';
+  document.getElementById('verify-error').style.display='none';
+  document.getElementById('verify-overlay').classList.add('open');
+  document.getElementById('verify-code').focus();
+}
+function closeVerifyGate(){document.getElementById('verify-overlay').classList.remove('open');}
+function submitVerifyCode(){
+  const code=document.getElementById('verify-code').value.trim();
+  // Demo: accept the displayed demo code or any 6-digit code
+  if(/^\d{6}$/.test(code)){
+    closeVerifyGate();
+    completeSubmission();
+  }else{
+    document.getElementById('verify-error').style.display='block';
+  }
+}
 </script>
 </body>
 </html>

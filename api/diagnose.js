@@ -1,3 +1,43 @@
+// Vercel Serverless Function — /api/diagnose
+// Sonnet-powered full job diagnosis. Protected with rate limiting + spam filtering.
+
+const RATE = {};
+const WINDOW_MS = 60 * 1000;
+const MAX_PER_WINDOW = 5;        // diagnosis is heavier — stricter than quicktips
+const MAX_PER_DAY = 30;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function clientIp(req) {
+  const xf = req.headers['x-forwarded-for'];
+  if (xf) return String(xf).split(',')[0].trim();
+  return req.headers['x-real-ip'] || 'unknown';
+}
+function rateCheck(ip) {
+  const now = Date.now();
+  let r = RATE[ip];
+  if (!r) { r = RATE[ip] = { hits: [], dayStart: now, dayCount: 0 }; }
+  if (now - r.dayStart > DAY_MS) { r.dayStart = now; r.dayCount = 0; }
+  r.hits = r.hits.filter(t => now - t < WINDOW_MS);
+  if (r.hits.length >= MAX_PER_WINDOW) return { ok: false, reason: 'rate' };
+  if (r.dayCount >= MAX_PER_DAY) return { ok: false, reason: 'daily' };
+  r.hits.push(now); r.dayCount++;
+  return { ok: true };
+}
+function looksLikeSpam(q) {
+  const s = (q || '').trim();
+  if (!s) return null; // image-only requests allowed
+  if (s.length < 4) return 'too short';
+  if (s.length > 800) return 'too long';
+  const letters = (s.match(/[a-zA-Z]/g) || []).length;
+  if (letters / s.length < 0.4) return 'gibberish';
+  if (/(.)\1{6,}/.test(s)) return 'repeated chars';
+  if (/(https?:\/\/|www\.|\.(com|net|org|ru|xyz)\b)/i.test(s)) return 'links';
+  const bad = ['viagra','casino','crypto','bitcoin','porn','sex','loan','seo service','buy followers'];
+  const low = s.toLowerCase();
+  if (bad.some(b => low.includes(b))) return 'spam keywords';
+  return null;
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -6,9 +46,14 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return; }
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) { res.status(500).json({ error: 'Missing ANTHROPIC_API_KEY' }); return; }
+  const ip = clientIp(req);
+  const rc = rateCheck(ip);
+  if (!rc.ok) { res.status(429).json({ error: 'rate_limited', message: rc.reason === 'daily' ? 'Daily analysis limit reached. Please try again tomorrow.' : 'Too many requests — please wait a moment before analyzing again.' }); return; }
   try {
     const { description = '', location = '', duration = '', imageBase64 = null, imageType = null } = req.body || {};
     if (!description && !imageBase64) { res.status(400).json({ error: 'No description or image provided.' }); return; }
+    const spam = looksLikeSpam(description);
+    if (spam) { res.status(400).json({ error: 'invalid_input', message: 'Please describe your electrical issue in plain English so we can help.' }); return; }
     const userContent = [];
     if (imageBase64 && imageType) { userContent.push({ type: 'image', source: { type: 'base64', media_type: imageType, data: imageBase64 } }); }
     const prompt = 'You are an expert residential electrician AI. A homeowner reports: "' + (description || 'See photo') + '" - location: ' + (location || 'unspecified') + ' - duration: ' + (duration || 'unspecified') + '. Return ONLY valid JSON, no markdown, with these exact keys: title (short, max 10 words), summary (2-3 sentences plain English), severity (high|medium|low), severityReason (one sentence), scope (brief professional work needed), estimatedCost (range like $200-400), timeToComplete (like 2-4 hours), tradeRequired (Licensed electrician|Master electrician|Journeyman electrician), permitRequired (true or false), safetyWarning (null or a string), quickFixes (array of 3-5 objects each with title, detail, and difficulty which is easy or moderate), whenToCallPro (one sentence). For quickFixes: give specific safe steps addressing the EXACT symptoms, not generic advice. Good example for kitchen breaker tripping with dishwasher: unplug counter appliances like microwave air fryer toaster before running the dishwasher. Bad: reset the breaker. If dangerous (smoke, sparking, burning smell, shock) set safetyWarning and give minimal quickFixes. Friendly encouraging tone like a knowledgeable neighbor.';
