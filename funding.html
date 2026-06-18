@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Use of Funds — ElectriSolve</title>
+  <meta name="description" content="Interactive funding model for ElectriSolve — adjust market size, ad spend, and build approach to see monthly burn and the funding ask.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .fund-hero{padding:2.5rem 0 1.5rem;border-bottom:1px solid var(--border)}
+    .fund-hero h1{font-size:clamp(1.7rem,3.5vw,2.3rem);font-weight:800;letter-spacing:-.025em;margin-bottom:.4rem}
+    .fund-hero p{font-size:16px;color:var(--muted);max-width:640px;line-height:1.6}
+    .fund-layout{display:grid;grid-template-columns:1fr 380px;gap:2rem;align-items:start;padding:2rem 0 4rem}
+    /* Controls */
+    .ctrl-card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow);margin-bottom:1.25rem}
+    .ctrl-card h2{font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--hint);margin-bottom:1.25rem;display:flex;align-items:center;gap:7px}
+    .ctrl-card h2 i{color:var(--blue);font-size:18px}
+    .ctrl-group{margin-bottom:1.5rem}
+    .ctrl-group:last-child{margin-bottom:0}
+    .ctrl-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.5rem}
+    .ctrl-label .lbl{font-size:14px;font-weight:600;color:var(--text)}
+    .ctrl-label .val{font-size:15px;font-weight:800;color:var(--blue)}
+    input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--border);outline:none}
+    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--blue);cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+    input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--blue);cursor:pointer;border:none;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+    .ctrl-hint{font-size:12px;color:var(--hint);margin-top:.4rem;line-height:1.4}
+    .seg{display:flex;gap:6px}
+    .seg button{flex:1;padding:.6rem .5rem;border:1.5px solid var(--border2);background:white;border-radius:var(--radius);font-family:var(--font);font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .12s}
+    .seg button.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue)}
+    /* Results */
+    .result-card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;position:sticky;top:1rem}
+    .rc-head{background:linear-gradient(160deg,#1e3a8a,var(--blue));color:white;padding:1.5rem}
+    .rc-head .rc-ask-label{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+    .rc-head .rc-ask{font-size:42px;font-weight:900;letter-spacing:-.03em;line-height:1;margin:.3rem 0}
+    .rc-head .rc-ask-sub{font-size:13px;opacity:.85}
+    .rc-body{padding:1.25rem 1.5rem}
+    .rc-line{display:flex;justify-content:space-between;align-items:baseline;padding:.6rem 0;border-bottom:1px solid var(--border);font-size:14px}
+    .rc-line:last-of-type{border-bottom:none}
+    .rc-line .k{color:var(--muted)}
+    .rc-line .v{font-weight:700;color:var(--text)}
+    .rc-burn{background:var(--off);border-radius:var(--radius);padding:1rem;margin-top:1rem;text-align:center}
+    .rc-burn .bn{font-size:28px;font-weight:900;color:var(--text);letter-spacing:-.02em}
+    .rc-burn .bl{font-size:12px;color:var(--hint);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+    .rc-foot{padding:1rem 1.5rem;background:var(--blue-light);font-size:12px;color:var(--blue);line-height:1.5;display:flex;gap:7px;align-items:flex-start}
+    .rc-foot i{flex-shrink:0;margin-top:1px}
+    /* Breakdown bars */
+    .bd-block{margin-top:1rem}
+    .bd-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:.6rem}
+    .bd-bar{display:flex;height:28px;border-radius:6px;overflow:hidden;margin-bottom:.6rem}
+    .bd-seg{height:100%}
+    .bd-legend{display:flex;flex-direction:column;gap:5px}
+    .bd-leg-item{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted)}
+    .bd-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+    .bd-leg-item .amt{margin-left:auto;font-weight:700;color:var(--text)}
+    .disclaimer{font-size:11px;color:var(--hint);line-height:1.5;margin-top:1.5rem;max-width:760px}
+    @media(max-width:860px){.fund-layout{grid-template-columns:1fr}.result-card{position:static}}
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon"><i class="ti ti-bolt"></i></div>
+      <span class="logo-text">Electri<span>Solve</span></span>
+    </a>
+    <nav class="header-nav">
+      <a href="jobs.html" class="nav-link">Browse jobs</a>
+      <a href="estimate.html" class="nav-link">Estimate costs</a>
+      <a href="messages.html" class="nav-link">Messages</a>
+      <a href="why.html" class="nav-link">Why ElectriSolve</a>
+      <a href="funding.html" class="nav-link">Use of Funds</a>
+      <a href="contractor.html" class="nav-link">For contractors</a>
+      <a href="post-job.html" class="btn btn-primary">Get free estimates</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="fund-hero">
+    <div class="container">
+      <h1>Use of Funds — interactive model</h1>
+      <p>Adjust the levers below to see how market size, advertising, and build approach shape ElectriSolve's monthly burn and total funding ask. Built for investor conversations — every number is editable live.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="fund-layout">
+      <!-- CONTROLS -->
+      <div>
+        <div class="ctrl-card">
+          <h2><i class="ti ti-adjustments"></i> Your assumptions</h2>
+
+          <div class="ctrl-group">
+            <div class="ctrl-label"><span class="lbl">Markets at launch</span><span class="val" id="v-metros">1 metro</span></div>
+            <input type="range" id="metros" min="1" max="5" step="1" value="1">
+            <div class="ctrl-hint">Each new metro adds ad spend and a slice of infrastructure usage. Start focused (Northern Colorado), expand as subscriptions grow.</div>
+          </div>
+
+          <div class="ctrl-group">
+            <div class="ctrl-label"><span class="lbl">Monthly ad spend (per metro)</span><span class="val" id="v-ad">$2,000</span></div>
+            <input type="range" id="ad" min="500" max="8000" step="250" value="2000">
+            <div class="ctrl-hint">Split across contractor acquisition (Google Search) and homeowner demand (Local Services Ads + Meta).</div>
+          </div>
+
+          <div class="ctrl-group">
+            <div class="ctrl-label"><span class="lbl">Your salary / founder draw</span><span class="val" id="v-salary">$4,000/mo</span></div>
+            <input type="range" id="salary" min="0" max="9000" step="500" value="4000">
+            <div class="ctrl-hint">So you can work on this full-time instead of pulling wire. Set to $0 for the pure bootstrap path.</div>
+          </div>
+
+          <div class="ctrl-group">
+            <div class="ctrl-label"><span class="lbl">Runway to fund</span><span class="val" id="v-runway">12 months</span></div>
+            <input type="range" id="runway" min="6" max="24" step="1" value="12">
+            <div class="ctrl-hint">How many months of operation the raise should cover before revenue carries the business.</div>
+          </div>
+        </div>
+
+        <div class="ctrl-card">
+          <h2><i class="ti ti-tools"></i> Build approach</h2>
+          <div class="seg" id="seg-build">
+            <button data-build="diy" class="active">Build with AI (DIY)</button>
+            <button data-build="hybrid">Hybrid</button>
+            <button data-build="hire">Hire a dev</button>
+          </div>
+          <div class="ctrl-hint" id="build-hint" style="margin-top:.75rem">You build the backend with AI assistance. Lowest cash cost — just your time. One-time build: ~$0.</div>
+        </div>
+
+        <div class="ctrl-card">
+          <h2><i class="ti ti-checkbox"></i> Include real payments?</h2>
+          <div class="seg" id="seg-pay">
+            <button data-pay="no" class="active">Subscriptions only</button>
+            <button data-pay="yes">+ Milestone payments</button>
+          </div>
+          <div class="ctrl-hint" id="pay-hint" style="margin-top:.75rem">Launch on contractor subscriptions alone. Add real money-handling (Stripe Connect + compliance) once you have traction.</div>
+        </div>
+      </div>
+
+      <!-- RESULTS -->
+      <div class="result-card">
+        <div class="rc-head">
+          <div class="rc-ask-label">Recommended raise</div>
+          <div class="rc-ask" id="r-ask">$95,000</div>
+          <div class="rc-ask-sub" id="r-ask-sub">Pre-seed / friends &amp; family range</div>
+        </div>
+        <div class="rc-body">
+          <div class="rc-line"><span class="k">One-time setup</span><span class="v" id="r-onetime">$8,000</span></div>
+          <div class="rc-line"><span class="k">Monthly operating × runway</span><span class="v" id="r-opsrunway">$78,000</span></div>
+          <div class="rc-line"><span class="k">Contingency buffer (15%)</span><span class="v" id="r-buffer">$12,900</span></div>
+          <div class="rc-burn">
+            <div class="bn" id="r-burn">$6,500</div>
+            <div class="bl">Monthly burn</div>
+          </div>
+          <div class="bd-block">
+            <div class="bd-title">Monthly burn breakdown</div>
+            <div class="bd-bar" id="bd-bar"></div>
+            <div class="bd-legend" id="bd-legend"></div>
+          </div>
+        </div>
+        <div class="rc-foot"><i class="ti ti-bulb"></i> <span id="r-insight">At this spend, your blended acquisition cost should run far below Angi's ~$1,400 per booked job — that's the pitch.</span></div>
+      </div>
+    </div>
+
+    <p class="disclaimer">Planning model for discussion only — not financial advice or a guarantee of results. Infrastructure figures based on published 2026 pricing (Vercel Pro ~$20/mo, Supabase Pro ~$25/mo + usage, plus AI/API and email). Advertising outcomes vary widely by market, creative, and competition. Legal, insurance, and payment-compliance costs are ballpark estimates; confirm specifics for your state before committing. The "$1,400 per booked job" benchmark refers to publicly reported contractor acquisition costs on Angi.</p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span style="font-weight:700;color:var(--text)">ElectriSolve</span>
+    <span>Free for homeowners · Licensed contractors only</span>
+  </div>
+</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const fmt=n=>'$'+Math.round(n).toLocaleString();
+const fmtK=n=>{const k=n/1000;return '$'+(k>=10?Math.round(k):k.toFixed(0))+',000';};
+
+let build='diy', pay='no';
+
+const BUILD={
+  diy:{onetime:0,label:'You build the backend with AI assistance. Lowest cash cost — just your time. One-time build: ~$0.'},
+  hybrid:{onetime:6000,label:'You build the core with AI; hire a contractor for payments/security hardening. One-time build: ~$6,000.'},
+  hire:{onetime:13000,label:'A developer builds the production backend (DB, auth, payments, security). One-time build: ~$13,000.'}
+};
+const PAY={
+  no:{onetime:0,label:'Launch on contractor subscriptions alone. Add real money-handling (Stripe Connect + compliance) once you have traction.'},
+  yes:{onetime:3500,label:'Real milestone payments via Stripe Connect — adds payment-compliance legal + setup. One-time: ~$3,500 (plus ~2.9%+30¢ per transaction, paid from revenue).'}
+};
+
+// Fixed one-time items everyone needs
+const BASE_ONETIME = 500 /*LLC*/ + 1000 /*insurance setup*/ + 1500 /*legal templates*/ + 300 /*brand+domain*/;
+
+function calc(){
+  const metros=+$('metros').value;
+  const ad=+$('ad').value;
+  const salary=+$('salary').value;
+  const runway=+$('runway').value;
+
+  // Infrastructure scales modestly with metros
+  const infra = 70 + (metros-1)*40;          // Vercel+Supabase+email base, more usage per metro
+  const ai    = 40 + (metros-1)*30;           // AI diagnosis usage
+  const adTotal = ad * metros;
+  const tools = 50;                            // misc SaaS (analytics, support inbox)
+
+  const burn = infra + ai + adTotal + tools + salary;
+
+  // One-time
+  const onetime = BASE_ONETIME + BUILD[build].onetime + PAY[pay].onetime;
+
+  // Funding ask
+  const opsRunway = burn * runway;
+  const subtotal = onetime + opsRunway;
+  const buffer = subtotal * 0.15;
+  const ask = subtotal + buffer;
+
+  // Update displays
+  $('v-metros').textContent = metros + (metros===1?' metro':' metros');
+  $('v-ad').textContent = fmt(ad);
+  $('v-salary').textContent = fmt(salary)+'/mo';
+  $('v-runway').textContent = runway+' months';
+
+  $('r-burn').textContent = fmt(burn);
+  $('r-onetime').textContent = fmt(onetime);
+  $('r-opsrunway').textContent = fmt(opsRunway);
+  $('r-buffer').textContent = fmt(buffer);
+
+  // Round ask to nearest $5k for a clean pitch number
+  const askRounded = Math.round(ask/5000)*5000;
+  $('r-ask').textContent = fmt(askRounded);
+  $('r-ask-sub').textContent = askRounded<50000?'Lean bootstrap range':askRounded<175000?'Pre-seed / friends & family range':'Seed round range';
+
+  // Breakdown bar
+  const segs=[
+    {label:'Advertising',amt:adTotal,color:'#2563eb'},
+    {label:'Founder salary',amt:salary,color:'#16a34a'},
+    {label:'Infrastructure',amt:infra,color:'#d97706'},
+    {label:'AI / API',amt:ai,color:'#7c3aed'},
+    {label:'Tools',amt:tools,color:'#94a3b8'}
+  ].filter(s=>s.amt>0);
+  const total=segs.reduce((a,s)=>a+s.amt,0)||1;
+  $('bd-bar').innerHTML=segs.map(s=>`<div class="bd-seg" style="width:${s.amt/total*100}%;background:${s.color}"></div>`).join('');
+  $('bd-legend').innerHTML=segs.map(s=>`<div class="bd-leg-item"><span class="bd-dot" style="background:${s.color}"></span>${s.label}<span class="amt">${fmt(s.amt)}/mo</span></div>`).join('');
+
+  // Insight line
+  if(adTotal===0){
+    $('r-insight').textContent='No ad spend — pure organic/network growth. Slowest but cheapest path to your first contractors.';
+  }else{
+    const impliedCAC = Math.round(adTotal / Math.max(2, metros*4)); // rough: ~4 booked customers per metro per mo
+    $('r-insight').textContent=`Even at this spend, your implied acquisition cost (~${fmt(impliedCAC)}) sits far below Angi's reported ~$1,400 per booked job — because you're selling relief from the pain contractors already feel.`;
+  }
+}
+
+// Wire up sliders
+['metros','ad','salary','runway'].forEach(id=>$(id).addEventListener('input',calc));
+
+// Segmented controls
+$('seg-build').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+  $('seg-build').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');build=b.dataset.build;$('build-hint').textContent=BUILD[build].label;calc();
+}));
+$('seg-pay').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+  $('seg-pay').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');pay=b.dataset.pay;$('pay-hint').textContent=PAY[pay].label;calc();
+}));
+
+calc();
+</script>
+</body>
+</html>

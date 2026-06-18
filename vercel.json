@@ -29,6 +29,14 @@
       "dest": "/messages.html"
     },
     {
+      "src": "/why",
+      "dest": "/why.html"
+    },
+    {
+      "src": "/funding",
+      "dest": "/funding.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }
