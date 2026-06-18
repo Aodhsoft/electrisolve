@@ -38,6 +38,23 @@ function looksLikeSpam(q) {
   return null;
 }
 
+// Hate-speech / abuse gate. Pattern-based first pass; the AI vision+text moderation
+// (moderationCheck below) is the real backstop. Collapses leetspeak/spacing evasions.
+function looksAbusive(q) {
+  const s = (q || '').toLowerCase();
+  if (!s.trim()) return false;
+  // collapse common obfuscation: spaces/dots/dashes between letters, leet digits
+  const norm = s
+    .replace(/[\s._\-*]/g, '')
+    .replace(/0/g, 'o').replace(/1/g, 'i').replace(/3/g, 'e').replace(/4/g, 'a').replace(/5/g, 's').replace(/7/g, 't').replace(/@/g, 'a').replace(/\$/g, 's');
+  // Slur/hate stems kept minimal; matches the obfuscation-collapsed string.
+  const stems = ['nigg','n1gg','faggot','fagot','retard','kike','spic','chink','wetback','tranny','beaner','coon','dyke','gook','raghead','sandnigg','whitepower','heilhitler','kkk'];
+  if (stems.some(t => norm.includes(t))) return true;
+  // explicit threats / violence directed language
+  if (/\b(kill|murder|rape|lynch)\s+(you|them|all|the)\b/.test(s)) return true;
+  return false;
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -54,9 +71,10 @@ export default async function handler(req, res) {
     if (!description && !imageBase64) { res.status(400).json({ error: 'No description or image provided.' }); return; }
     const spam = looksLikeSpam(description);
     if (spam) { res.status(400).json({ error: 'invalid_input', message: 'Please describe your electrical issue in plain English so we can help.' }); return; }
+    if (looksAbusive(description)) { res.status(400).json({ error: 'content_blocked', message: 'Your submission contains language that violates our community guidelines and was not posted.' }); return; }
     const userContent = [];
     if (imageBase64 && imageType) { userContent.push({ type: 'image', source: { type: 'base64', media_type: imageType, data: imageBase64 } }); }
-    const prompt = 'You are an expert residential electrician AI. A homeowner reports: "' + (description || 'See photo') + '" - location: ' + (location || 'unspecified') + ' - duration: ' + (duration || 'unspecified') + '. Return ONLY valid JSON, no markdown, with these exact keys: title (short, max 10 words), summary (2-3 sentences plain English), severity (high|medium|low), severityReason (one sentence), scope (brief professional work needed), estimatedCost (range like $200-400), timeToComplete (like 2-4 hours), tradeRequired (Licensed electrician|Master electrician|Journeyman electrician), permitRequired (true or false), safetyWarning (null or a string), quickFixes (array of 3-5 objects each with title, detail, and difficulty which is easy or moderate), whenToCallPro (one sentence). For quickFixes: give specific safe steps addressing the EXACT symptoms, not generic advice. Good example for kitchen breaker tripping with dishwasher: unplug counter appliances like microwave air fryer toaster before running the dishwasher. Bad: reset the breaker. If dangerous (smoke, sparking, burning smell, shock) set safetyWarning and give minimal quickFixes. Friendly encouraging tone like a knowledgeable neighbor.';
+    const prompt = 'You are an expert residential electrician AI that also screens submissions for a public job board. A homeowner reports: "' + (description || 'See photo') + '" - location: ' + (location || 'unspecified') + ' - duration: ' + (duration || 'unspecified') + '.' + (imageBase64 ? ' An image is attached.' : '') + ' FIRST screen the submission. Return ONLY valid JSON, no markdown. Include a "moderation" object with these keys: appropriate (true only if the text AND any image are a genuine, good-faith electrical/home-repair issue suitable for a public board), isElectrical (true if it concerns an electrical or home-repair problem), reason (short phrase if not appropriate, else null). Set appropriate=false if the image is a meme, screenshot, joke, selfie, unrelated photo, offensive/explicit/violent imagery, or anything not a real electrical problem; or if the text is hateful, abusive, harassing, sexual, threatening, gibberish, advertising, or otherwise not a sincere repair request. If moderation.appropriate is false, set all diagnosis fields to null. If appropriate is true, ALSO return these diagnosis keys: title (short, max 10 words), summary (2-3 sentences plain English), severity (high|medium|low), severityReason (one sentence), scope (brief professional work needed), estimatedCost (range like $200-400), timeToComplete (like 2-4 hours), tradeRequired (Licensed electrician|Master electrician|Journeyman electrician), permitRequired (true or false), safetyWarning (null or a string), quickFixes (array of 3-5 objects each with title, detail, and difficulty which is easy or moderate), whenToCallPro (one sentence). For quickFixes give specific safe steps addressing the EXACT symptoms, not generic advice. If dangerous (smoke, sparking, burning smell, shock) set safetyWarning and give minimal quickFixes. Friendly encouraging tone like a knowledgeable neighbor.';
     userContent.push({ type: 'text', text: prompt });
     const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -68,6 +86,11 @@ export default async function handler(req, res) {
     const raw = (data.content || []).map(function(c){ return c.text || ''; }).join('').replace(/```json|```/g, '').trim();
     let diag;
     try { diag = JSON.parse(raw); } catch (e) { res.status(502).json({ error: 'Parse error', raw: raw.substring(0, 300) }); return; }
+    // Enforce AI moderation verdict server-side
+    if (diag && diag.moderation && diag.moderation.appropriate === false) {
+      res.status(400).json({ error: 'content_blocked', message: 'This submission was flagged by our content check and was not posted. Please submit a genuine electrical issue.', reason: diag.moderation.reason || null });
+      return;
+    }
     res.status(200).json(diag);
   } catch (e) {
     res.status(500).json({ error: 'Server error', detail: String(e).substring(0, 300) });

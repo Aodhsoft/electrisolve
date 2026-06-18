@@ -362,9 +362,31 @@ document.getElementById('diagnose-btn').addEventListener('click',async()=>{
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(body)
     });
-    if(!res.ok)throw new Error('API error '+res.status);
     const diag=await res.json();
+
+    // Content moderation rejection — block submission, do not route to board
+    if(res.status===400 && (diag.error==='content_blocked' || diag.error==='invalid_input')){
+      document.getElementById('ai-thinking').style.display='none';
+      document.getElementById('ai-output').style.display='block';
+      document.getElementById('diagnosis-summary').innerHTML='';
+      document.getElementById('diagnosis-warn').style.display='none';
+      document.getElementById('diagnosis-findings').innerHTML=
+        '<div style="background:var(--red-light);border:1px solid #fecaca;border-radius:var(--radius-lg);padding:1.5rem;text-align:center">'
+        +'<i class="ti ti-ban" style="font-size:40px;color:var(--red)"></i>'
+        +'<div style="font-weight:800;font-size:17px;margin:.5rem 0;color:#7f1d1d">This submission couldn\'t be posted</div>'
+        +'<div style="font-size:14px;color:var(--muted);line-height:1.55;max-width:420px;margin:0 auto">'
+        +(diag.message||'Your submission was flagged by our content check. Please submit a genuine electrical issue with a relevant photo.')
+        +'</div></div>';
+      // Block progression: disable/hide the continue button, clear any prior diagnosis
+      window._diagnosis=null;
+      const cb=document.getElementById('confirm-btn'); if(cb)cb.style.display='none';
+      return;
+    }
+
+    if(!res.ok)throw new Error('API error '+res.status);
     if(diag.error)throw new Error(diag.error);
+    // make sure continue is enabled for valid submissions
+    const cb=document.getElementById('confirm-btn'); if(cb)cb.style.display='';
 
     document.getElementById('ai-thinking').style.display='none';
     document.getElementById('ai-output').style.display='block';
