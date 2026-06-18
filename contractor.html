@@ -164,6 +164,9 @@
         <button class="btn btn-lg" style="background:white;color:var(--blue);border-color:white;font-size:16px" onclick="showPage('page-signup')">Create my account <i class="ti ti-arrow-right"></i></button>
         <button class="btn btn-lg" style="background:transparent;color:white;border-color:rgba(255,255,255,.5);font-size:16px" onclick="showPage('page-calc')"><i class="ti ti-calculator"></i> Calculate my labor rate first</button>
       </div>
+      <div style="margin-top:1.25rem">
+        <button onclick="enterDemo()" style="background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.35);border-radius:24px;padding:9px 20px;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px"><i class="ti ti-player-play"></i> View live demo dashboard</button>
+      </div>
       <div class="onboard-steps">
         <div class="onboard-step"><div class="num">1</div><div class="label">Homeowner posts job</div></div>
         <div class="onboard-step"><div class="num">2</div><div class="label">AI qualifies the scope</div></div>
@@ -475,7 +478,7 @@ function avatarColor(name){let h=0;for(let i=0;i<name.length;i++)h=name.charCode
 function initials(name){return name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}
 
 // Seeded conversations — written to look like a real, active marketplace
-const CONVERSATIONS=[
+const CONVERSATIONS_MASTER=[
   {
     id:'c1', name:'Sarah Mitchell', job:'Panel upgrade · Lakewood', unread:true, lastTime:'10:42 AM',
     messages:[
@@ -508,7 +511,11 @@ const CONVERSATIONS=[
   },
 ];
 
+const CONVERSATIONS_SEED = JSON.parse(JSON.stringify(CONVERSATIONS_MASTER));
+let CONVERSATIONS = JSON.parse(JSON.stringify(CONVERSATIONS_SEED));
+
 let activeConv=null, msgInited=false;
+let autoPlayTimers=[];
 
 function initMessages(){
   if(msgInited)return; msgInited=true;
@@ -683,6 +690,73 @@ function sendQuote(){
 }
 
 updateUnreadBadge();
+
+/* ══════════════════════════════════════════
+   DEMO: shortcut into dashboard + auto-play + restart
+══════════════════════════════════════════ */
+function clearAutoPlay(){ autoPlayTimers.forEach(t=>clearTimeout(t)); autoPlayTimers=[]; }
+
+// One-click jump from onboarding hero straight into the messaging demo
+function enterDemo(){
+  showPage('page-dash');
+  const msgLink=[...document.querySelectorAll('.dash-nav a')].find(a=>a.textContent.includes('Messages'));
+  if(msgLink){
+    document.querySelectorAll('.dash-nav a').forEach(a=>a.classList.remove('active'));
+    msgLink.classList.add('active');
+  }
+  ['available','messages','bids','calc-tab','profile'].forEach(t=>{const e=document.getElementById('dtab-'+t);if(e)e.style.display='none';});
+  document.getElementById('dtab-messages').style.display='block';
+  msgInited=true;
+  restartDemo();
+}
+
+function restartDemo(){
+  clearAutoPlay();
+  CONVERSATIONS = JSON.parse(JSON.stringify(CONVERSATIONS_SEED));
+  activeConv=null;
+  renderConvList();
+  updateUnreadBadge();
+  openConv('c1');
+  const t1=setTimeout(()=>{
+    const conv=CONVERSATIONS.find(x=>x.id==='c1');
+    if(conv && activeConv==='c1'){
+      apTypeThenAppend(conv,{from:'them',type:'text',text:"One more thing — my husband wants to know if you handle the permit paperwork or if we do? Trying to make this easy 🙂",time:'Just now'});
+    }
+  },1500);
+  autoPlayTimers.push(t1);
+}
+
+function apTypeThenAppend(conv,msg){
+  const scroll=document.getElementById('msg-scroll');
+  if(!scroll)return;
+  const typing=document.createElement('div');
+  typing.className='bubble bubble-them';typing.id='ap-typing';
+  typing.innerHTML='<span style="opacity:.6">'+conv.name.split(' ')[0]+' is typing…</span>';
+  scroll.appendChild(typing);scroll.scrollTop=scroll.scrollHeight;
+  const t=setTimeout(()=>{
+    document.getElementById('ap-typing')?.remove();
+    conv.messages.push(msg);conv.unread=true;
+    if(conv.id===activeConv){conv.unread=false;renderMessages(conv);}
+    renderConvList();updateUnreadBadge();
+  },1900);
+  autoPlayTimers.push(t);
+}
+
+// Floating restart button
+(function injectRestartBtn(){
+  const btn=document.createElement('button');
+  btn.id='demo-restart';
+  btn.innerHTML='<i class="ti ti-refresh"></i> Restart demo';
+  btn.title='Reset the messaging demo to its starting state';
+  btn.style.cssText='position:fixed;bottom:20px;right:20px;z-index:200;background:var(--text);color:white;border:none;border-radius:24px;padding:11px 18px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.25);display:flex;align-items:center;gap:7px';
+  btn.onmouseover=()=>btn.style.background='#1e293b';
+  btn.onmouseout=()=>btn.style.background='var(--text)';
+  btn.onclick=()=>{
+    if(!document.getElementById('page-dash').classList.contains('active')){ enterDemo(); }
+    else { restartDemo(); }
+  };
+  document.body.appendChild(btn);
+})();
 
 
 /* LABOR CALCULATOR */

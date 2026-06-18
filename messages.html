@@ -134,7 +134,7 @@ function initials(name){return name.split(' ').map(w=>w[0]).join('').substring(0
 
 // Homeowner (Sarah) view — same conversations the contractor sees, flipped perspective.
 // 'me' = the homeowner. 'them' = the contractor.
-const CONVERSATIONS=[
+const CONVERSATIONS_MASTER=[
   {
     id:'c1', name:'Mike Torres', company:'Torres Electric LLC', job:'Your panel upgrade · Lakewood', verified:true, unread:true, lastTime:'10:42 AM',
     messages:[
@@ -157,7 +157,12 @@ const CONVERSATIONS=[
   },
 ];
 
+// Master seed — never mutated. Working copy is deep-cloned from this on every (re)start.
+const CONVERSATIONS_SEED = JSON.parse(JSON.stringify(CONVERSATIONS_MASTER));
+let CONVERSATIONS = JSON.parse(JSON.stringify(CONVERSATIONS_SEED));
+
 let activeConv=null;
+let autoPlayTimers=[];
 
 function renderConvList(){
   const el=document.getElementById('msg-list');
@@ -280,9 +285,74 @@ function sendMessage(){
   },700);
 }
 
+/* ══════════════════════════════════════════
+   DEMO AUTO-PLAY + RESTART
+══════════════════════════════════════════ */
+function clearAutoPlay(){ autoPlayTimers.forEach(t=>clearTimeout(t)); autoPlayTimers=[]; }
+
+// Reset everything to the pristine seed and replay the demo
+function restartDemo(){
+  clearAutoPlay();
+  CONVERSATIONS = JSON.parse(JSON.stringify(CONVERSATIONS_SEED));
+  activeConv=null;
+  renderConvList();
+  // Land on Mike's thread, then auto-play the last unread beats so it feels live
+  autoPlayThread('c1');
+}
+
+// Reveal a thread with a gentle staged animation: show all but the final
+// incoming message(s), then play them in with a typing indicator.
+function autoPlayThread(id){
+  const c=CONVERSATIONS.find(x=>x.id===id);
+  // Find trailing run of incoming ('them') messages to "play" live
+  let playFrom=c.messages.length;
+  // We'll animate the final homeowner-unread beat: reveal everything, then
+  // re-show the last 1-2 messages as if arriving now.
+  openConv(id);            // renders full thread instantly (clean state)
+  // Add a subtle "new message" shimmer on the other conversation in the list
+  const t1=setTimeout(()=>{
+    // simulate a fresh incoming message on Mike's thread to show liveness
+    const conv=CONVERSATIONS.find(x=>x.id==='c1');
+    if(conv && activeConv==='c1'){
+      typeThenAppend(conv,{from:'them',type:'text',text:"Thursday works great — I'll plan for an early start. You only need to be home for the first 30 minutes and the final inspection.",time:'Just now'});
+    }
+  },1400);
+  autoPlayTimers.push(t1);
+}
+
+// Show a typing indicator on the active thread, then append the message
+function typeThenAppend(conv,msg){
+  const scroll=document.getElementById('msg-scroll');
+  if(!scroll)return;
+  const typing=document.createElement('div');
+  typing.className='bubble bubble-them';typing.id='ap-typing';
+  typing.innerHTML='<span style="opacity:.6">'+conv.name.split(' ')[0]+' is typing…</span>';
+  scroll.appendChild(typing);scroll.scrollTop=scroll.scrollHeight;
+  const t=setTimeout(()=>{
+    document.getElementById('ap-typing')?.remove();
+    conv.messages.push(msg);
+    if(conv.id===activeConv)renderMessages(conv);
+    renderConvList();
+  },1900);
+  autoPlayTimers.push(t);
+}
+
+// Floating restart button (always available during a pitch)
+(function injectRestartBtn(){
+  const btn=document.createElement('button');
+  btn.id='demo-restart';
+  btn.innerHTML='<i class="ti ti-refresh"></i> Restart demo';
+  btn.title='Reset the demo to its starting state';
+  btn.style.cssText='position:fixed;bottom:20px;right:20px;z-index:200;background:var(--text);color:white;border:none;border-radius:24px;padding:11px 18px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.25);display:flex;align-items:center;gap:7px';
+  btn.onmouseover=()=>btn.style.background='#1e293b';
+  btn.onmouseout=()=>btn.style.background='var(--text)';
+  btn.onclick=restartDemo;
+  document.body.appendChild(btn);
+})();
+
+// On every page load: clean state, then play the demo
 renderConvList();
-// Auto-open the first conversation so the demo lands on a populated thread
-openConv('c1');
+restartDemo();
 </script>
 </body>
 </html>
