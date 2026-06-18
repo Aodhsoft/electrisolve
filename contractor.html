@@ -136,6 +136,31 @@
     .qb-line input:focus{outline:none;border-color:var(--blue)}
     .qb-rm{background:none;border:none;color:var(--hint);cursor:pointer;font-size:16px}
     @media(max-width:768px){.msg-layout{grid-template-columns:1fr;height:auto}.msg-list{max-height:200px}.msg-thread{height:480px}}
+    /* WS1 Lead Qualification */
+    .qual-explainer{display:flex;gap:11px;align-items:flex-start;background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:var(--radius-lg);padding:1rem 1.1rem;margin-bottom:1.25rem;font-size:13px;color:var(--text);line-height:1.55}
+    .qual-explainer i{font-size:22px;color:var(--blue);flex-shrink:0;margin-top:1px}
+    .qual-explainer strong{color:var(--blue)}
+    .qual-bar{display:flex;gap:12px;align-items:center;margin:.75rem 0;padding:.75rem;background:var(--off);border-radius:var(--radius)}
+    .qual-score{flex-shrink:0;width:54px;height:54px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;line-height:1}
+    .qual-green{background:var(--green)}.qual-blue{background:var(--blue)}.qual-amber{background:var(--amber)}.qual-hint{background:var(--hint)}
+    .qs-num{font-size:20px;font-weight:800}
+    .qs-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;text-align:center;margin-top:2px;opacity:.9}
+    .qual-detail{flex:1;min-width:0}
+    .qual-intent{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:5px;margin-bottom:5px}
+    .qual-flags{display:flex;flex-wrap:wrap;gap:5px}
+    .qflag{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px}
+    .qflag.ok{background:var(--green-light);color:var(--green)}
+    .qflag.pending{background:var(--amber-light);color:var(--amber)}
+    .qual-note{font-size:12.5px;color:var(--muted);line-height:1.5;background:white;border-left:3px solid var(--blue-mid);padding:.5rem .75rem;margin-bottom:.75rem;border-radius:0 6px 6px 0}
+    .qual-note i{color:var(--blue);margin-right:4px}
+    /* WS3 Milestone payments */
+    .ms-block{margin-top:.85rem;padding-top:.85rem;border-top:1px dashed var(--border)}
+    .ms-title{font-size:12px;font-weight:800;color:var(--green);display:flex;align-items:center;gap:5px;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.03em}
+    .ms-row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);padding:3px 0}
+    .ms-row span:last-child{font-weight:700;color:var(--text)}
+    .ms-row em{font-style:normal;font-weight:500;color:var(--hint);font-size:11px}
+    .ms-note{margin-top:.5rem;font-size:11.5px;color:var(--green);background:var(--green-light);border-radius:6px;padding:.45rem .6rem;line-height:1.45;display:flex;gap:5px;align-items:flex-start}
+    .ms-note i{flex-shrink:0;margin-top:1px}
   </style>
 </head>
 <body>
@@ -374,6 +399,10 @@
         </div>
         <div id="dtab-available">
           <div class="section-header"><h2>Jobs in your area</h2><span class="badge badge-blue">7 new</span></div>
+          <div class="qual-explainer">
+            <i class="ti ti-shield-check"></i>
+            <div><strong>Every lead is AI-screened before you see it.</strong> We score each job for real intent, confirmed budget, and clear scope — so you never pay your subscription chasing tire-kickers. Unlike pay-per-lead sites, one job is never sold to a crowd of contractors.</div>
+          </div>
           <div class="jobs-list" id="dash-jobs"></div>
         </div>
         <div id="dtab-messages" style="display:none">
@@ -463,9 +492,35 @@ document.getElementById('signup-btn').addEventListener('click',()=>showPage('pag
 document.getElementById('login-btn').addEventListener('click',()=>showPage('page-dash'));
 document.getElementById('logout-btn').addEventListener('click',e=>{e.preventDefault();showPage('page-onboard');});
 function showDTab(name,el){event.preventDefault();['available','messages','bids','calc-tab','profile'].forEach(t=>{const e=document.getElementById('dtab-'+t);if(e)e.style.display='none';});document.getElementById('dtab-'+name).style.display='block';document.querySelectorAll('.dash-nav a').forEach(a=>a.classList.remove('active'));if(el)el.classList.add('active');if(name==='messages')initMessages();}
-const DASH_JOBS=[{id:1,title:"Panel upgrade · Lakewood",sev:"high",desc:"Federal Pacific replacement. Est. $1,800–2,400. Permit required.",est:"$1,800–2,400",bids:3,posted:"2h ago"},{id:7,title:"Flickering lights · Centennial",sev:"high",desc:"Possible loose neutral. Only 1 bid.",est:"$200–600",bids:1,posted:"3h ago"},{id:2,title:"GFCI outlets · Aurora",sev:"medium",desc:"6 outlets, 2–4 hrs.",est:"$280–420",bids:5,posted:"5h ago"},{id:3,title:"EV charger · Denver",sev:"low",desc:"60A circuit, 35 ft run.",est:"$450–700",bids:4,posted:"8h ago"}];
+const DASH_JOBS=[
+  {id:1,title:"Panel upgrade · Lakewood",sev:"high",desc:"Federal Pacific replacement. Est. $1,800–2,400. Permit required.",est:"$1,800–2,400",bids:3,posted:"2h ago",qScore:96,intent:"high",budgetConfirmed:true,photos:true,licenseReady:true,qNote:"Homeowner confirmed budget, uploaded panel photo, and inspector report. Ready to hire this week."},
+  {id:7,title:"Flickering lights · Centennial",sev:"high",desc:"Possible loose neutral. Only 1 bid.",est:"$200–600",bids:1,posted:"3h ago",qScore:88,intent:"high",budgetConfirmed:true,photos:false,licenseReady:true,qNote:"AI flagged possible safety issue. Homeowner responded to all screening questions and wants someone out fast."},
+  {id:2,title:"GFCI outlets · Aurora",sev:"medium",desc:"6 outlets, 2–4 hrs.",est:"$280–420",bids:5,posted:"5h ago",qScore:79,intent:"medium",budgetConfirmed:true,photos:true,licenseReady:false,qNote:"Clear scope, photos provided. Budget in range. Comparing a few quotes."},
+  {id:3,title:"EV charger · Denver",sev:"low",desc:"60A circuit, 35 ft run.",est:"$450–700",bids:4,posted:"8h ago",qScore:72,intent:"medium",budgetConfirmed:false,photos:true,licenseReady:false,qNote:"Scope well-defined with photos. Budget not yet confirmed — early-stage but serious."}
+];
 let activeBid=null;
-function renderDashJobs(){document.getElementById('dash-jobs').innerHTML=DASH_JOBS.map(j=>`<div class="job-card${j.sev==='high'?' urgent':''}"><div class="job-meta"><span class="badge badge-${j.sev==='high'?'red':j.sev==='medium'?'amber':'green'}">${j.sev==='high'?'Urgent':j.sev==='medium'?'Standard':'Minor'}</span><span class="job-stat"><i class="ti ti-users"></i>${j.bids} bid${j.bids!==1?'s':''}</span></div><div class="job-title">${j.title}</div><div class="job-footer"><span class="job-stat"><i class="ti ti-currency-dollar"></i>${j.est}</span><button class="btn btn-primary" style="padding:8px 16px;font-size:13px" onclick="toggleBid(${j.id})"><i class="ti ti-send"></i> Bid</button></div><div class="bid-form" id="bid-${j.id}"><div class="form-row" style="margin-bottom:.75rem"><div class="form-group" style="margin-bottom:0"><label>Your bid ($)</label><input type="number" placeholder="450" id="amt-${j.id}"></div><div class="form-group" style="margin-bottom:0"><label>Est. hours</label><input type="number" placeholder="4" id="hrs-${j.id}"></div></div><div class="form-group" style="margin-bottom:.75rem"><label>Note to homeowner</label><textarea placeholder="Brief intro..." id="note-${j.id}" style="min-height:60px"></textarea></div><div style="display:flex;gap:8px"><button class="btn btn-ghost" onclick="toggleBid(${j.id})">Cancel</button><button class="btn btn-primary" style="flex:1" onclick="submitBid(${j.id})">Submit bid</button></div></div></div>`).join('');}
+function renderDashJobs(){document.getElementById('dash-jobs').innerHTML=DASH_JOBS.map(j=>{
+  const qColor=j.qScore>=90?'green':j.qScore>=80?'blue':j.qScore>=70?'amber':'hint';
+  const intentLabel=j.intent==='high'?'High intent':j.intent==='medium'?'Comparing quotes':'Early stage';
+  const flags=[];
+  if(j.budgetConfirmed)flags.push('<span class="qflag ok"><i class="ti ti-currency-dollar"></i> Budget confirmed</span>');else flags.push('<span class="qflag pending"><i class="ti ti-currency-dollar"></i> Budget pending</span>');
+  if(j.photos)flags.push('<span class="qflag ok"><i class="ti ti-photo"></i> Photos provided</span>');
+  flags.push('<span class="qflag ok"><i class="ti ti-robot"></i> AI-screened</span>');
+  return `<div class="job-card${j.sev==='high'?' urgent':''}">
+    <div class="job-meta"><span class="badge badge-${j.sev==='high'?'red':j.sev==='medium'?'amber':'green'}">${j.sev==='high'?'Urgent':j.sev==='medium'?'Standard':'Minor'}</span><span class="job-stat"><i class="ti ti-users"></i>${j.bids} bid${j.bids!==1?'s':''}</span></div>
+    <div class="job-title">${j.title}</div>
+    <div class="qual-bar">
+      <div class="qual-score qual-${qColor}"><span class="qs-num">${j.qScore}</span><span class="qs-lbl">Lead<br>Quality</span></div>
+      <div class="qual-detail">
+        <div class="qual-intent"><i class="ti ti-flame" style="color:var(--${j.intent==='high'?'green':'amber'})"></i> ${intentLabel}</div>
+        <div class="qual-flags">${flags.join('')}</div>
+      </div>
+    </div>
+    <div class="qual-note"><i class="ti ti-sparkles"></i> ${j.qNote}</div>
+    <div class="job-footer"><span class="job-stat"><i class="ti ti-currency-dollar"></i>${j.est}</span><button class="btn btn-primary" style="padding:8px 16px;font-size:13px" onclick="toggleBid(${j.id})"><i class="ti ti-send"></i> Bid</button></div>
+    <div class="bid-form" id="bid-${j.id}"><div class="form-row" style="margin-bottom:.75rem"><div class="form-group" style="margin-bottom:0"><label>Your bid ($)</label><input type="number" placeholder="450" id="amt-${j.id}"></div><div class="form-group" style="margin-bottom:0"><label>Est. hours</label><input type="number" placeholder="4" id="hrs-${j.id}"></div></div><div class="form-group" style="margin-bottom:.75rem"><label>Note to homeowner</label><textarea placeholder="Brief intro..." id="note-${j.id}" style="min-height:60px"></textarea></div><div style="display:flex;gap:8px"><button class="btn btn-ghost" onclick="toggleBid(${j.id})">Cancel</button><button class="btn btn-primary" style="flex:1" onclick="submitBid(${j.id})">Submit bid</button></div></div>
+  </div>`;
+}).join('');}
 function toggleBid(id){if(activeBid&&activeBid!==id)document.getElementById('bid-'+activeBid).classList.remove('open');const f=document.getElementById('bid-'+id);f.classList.toggle('open');activeBid=f.classList.contains('open')?id:null;}
 function submitBid(id){const amt=document.getElementById('amt-'+id).value;if(!amt){alert('Enter a bid amount.');return;}document.getElementById('bid-'+id).innerHTML=`<p style="color:var(--green);font-size:14px;font-weight:600;padding:.4rem 0;display:flex;align-items:center;gap:7px"><i class="ti ti-circle-check" style="font-size:18px"></i>Bid of $${amt} submitted!</p>`;}
 renderDashJobs();
@@ -586,11 +641,26 @@ function renderBubble(m){
     else if(m.status==='pending'&&m.from==='me'){footer=`<div class="quote-status" style="background:var(--amber-light);color:var(--amber)"><i class="ti ti-clock"></i> Awaiting response</div>`;}
     return `<div class="quote-card ${m.from==='me'?'':'them'}">
       <div class="quote-head"><i class="ti ti-file-dollar"></i> ${m.title}</div>
-      <div class="quote-body">${lines}<div class="quote-total"><span>Total</span><span>${m.total}</span></div></div>
+      <div class="quote-body">${lines}<div class="quote-total"><span>Total</span><span>${m.total}</span></div>${milestoneHTML(m.total)}</div>
       ${footer}<span class="bubble-time" style="display:block;text-align:right;padding:0 1rem .6rem;color:var(--hint)">${m.time}</span>
     </div>`;
   }
   return '';
+}
+
+// WS3: milestone payment schedule — protects homeowner (no large upfront deposit)
+function milestoneHTML(totalStr){
+  const total=parseFloat(String(totalStr).replace(/[^0-9.]/g,''))||0;
+  if(!total)return '';
+  const fmt=n=>'$'+Math.round(n).toLocaleString();
+  const m1=total*0.10, m2=total*0.40, m3=total*0.50;
+  return `<div class="ms-block">
+    <div class="ms-title"><i class="ti ti-shield-check"></i> Milestone payment plan</div>
+    <div class="ms-row"><span>1 · At permit pull</span><span>${fmt(m1)} <em>(10%)</em></span></div>
+    <div class="ms-row"><span>2 · Work underway</span><span>${fmt(m2)} <em>(40%)</em></span></div>
+    <div class="ms-row"><span>3 · Job complete &amp; inspected</span><span>${fmt(m3)} <em>(50%)</em></span></div>
+    <div class="ms-note"><i class="ti ti-info-circle"></i> No large deposit. You pay as work is verified — final 50% only after inspection.</div>
+  </div>`;
 }
 
 function panelSVG(){

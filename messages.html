@@ -71,6 +71,52 @@
     .composer-send:hover{background:#1d4ed8}
     .on-platform-note{display:flex;align-items:center;gap:6px;justify-content:center;font-size:11px;color:var(--hint);padding:.5rem;background:var(--off);border-top:1px solid var(--border)}
     @media(max-width:768px){.msg-layout{grid-template-columns:1fr;height:auto}.msg-list{max-height:200px}.msg-thread{height:500px}}
+    /* WS2 Verification panel */
+    .verify-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--blue);background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:14px;padding:3px 9px;cursor:pointer;font-family:var(--font);margin-left:4px}
+    .verify-badge:hover{background:var(--blue-mid)}
+    .verify-badge i{font-size:13px}
+    .verify-panel{border-bottom:1px solid var(--border);background:linear-gradient(180deg,var(--blue-light),white);padding:1rem 1.1rem}
+    .vp-head{font-size:13px;font-weight:800;color:var(--blue);display:flex;align-items:center;gap:7px;margin-bottom:.85rem}
+    .vp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .vp-item{display:flex;gap:9px;align-items:flex-start;font-size:13px;color:var(--text);font-weight:600}
+    .vp-item i{font-size:18px;color:var(--blue);flex-shrink:0;margin-top:1px}
+    .vp-item.ok i{color:var(--green)}
+    .vp-item span{display:block;font-size:11px;font-weight:700;color:var(--hint);text-transform:uppercase;letter-spacing:.03em;margin-bottom:1px}
+    .vp-item em{display:block;font-size:11px;font-style:normal;color:var(--muted);font-weight:500;margin-top:1px}
+    .vp-foot{margin-top:.85rem;font-size:11.5px;color:var(--muted);line-height:1.5;display:flex;gap:6px;align-items:flex-start}
+    .vp-foot i{color:var(--blue);flex-shrink:0;margin-top:1px}
+    @media(max-width:768px){.vp-grid{grid-template-columns:1fr}}
+    /* WS3 Milestone payments */
+    .ms-block{margin-top:.85rem;padding-top:.85rem;border-top:1px dashed var(--border)}
+    .ms-title{font-size:12px;font-weight:800;color:var(--green);display:flex;align-items:center;gap:5px;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.03em}
+    .ms-row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);padding:3px 0}
+    .ms-row span:last-child{font-weight:700;color:var(--text)}
+    .ms-row em{font-style:normal;font-weight:500;color:var(--hint);font-size:11px}
+    .ms-note{margin-top:.5rem;font-size:11.5px;color:var(--green);background:var(--green-light);border-radius:6px;padding:.45rem .6rem;line-height:1.45;display:flex;gap:5px;align-items:flex-start}
+    .ms-note i{flex-shrink:0;margin-top:1px}
+    /* WS4 Anti-swarm banner */
+    .anti-swarm{display:flex;gap:11px;align-items:flex-start;background:var(--green-light);border:1px solid #bbf7d0;border-radius:var(--radius-lg);padding:1rem 1.1rem;margin-bottom:1.25rem;font-size:13px;color:var(--text);line-height:1.55}
+    .anti-swarm i{font-size:22px;color:var(--green);flex-shrink:0;margin-top:1px}
+    .anti-swarm strong{color:var(--green)}
+    .anti-swarm em{font-style:italic;font-weight:600}
+    /* WS5 Resolution */
+    .composer-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:.5rem;background:var(--off);border-top:1px solid var(--border);flex-wrap:wrap}
+    .resolve-link{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--muted);background:none;border:none;cursor:pointer;font-family:var(--font)}
+    .resolve-link:hover{color:var(--blue)}
+    .sys-msg{align-self:center;max-width:90%;display:flex;gap:8px;background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:var(--radius);padding:.7rem .9rem;font-size:12.5px;color:var(--text);line-height:1.5}
+    .sys-msg i{color:var(--blue);font-size:18px;flex-shrink:0;margin-top:1px}
+    .sys-time{display:block;font-size:10px;color:var(--hint);margin-top:4px}
+    .resolve-overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;z-index:300;padding:1rem}
+    .resolve-overlay.open{display:flex}
+    .resolve-modal{background:white;border-radius:var(--radius-lg);max-width:460px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+    .resolve-head{padding:1.1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+    .resolve-head h3{font-size:16px;font-weight:800;display:flex;align-items:center;gap:7px}
+    .resolve-head i{color:var(--blue)}
+    .resolve-body{padding:1.25rem}
+    .resolve-steps{display:flex;flex-direction:column;gap:11px}
+    .rs-step{display:flex;gap:11px;font-size:13px;color:var(--muted);line-height:1.5}
+    .rs-step strong{color:var(--text)}
+    .rs-num{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--blue);color:white;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center}
   </style>
 </head>
 <body>
@@ -99,6 +145,10 @@
   </div>
 
   <div class="container" style="padding-bottom:4rem">
+    <div class="anti-swarm">
+      <i class="ti ti-users-group"></i>
+      <div><strong>You're in control — no phone-blowing-up.</strong> On other sites your info gets sold to 5+ contractors who all call at once. On ElectriSolve, only the electricians <em>you</em> choose can message you, and you compare their quotes side by side, right here. No swarm, no pressure.</div>
+    </div>
     <div class="msg-layout">
       <div class="msg-list">
         <div class="msg-list-head">Your conversations</div>
@@ -112,6 +162,7 @@
         </div>
         <div class="msg-conversation" id="msg-conversation" style="display:none">
           <div class="msg-thread-header" id="msg-thread-header"></div>
+          <div class="verify-panel" id="verify-panel" style="display:none"></div>
           <div class="msg-scroll" id="msg-scroll"></div>
           <div class="msg-composer" id="msg-composer"></div>
         </div>
@@ -119,6 +170,28 @@
     </div>
   </div>
 </main>
+
+<!-- WS5 Resolution modal -->
+<div class="resolve-overlay" id="resolve-overlay">
+  <div class="resolve-modal">
+    <div class="resolve-head">
+      <h3><i class="ti ti-gavel"></i> Open a resolution case</h3>
+      <button class="qb-rm" style="font-size:22px;background:none;border:none;cursor:pointer;color:var(--hint)" onclick="closeResolution()">×</button>
+    </div>
+    <div class="resolve-body">
+      <p style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:1rem">ElectriSolve isn't a hands-off middleman. If a job goes wrong, we step in — and because every message, quote, and milestone is on record here, we have the evidence to resolve it fairly.</p>
+      <div class="resolve-steps">
+        <div class="rs-step"><div class="rs-num">1</div><div><strong>Your records are attached automatically</strong><br>Your full conversation and the accepted quote become the case file — nothing to dig up.</div></div>
+        <div class="rs-step"><div class="rs-num">2</div><div><strong>Payments pause at the next milestone</strong><br>Any funds not yet released are held until the case is reviewed.</div></div>
+        <div class="rs-step"><div class="rs-num">3</div><div><strong>A specialist reviews within 1 business day</strong><br>We mediate based on the documented record — not he-said-she-said.</div></div>
+      </div>
+      <label style="display:block;font-size:13px;font-weight:600;margin:1.1rem 0 .4rem">What's the issue? (optional)</label>
+      <textarea id="resolve-text" placeholder="e.g. Work doesn't match the accepted quote..." style="width:100%;border:1.5px solid var(--border2);border-radius:var(--radius);padding:.6rem .8rem;font-family:var(--font);font-size:14px;resize:none;min-height:70px"></textarea>
+      <button class="btn btn-primary btn-full btn-lg" style="margin-top:1rem" onclick="submitResolution()"><i class="ti ti-gavel"></i> Open case &amp; attach my records</button>
+      <p style="font-size:11.5px;color:var(--hint);text-align:center;margin-top:.6rem">Demo flow — illustrates how on-platform records power dispute resolution.</p>
+    </div>
+  </div>
+</div>
 
 <footer class="site-footer">
   <div class="container footer-inner">
@@ -137,6 +210,7 @@ function initials(name){return name.split(' ').map(w=>w[0]).join('').substring(0
 const CONVERSATIONS_MASTER=[
   {
     id:'c1', name:'Mike Torres', company:'Torres Electric LLC', job:'Your panel upgrade · Lakewood', verified:true, unread:true, lastTime:'10:42 AM',
+    creds:{license:'EC.0123456 · Master Electrician',licenseState:'Colorado DORA — Active',insured:'$2M general liability + workers\' comp',years:12,bgCheck:true,reviews:'4.9 ★ (87 jobs on ElectriSolve)',deposit:'No deposit until permit is pulled',permits:'Pulls all permits — never asks homeowner to'},
     messages:[
       {from:'them',type:'text',text:"Hi Sarah — I saw your panel upgrade request come through. I'm a master electrician based in Lakewood, 12 years doing Federal Pacific replacements specifically. Happy to take a look.",time:'Yesterday 4:15 PM'},
       {from:'me',type:'text',text:"Oh great, thank you! Yeah our home inspector flagged the FPE panel as a fire risk. How worried should I be?",time:'Yesterday 4:31 PM'},
@@ -149,6 +223,7 @@ const CONVERSATIONS_MASTER=[
   },
   {
     id:'c2', name:'Rosa Delgado', company:'Bright Spark Electric', job:'Your panel upgrade · Lakewood', verified:true, unread:false, lastTime:'Yesterday',
+    creds:{license:'EC.0098765 · Electrical Contractor',licenseState:'Colorado DORA — Active',insured:'$1M general liability + workers\' comp',years:15,bgCheck:true,reviews:'4.8 ★ (112 jobs on ElectriSolve)',deposit:'No deposit until permit is pulled',permits:'Pulls all permits — never asks homeowner to'},
     messages:[
       {from:'them',type:'text',text:"Hello Sarah! I also bid on your panel upgrade. We're a family-owned shop in Wheat Ridge, 15 years in business. I'd love to earn your trust on this one.",time:'Yesterday 5:30 PM'},
       {from:'them',type:'quote',title:'200A Panel Upgrade',lines:[['Eaton 200A panel','$390'],['Labor','$1,450'],['Permit','$185']],total:'$2,025',status:'pending',time:'Yesterday 5:34 PM'},
@@ -192,16 +267,33 @@ function openConv(id){
   document.getElementById('msg-thread-header').innerHTML=`
     <div class="mth-avatar" style="background:${avatarColor(c.name)}">${initials(c.name)}</div>
     <div class="mth-info">
-      <div class="mth-name">${c.name} ${c.verified?'<i class="ti ti-rosette-discount-check-filled" style="color:var(--blue);font-size:16px" title="Verified electrician"></i>':''}</div>
+      <div class="mth-name">${c.name} ${c.verified?'<button class="verify-badge" onclick="toggleVerify()"><i class="ti ti-rosette-discount-check-filled"></i> Verified — view credentials</button>':''}</div>
       <div class="mth-job">${c.company} · ${c.job}</div>
     </div>`;
   renderMessages(c);
+  renderVerifyPanel(c);
   document.getElementById('msg-composer').innerHTML=`
     <div class="composer-input">
       <textarea id="composer-text" placeholder="Message ${c.name.split(' ')[0]}..." oninput="autoGrow(this)" onkeydown="composerKey(event)"></textarea>
       <button class="composer-send" onclick="sendMessage()"><i class="ti ti-send"></i></button>
     </div>
-    <div class="on-platform-note"><i class="ti ti-shield-lock"></i> Your contact info stays private until you choose to share it</div>`;
+    <div class="composer-foot">
+      <span class="on-platform-note" style="border:none;background:none;padding:0"><i class="ti ti-shield-lock"></i> Contact info stays private until you choose to share it</span>
+      <button class="resolve-link" onclick="openResolution()"><i class="ti ti-gavel"></i> Open a resolution</button>
+    </div>`;
+}
+
+/* WS5: Resolution — platform is NOT a hands-off bystander */
+function openResolution(){
+  document.getElementById('resolve-overlay').classList.add('open');
+}
+function closeResolution(){document.getElementById('resolve-overlay').classList.remove('open');}
+function submitResolution(){
+  const c=CONVERSATIONS.find(x=>x.id===activeConv);
+  closeResolution();
+  // Drop a system message into the thread proving the platform stepped in
+  c.messages.push({from:'system',type:'system',text:'ElectriSolve has opened a resolution case. Your full message history and the accepted quote have been attached as evidence. A specialist will review within 1 business day — payments held at the next milestone are paused until this is resolved.',time:'Just now'});
+  renderMessages(c);renderConvList();
 }
 
 function renderMessages(c){
@@ -210,7 +302,33 @@ function renderMessages(c){
   el.scrollTop=el.scrollHeight;
 }
 
+function renderVerifyPanel(c){
+  const p=document.getElementById('verify-panel');
+  if(!c.creds){p.style.display='none';return;}
+  p.style.display='none'; // collapsed by default
+  const cr=c.creds;
+  p.innerHTML=`
+    <div class="vp-head"><i class="ti ti-shield-check"></i> ElectriSolve verified ${c.name} before they could contact you</div>
+    <div class="vp-grid">
+      <div class="vp-item"><i class="ti ti-license"></i><div><span>License</span>${cr.license}<em>${cr.licenseState}</em></div></div>
+      <div class="vp-item"><i class="ti ti-umbrella"></i><div><span>Insurance</span>${cr.insured}</div></div>
+      <div class="vp-item"><i class="ti ti-user-check"></i><div><span>Background check</span>${cr.bgCheck?'Passed':'—'}</div></div>
+      <div class="vp-item"><i class="ti ti-star"></i><div><span>Track record</span>${cr.reviews}<em>${cr.years} years in business</em></div></div>
+      <div class="vp-item ok"><i class="ti ti-cash-off"></i><div><span>Deposit policy</span>${cr.deposit}</div></div>
+      <div class="vp-item ok"><i class="ti ti-file-certificate"></i><div><span>Permits</span>${cr.permits}</div></div>
+    </div>
+    <div class="vp-foot"><i class="ti ti-info-circle"></i> These protections are built in — no large upfront cash, no "you pull the permit," no unlicensed work. If anything goes wrong, your whole conversation and quote are on record here.</div>`;
+}
+
+function toggleVerify(){
+  const p=document.getElementById('verify-panel');
+  p.style.display=p.style.display==='none'?'block':'none';
+}
+
 function renderBubble(m,convId,idx){
+  if(m.type==='system'){
+    return `<div class="sys-msg"><i class="ti ti-shield-check"></i><div>${m.text}<span class="sys-time">${m.time}</span></div></div>`;
+  }
   if(m.type==='text'){
     return `<div class="bubble bubble-${m.from==='me'?'me':'them'}">${m.text}<span class="bubble-time">${m.time}</span></div>`;
   }
@@ -233,11 +351,25 @@ function renderBubble(m,convId,idx){
     }
     return `<div class="quote-card">
       <div class="quote-head"><i class="ti ti-file-dollar"></i> ${m.title}</div>
-      <div class="quote-body">${lines}<div class="quote-total"><span>Total</span><span>${m.total}</span></div></div>
+      <div class="quote-body">${lines}<div class="quote-total"><span>Total</span><span>${m.total}</span></div>${milestoneHTML(m.total)}</div>
       ${footer}<span class="bubble-time" style="display:block;text-align:left;padding:0 1rem .6rem;color:var(--hint)">${m.time}</span>
     </div>`;
   }
   return '';
+}
+
+// WS3: milestone payment schedule — shows homeowner they're protected
+function milestoneHTML(totalStr){
+  const total=parseFloat(String(totalStr).replace(/[^0-9.]/g,''))||0;
+  if(!total)return '';
+  const fmt=n=>'$'+Math.round(n).toLocaleString();
+  return `<div class="ms-block">
+    <div class="ms-title"><i class="ti ti-shield-check"></i> Your milestone payment plan</div>
+    <div class="ms-row"><span>1 · At permit pull</span><span>${fmt(total*0.10)} <em>(10%)</em></span></div>
+    <div class="ms-row"><span>2 · Work underway</span><span>${fmt(total*0.40)} <em>(40%)</em></span></div>
+    <div class="ms-row"><span>3 · Complete &amp; inspected</span><span>${fmt(total*0.50)} <em>(50%)</em></span></div>
+    <div class="ms-note"><i class="ti ti-info-circle"></i> No large deposit required. You only pay the final 50% after the work passes inspection.</div>
+  </div>`;
 }
 
 function genericPhotoSVG(){
