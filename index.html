@@ -217,40 +217,14 @@ async function fetchTips(query) {
   lastQuery = query;
   showLoading();
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/quicktips', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 600,
-        messages: [{
-          role: 'user',
-          content: `You are a helpful electrician assistant. A homeowner typed: "${query}"
-
-Respond ONLY with valid JSON — no markdown, no explanation:
-{
-  "isElectrical": true,
-  "severity": "high|medium|low",
-  "summary": "One sentence plain-English explanation of what's likely happening",
-  "tips": [
-    "First quick thing to check or try yourself (specific, actionable)",
-    "Second quick check (specific, actionable)",
-    "Third quick check (specific, actionable)"
-  ],
-  "callPro": true,
-  "callProReason": "One sentence on when to call a pro vs handle yourself"
-}
-
-If the query is not electrical, set isElectrical to false and all other fields to null.
-Keep tips short — one sentence each. Focus on safe, simple checks a homeowner can do.`
-        }]
-      })
+      body: JSON.stringify({ query })
     });
     const data = await res.json();
-    const raw = data.content.map(c => c.text || '').join('').replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(raw);
-    if (!parsed.isElectrical || !parsed.tips) { hideTips(); return; }
-    showTips(parsed, query);
+    if (data.error || !data.isElectrical || !data.tips) { hideTips(); return; }
+    showTips(data, query);
   } catch(e) { hideTips(); }
 }
 

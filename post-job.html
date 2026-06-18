@@ -43,6 +43,21 @@
     .bb-badge{display:inline-flex;align-items:center;gap:5px;background:var(--green-light);color:var(--green);font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:1rem}
     .job-summary-pill{display:inline-flex;align-items:center;gap:6px;background:var(--off);border:1px solid var(--border);border-radius:var(--radius);padding:6px 12px;font-size:13px;color:var(--muted);margin:3px}
     @media(max-width:768px){.layout{grid-template-columns:1fr}}
+    /* Quick fixes */
+    .qf-section{background:linear-gradient(180deg,#fffbeb 0%,#fef3c7 100%);border:1.5px solid #fcd34d;border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.25rem}
+    .qf-header{display:flex;gap:12px;align-items:flex-start;margin-bottom:1rem;padding-bottom:.85rem;border-bottom:1px solid #fcd34d}
+    .qf-section-title{font-size:15px;font-weight:800;color:#92400e;letter-spacing:-.01em;margin-bottom:3px}
+    .qf-section-sub{font-size:13px;color:#92400e;opacity:.85;line-height:1.5}
+    .qf-list{display:flex;flex-direction:column;gap:10px}
+    .qf-item{display:flex;gap:11px;background:white;border:1px solid #fde68a;border-radius:var(--radius);padding:.9rem 1rem}
+    .qf-num{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--amber);color:white;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+    .qf-body{flex:1;min-width:0}
+    .qf-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap}
+    .qf-title{font-size:14px;font-weight:700;color:var(--text)}
+    .qf-detail{font-size:14px;color:var(--muted);line-height:1.55}
+    .qf-callpro{margin-top:1rem;display:flex;gap:10px;background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:var(--radius);padding:.85rem 1rem;font-size:13px;color:var(--blue);line-height:1.55}
+    .qf-callpro i{flex-shrink:0;font-size:18px;margin-top:1px}
+    .qf-callpro strong{color:var(--text)}
   </style>
 </head>
 <body>
@@ -307,30 +322,76 @@ document.getElementById('diagnose-btn').addEventListener('click',async()=>{
   setStep(2);
   document.getElementById('ai-thinking').style.display='flex';
   document.getElementById('ai-output').style.display='none';
+
+  const body={description:desc,location:loc,duration:age};
+  if(uploadedB64&&uploadedFile){body.imageBase64=uploadedB64;body.imageType=uploadedFile.type;}
+
   try{
-    const body={description:desc,location:loc,duration:age};
-    if(uploadedB64&&uploadedFile){body.imageBase64=uploadedB64;body.imageType=uploadedFile.type;}
-    const res=await fetch('/api/diagnose',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const res=await fetch('/api/diagnose',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
     if(!res.ok)throw new Error('API error '+res.status);
     const diag=await res.json();
+    if(diag.error)throw new Error(diag.error);
+
     document.getElementById('ai-thinking').style.display='none';
     document.getElementById('ai-output').style.display='block';
     document.getElementById('diagnosis-summary').textContent=diag.summary;
     const sc=diag.severity==='high'?'red':diag.severity==='medium'?'amber':'green';
     const sl=diag.severity==='high'?'Urgent':diag.severity==='medium'?'Standard':'Minor';
-    document.getElementById('diagnosis-findings').innerHTML=`
+
+    // Render quick fixes section
+    let quickFixesHtml='';
+    if(diag.quickFixes&&Array.isArray(diag.quickFixes)&&diag.quickFixes.length>0){
+      const fixItems=diag.quickFixes.map((f,i)=>{
+        const diffColor=f.difficulty==='easy'?'green':'amber';
+        const diffLabel=f.difficulty==='easy'?'Easy':'Moderate';
+        return `
+          <div class="qf-item">
+            <div class="qf-num">${i+1}</div>
+            <div class="qf-body">
+              <div class="qf-head">
+                <span class="qf-title">${f.title}</span>
+                <span class="badge badge-${diffColor}" style="font-size:11px">${diffLabel}</span>
+              </div>
+              <div class="qf-detail">${f.detail}</div>
+            </div>
+          </div>`;
+      }).join('');
+      quickFixesHtml=`
+        <div class="qf-section">
+          <div class="qf-header">
+            <i class="ti ti-bulb" style="color:var(--amber);font-size:22px"></i>
+            <div>
+              <div class="qf-section-title">Try these first — you might fix it yourself</div>
+              <div class="qf-section-sub">Safe steps to try before hiring a pro. Most kitchen breaker issues, flickering lights, and dead outlets have a simple cause.</div>
+            </div>
+          </div>
+          <div class="qf-list">${fixItems}</div>
+          ${diag.whenToCallPro?`<div class="qf-callpro"><i class="ti ti-phone-call" style="color:var(--blue)"></i><div><strong>When to stop and call a pro:</strong> ${diag.whenToCallPro}</div></div>`:''}
+        </div>`;
+    }
+
+    document.getElementById('diagnosis-findings').innerHTML=quickFixesHtml+`
+      <div class="ai-label" style="margin:1.5rem 0 .75rem"><i class="ti ti-clipboard-list"></i> JOB DETAILS FOR ELECTRICIAN</div>
       <div class="finding-row"><span class="finding-key">Job title</span><span class="finding-val">${diag.title}</span></div>
       <div class="finding-row"><span class="finding-key">Severity</span><span class="finding-val"><span class="badge badge-${sc}">${sl}</span></span></div>
       <div class="finding-row"><span class="finding-key">Scope</span><span class="finding-val">${diag.scope}</span></div>
       <div class="finding-row"><span class="finding-key">Estimated cost</span><span class="finding-val">${diag.estimatedCost}</span></div>
       <div class="finding-row"><span class="finding-key">Time to complete</span><span class="finding-val">${diag.timeToComplete}</span></div>
       <div class="finding-row"><span class="finding-key">Permit needed</span><span class="finding-val">${diag.permitRequired?'Yes':'No'}</span></div>`;
-    if(diag.safetyWarning&&diag.safetyWarning!=='null'){document.getElementById('diagnosis-warn').style.display='flex';document.getElementById('warn-text').textContent=diag.safetyWarning;}
+
+    if(diag.safetyWarning&&diag.safetyWarning!=='null'&&diag.safetyWarning!==null){
+      document.getElementById('diagnosis-warn').style.display='flex';
+      document.getElementById('warn-text').textContent=diag.safetyWarning;
+    }
     window._diagnosis=diag;
   }catch(e){
     document.getElementById('ai-thinking').style.display='none';
     document.getElementById('ai-output').style.display='block';
-    document.getElementById('diagnosis-summary').textContent='Analysis unavailable — your request will still be routed to a local electrician.';
+    document.getElementById('diagnosis-summary').textContent='Analysis unavailable — your request will still be routed to a local electrician who can help.';
   }
 });
 
