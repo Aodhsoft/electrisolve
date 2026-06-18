@@ -79,6 +79,22 @@
     .lc-meta span{white-space:nowrap}
     .lc-badge{flex-shrink:0;display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:var(--green);background:var(--green-light);padding:3px 8px;border-radius:10px}
     @media(max-width:480px){.lc-badge{display:none}}
+    /* Estimate disclaimer (liability) */
+    .est-disclaimer{display:flex;gap:8px;align-items:flex-start;background:var(--amber-light);border:1px solid #fde68a;border-radius:var(--radius);padding:.75rem .85rem;margin-top:1rem;font-size:12px;color:#78350f;line-height:1.5}
+    .est-disclaimer i{color:var(--amber);font-size:16px;flex-shrink:0;margin-top:1px}
+    .est-disclaimer a{color:var(--amber);font-weight:700;text-decoration:underline}
+    /* Job-type selector (service vs install) */
+    .jobtype-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .jobtype-card{text-align:left;background:white;border:2px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem;cursor:pointer;font-family:var(--font);transition:all .12s}
+    .jobtype-card:hover{border-color:var(--blue-mid)}
+    .jobtype-card.active{border-color:var(--blue);background:var(--blue-light)}
+    .jobtype-card>i{font-size:26px;color:var(--blue);margin-bottom:.4rem;display:block}
+    .jt-name{font-size:15px;font-weight:800;color:var(--text);margin-bottom:.25rem}
+    .jt-desc{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:.6rem}
+    .jt-flag{font-size:11px;font-weight:700;color:var(--blue);display:flex;align-items:center;gap:4px}
+    .jt-note{display:flex;gap:8px;align-items:flex-start;background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:var(--radius);padding:.75rem .85rem;margin-bottom:1.1rem;font-size:12.5px;color:var(--text);line-height:1.5}
+    .jt-note i{color:var(--blue);font-size:16px;flex-shrink:0;margin-top:1px}
+    @media(max-width:600px){.jobtype-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -122,6 +138,23 @@
         <!-- STEP 1 -->
         <div class="step-panel active" id="step-1">
           <div class="card" style="margin-bottom:1rem">
+            <div class="card-title">What kind of job is this?</div>
+            <div class="jobtype-grid">
+              <button type="button" class="jobtype-card active" id="jt-service" onclick="setJobType('service')">
+                <i class="ti ti-tools"></i>
+                <div class="jt-name">Service / Repair</div>
+                <div class="jt-desc">Something's wrong — tripping breaker, dead outlet, flickering lights. An electrician diagnoses on site, then quotes.</div>
+                <div class="jt-flag"><i class="ti ti-map-pin"></i> On-site diagnosis first</div>
+              </button>
+              <button type="button" class="jobtype-card" id="jt-install" onclick="setJobType('install')">
+                <i class="ti ti-plug"></i>
+                <div class="jt-name">Installation / Upgrade</div>
+                <div class="jt-desc">You know what you want added — EV charger, panel upgrade, new circuit, fixtures. Scope is clearer up front.</div>
+                <div class="jt-flag"><i class="ti ti-clipboard-check"></i> Quote, then on-site confirm</div>
+              </button>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:1rem">
             <div class="card-title">Add a photo <span style="font-weight:400;color:var(--hint);font-size:14px">(optional but helpful)</span></div>
             <div class="upload-zone" id="upload-zone">
               <i class="ti ti-camera-up"></i>
@@ -135,9 +168,9 @@
             <input type="file" id="file-input" accept="image/*" style="display:none">
           </div>
           <div class="card">
-            <div class="card-title">What's happening?</div>
+            <div class="card-title" id="whats-happening-title">What's happening?</div>
             <div class="form-group">
-              <label for="issue-desc">Describe the problem</label>
+              <label for="issue-desc" id="issue-desc-label">Describe the problem</label>
               <textarea id="issue-desc" placeholder="e.g. Breaker keeps tripping when I run the dishwasher. It's the 20A breaker in the kitchen. Started last week."></textarea>
             </div>
             <div class="form-row">
@@ -152,7 +185,7 @@
                 </select>
               </div>
               <div class="form-group">
-                <label for="issue-age">How long has this been happening?</label>
+                <label for="issue-age" id="issue-age-label">How long has this been happening?</label>
                 <select id="issue-age">
                   <option value="">Select timeframe</option>
                   <option>Just started</option><option>A few days</option>
@@ -243,9 +276,10 @@
                 <div style="flex:1;height:1px;background:var(--border)"></div>
               </div>
 
-              <p style="font-size:14px;color:var(--muted);margin-bottom:1.1rem;line-height:1.6">
+              <p style="font-size:14px;color:var(--muted);margin-bottom:1.1rem;line-height:1.6" id="success-blurb">
                 These verified pros serve your area and may reach out about your job. <strong>You'll talk to them right here on ElectriSolve</strong> — compare quotes side by side, no phone tag, your contact info stays private until you choose to share it.
               </p>
+              <div id="jobtype-note" class="jt-note"></div>
 
               <div id="local-contractors"></div>
 
@@ -327,6 +361,24 @@ window.addEventListener('DOMContentLoaded', () => {
 
 const zone=document.getElementById('upload-zone'),fileInput=document.getElementById('file-input'),preview=document.getElementById('img-preview'),previewImg=document.getElementById('preview-img'),removeBtn=document.getElementById('remove-img');
 let uploadedFile=null,uploadedB64=null;
+let jobType='service';
+function setJobType(t){
+  jobType=t;
+  document.getElementById('jt-service').classList.toggle('active',t==='service');
+  document.getElementById('jt-install').classList.toggle('active',t==='install');
+  // Swap copy to match the flow
+  if(t==='install'){
+    document.getElementById('whats-happening-title').textContent='What do you want installed or upgraded?';
+    document.getElementById('issue-desc-label').textContent='Describe the work';
+    document.getElementById('issue-desc').placeholder='e.g. Install a Level 2 EV charger in the garage. Panel is ~25 ft away. ChargePoint Home Flex, 50A circuit.';
+    document.getElementById('issue-age-label').textContent='When do you want it done?';
+  }else{
+    document.getElementById('whats-happening-title').textContent="What's happening?";
+    document.getElementById('issue-desc-label').textContent='Describe the problem';
+    document.getElementById('issue-desc').placeholder="e.g. Breaker keeps tripping when I run the dishwasher. It's the 20A breaker in the kitchen. Started last week.";
+    document.getElementById('issue-age-label').textContent='How long has this been happening?';
+  }
+}
 zone.addEventListener('click',()=>fileInput.click());
 zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
 zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
@@ -354,7 +406,7 @@ document.getElementById('diagnose-btn').addEventListener('click',async()=>{
   document.getElementById('ai-thinking').style.display='flex';
   document.getElementById('ai-output').style.display='none';
 
-  const body={description:desc,location:loc,duration:age};
+  const body={description:desc,location:loc,duration:age,jobType:jobType};
   if(uploadedB64&&uploadedFile){body.imageBase64=uploadedB64;body.imageType=uploadedFile.type;}
 
   try{
@@ -434,7 +486,8 @@ document.getElementById('diagnose-btn').addEventListener('click',async()=>{
       <div class="finding-row"><span class="finding-key">Scope</span><span class="finding-val">${diag.scope}</span></div>
       <div class="finding-row"><span class="finding-key">Estimated cost</span><span class="finding-val">${diag.estimatedCost}</span></div>
       <div class="finding-row"><span class="finding-key">Time to complete</span><span class="finding-val">${diag.timeToComplete}</span></div>
-      <div class="finding-row"><span class="finding-key">Permit needed</span><span class="finding-val">${diag.permitRequired?'Yes':'No'}</span></div>`;
+      <div class="finding-row"><span class="finding-key">Permit needed</span><span class="finding-val">${diag.permitRequired?'Yes':'No'}</span></div>
+      <div class="est-disclaimer"><i class="ti ti-info-circle"></i> <span><strong>This is a preliminary estimate, not a final price.</strong> It's an AI-generated ballpark based on your description. The actual cost is set by the electrician after an in-person assessment and can change if the work involves more than initially described. See our <a href="terms.html" target="_blank">Terms &amp; Estimate Policy</a>.</span></div>`;
 
     if(diag.safetyWarning&&diag.safetyWarning!=='null'&&diag.safetyWarning!==null){
       document.getElementById('diagnosis-warn').style.display='flex';
@@ -467,6 +520,14 @@ function completeSubmission(){
   ].filter(Boolean).join('');
   if(pills)document.getElementById('job-summary-display').innerHTML=`<div style="margin-bottom:.25rem;font-size:12px;font-weight:700;color:var(--hint);letter-spacing:.04em">YOUR JOB</div><div style="display:flex;flex-wrap:wrap;gap:2px">${pills}</div>`;
   renderLocalContractors();
+  const jtNote=document.getElementById('jobtype-note');
+  if(jtNote){
+    if(jobType==='install'){
+      jtNote.innerHTML='<i class="ti ti-clipboard-check"></i> <span><strong>Installation / upgrade:</strong> electricians can send a preliminary quote based on your description. They\'ll confirm the final price after a quick on-site check before starting.</span>';
+    }else{
+      jtNote.innerHTML='<i class="ti ti-map-pin"></i> <span><strong>Service / repair:</strong> for safety, an electrician will diagnose the issue in person before giving a firm price. Any number you see beforehand is a rough range, not a final quote.</span>';
+    }
+  }
   setStep('success');
   [1,2,3].forEach(i=>{document.getElementById('ps-'+i).className='progress-step done';const l=document.getElementById('pl-'+i);if(l)l.className='progress-line done';});
 }

@@ -37,6 +37,14 @@
       "dest": "/funding.html"
     },
     {
+      "src": "/terms",
+      "dest": "/terms.html"
+    },
+    {
+      "src": "/parts",
+      "dest": "/parts.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }

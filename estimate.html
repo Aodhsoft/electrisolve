@@ -89,6 +89,9 @@
 
     /* ── Disclaimer ── */
     .disclaimer { font-size: 12px; color: var(--hint); line-height: 1.6; padding: .9rem 0; border-top: 1px solid var(--border); margin-top: 1.5rem; }
+    .est-callout{display:flex;gap:8px;align-items:flex-start;background:var(--amber-light);border:1px solid #fde68a;border-radius:var(--radius);padding:.8rem .9rem;margin-top:1rem;font-size:12.5px;color:#78350f;line-height:1.5}
+    .est-callout i{color:var(--amber);font-size:17px;flex-shrink:0;margin-top:1px}
+    .est-callout a{color:var(--amber);font-weight:700;text-decoration:underline}
     .hd-note { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--hint); background: var(--off); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; margin-bottom: .75rem; }
     .hd-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; background: #f96302; color: white; padding: 2px 8px; border-radius: 4px; }
 
@@ -179,6 +182,7 @@
           <!-- Custom add rows -->
           <div id="custom-rows"></div>
           <button class="add-mat-btn" id="add-mat-btn"><i class="ti ti-plus"></i> Add custom material</button>
+          <a href="parts.html" target="_blank" style="display:flex;align-items:center;gap:8px;margin-top:.85rem;padding:.7rem .9rem;background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:var(--radius);text-decoration:none;font-size:13px;font-weight:600;color:var(--blue)"><i class="ti ti-building-store" style="font-size:17px"></i> Browse the live partner parts catalog →</a>
         </div>
 
         <!-- LABOR -->
@@ -238,6 +242,8 @@
             <div class="val" id="sum-total-val">$0</div>
           </div>
         </div>
+
+        <div class="est-callout"><i class="ti ti-alert-triangle"></i> <span><strong>Planning estimate only — not a price quote.</strong> Real cost is set by a licensed electrician after an in-person visit and may change if the job involves more than expected. <a href="terms.html" target="_blank">Terms &amp; Estimate Policy</a></span></div>
 
         <div style="margin-top:1rem">
           <a href="post-job.html" class="btn btn-primary btn-full btn-lg">

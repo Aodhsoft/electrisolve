@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parts Catalog — ElectriSolve × Front Range Electrical Supply</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .parts-hero{background:linear-gradient(160deg,#1e3a8a,var(--blue));color:white;padding:2.5rem 0}
+    .parts-hero .partner-row{display:flex;align-items:center;gap:14px;margin-bottom:1rem;flex-wrap:wrap}
+    .partner-chip{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700}
+    .parts-hero h1{font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:800;letter-spacing:-.025em;margin-bottom:.4rem}
+    .parts-hero p{font-size:15px;opacity:.9;max-width:640px;line-height:1.6}
+    .parts-toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:1.25rem 0;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);z-index:10}
+    .parts-search{flex:1;min-width:200px;display:flex;align-items:center;gap:8px;border:1.5px solid var(--border2);border-radius:var(--radius);padding:.6rem .85rem}
+    .parts-search input{border:none;outline:none;flex:1;font-family:var(--font);font-size:14px;color:var(--text)}
+    .parts-search i{color:var(--hint)}
+    .cat-filter{display:flex;gap:6px;flex-wrap:wrap}
+    .cat-btn{padding:.5rem .9rem;border:1.5px solid var(--border2);background:white;border-radius:20px;font-family:var(--font);font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .12s}
+    .cat-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue)}
+    .trade-toggle{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text)}
+    .switch{position:relative;width:42px;height:24px;flex-shrink:0}
+    .switch input{opacity:0;width:0;height:0}
+    .slider{position:absolute;inset:0;background:var(--border);border-radius:24px;transition:.2s;cursor:pointer}
+    .slider:before{content:"";position:absolute;height:18px;width:18px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s}
+    .switch input:checked+.slider{background:var(--blue)}
+    .switch input:checked+.slider:before{transform:translateX(18px)}
+    .parts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;padding:1.5rem 0 3rem}
+    .part-card{border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem;background:white;box-shadow:var(--shadow);display:flex;flex-direction:column}
+    .part-cat{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--blue);margin-bottom:.4rem}
+    .part-name{font-size:15px;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:.25rem}
+    .part-sub{font-size:12.5px;color:var(--muted);margin-bottom:.5rem;flex:1}
+    .part-sku{font-size:11px;color:var(--hint);font-family:monospace;margin-bottom:.75rem}
+    .part-price-row{display:flex;align-items:baseline;justify-content:space-between;padding-top:.75rem;border-top:1px solid var(--border)}
+    .part-price{font-size:20px;font-weight:800;color:var(--text)}
+    .part-price .unit{font-size:12px;font-weight:600;color:var(--hint)}
+    .part-retail{font-size:12px;color:var(--hint);text-decoration:line-through}
+    .part-save{font-size:11px;font-weight:700;color:var(--green);background:var(--green-light);padding:2px 7px;border-radius:10px}
+    .part-stock{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--green);margin-top:.5rem}
+    .part-stock.low{color:var(--amber)}
+    .parts-note{background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin:1.5rem 0;font-size:13px;color:var(--text);line-height:1.55;display:flex;gap:9px;align-items:flex-start}
+    .parts-note i{color:var(--blue);font-size:20px;flex-shrink:0;margin-top:1px}
+    .no-results{text-align:center;color:var(--hint);padding:3rem;font-size:15px}
+    .parts-disclaimer{font-size:11.5px;color:var(--hint);line-height:1.5;padding:1rem 0 2rem;border-top:1px solid var(--border)}
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon"><i class="ti ti-bolt"></i></div>
+      <span class="logo-text">Electri<span>Solve</span></span>
+    </a>
+    <nav class="header-nav">
+      <a href="jobs.html" class="nav-link">Browse jobs</a>
+      <a href="estimate.html" class="nav-link">Estimate costs</a>
+      <a href="messages.html" class="nav-link">Messages</a>
+      <a href="why.html" class="nav-link">Why ElectriSolve</a>
+      <a href="post-job.html" class="btn btn-primary">Get free estimates</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="parts-hero">
+    <div class="container">
+      <div class="partner-row">
+        <span class="partner-chip"><i class="ti ti-bolt"></i> ElectriSolve</span>
+        <i class="ti ti-plus" style="opacity:.6"></i>
+        <span class="partner-chip"><i class="ti ti-building-store"></i> Front Range Electrical Supply</span>
+        <span class="partner-chip" style="background:var(--green);border-color:var(--green)"><i class="ti ti-discount-check"></i> Partner pricing</span>
+      </div>
+      <h1>Live parts catalog, wired into every estimate</h1>
+      <p>Real-time parts and pricing from your local supplier — so estimates use accurate material costs, and contractors order the exact parts a job needs in one click. This is a demonstration catalog for the partnership.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="parts-note">
+      <i class="ti ti-info-circle"></i>
+      <div><strong>Demo catalog with realistic market pricing.</strong> Parts and prices below illustrate how a supplier partner's live inventory would feed ElectriSolve's estimator. In production this would sync to the partner's real catalog and stock. Toggle <strong>Trade pricing</strong> to see the contractor-account discount vs. retail.</div>
+    </div>
+
+    <div class="parts-toolbar">
+      <div class="parts-search">
+        <i class="ti ti-search"></i>
+        <input type="text" id="parts-search" placeholder="Search parts (e.g. GFCI, breaker, wire)..." oninput="renderParts()">
+      </div>
+      <div class="cat-filter" id="cat-filter"></div>
+      <label class="trade-toggle">
+        <span class="switch"><input type="checkbox" id="trade-toggle" onchange="renderParts()"><span class="slider"></span></span>
+        Trade pricing
+      </label>
+    </div>
+
+    <div class="parts-grid" id="parts-grid"></div>
+
+    <p class="parts-disclaimer">Demonstration catalog. Pricing reflects approximate 2026 market ranges for residential electrical materials and is for illustration of the ElectriSolve × supplier integration only — not an offer of sale. Real catalog, SKUs, stock levels, and trade pricing would be supplied by the partner. Material estimates shown anywhere on ElectriSolve are planning figures; see <a href="terms.html" style="color:var(--blue)">Terms &amp; Estimate Policy</a>.</p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span style="font-weight:700;color:var(--text)">ElectriSolve</span>
+    <span>Parts catalog demo · <a href="terms.html" style="color:var(--blue)">Terms</a></span>
+  </div>
+</footer>
+
+<script>
+// Demo parts catalog — realistic 2026 market pricing. retail = homeowner-facing, trade = contractor acct price.
+const PARTS = [
+  {cat:'Outlets & Switches', name:'15A Duplex Outlet', sub:'Leviton residential grade', sku:'FRES-OUT-15A', unit:'ea', retail:3.49, trade:1.95, stock:'in'},
+  {cat:'Outlets & Switches', name:'20A Duplex Outlet', sub:'Commercial grade, spec', sku:'FRES-OUT-20A', unit:'ea', retail:7.25, trade:4.10, stock:'in'},
+  {cat:'Outlets & Switches', name:'GFCI Outlet 15A', sub:'Leviton SmartlockPro', sku:'FRES-GFCI-15', unit:'ea', retail:16.99, trade:11.50, stock:'in'},
+  {cat:'Outlets & Switches', name:'GFCI Outlet 20A', sub:'Leviton self-test', sku:'FRES-GFCI-20', unit:'ea', retail:22.50, trade:15.25, stock:'in'},
+  {cat:'Outlets & Switches', name:'AFCI/GFCI Combo Outlet', sub:'Pass & Seymour 20A', sku:'FRES-COMBO-20', unit:'ea', retail:46.00, trade:31.00, stock:'low'},
+  {cat:'Outlets & Switches', name:'Single-Pole Switch 15A', sub:'Leviton decora', sku:'FRES-SW-1P', unit:'ea', retail:3.25, trade:1.80, stock:'in'},
+  {cat:'Outlets & Switches', name:'3-Way Switch', sub:'Leviton decora', sku:'FRES-SW-3W', unit:'ea', retail:6.50, trade:3.95, stock:'in'},
+  {cat:'Outlets & Switches', name:'LED Dimmer Switch', sub:'Lutron Diva CL', sku:'FRES-DIM-LED', unit:'ea', retail:26.99, trade:18.50, stock:'in'},
+  {cat:'Outlets & Switches', name:'NEMA 14-50 Outlet', sub:'EV / range, flush mount', sku:'FRES-1450', unit:'ea', retail:19.99, trade:13.25, stock:'in'},
+
+  {cat:'Breakers', name:'15A Single-Pole Breaker', sub:'Square D QO', sku:'FRES-BR-15', unit:'ea', retail:12.50, trade:7.90, stock:'in'},
+  {cat:'Breakers', name:'20A Single-Pole Breaker', sub:'Square D QO', sku:'FRES-BR-20', unit:'ea', retail:13.75, trade:8.60, stock:'in'},
+  {cat:'Breakers', name:'30A Double-Pole Breaker', sub:'Square D QO', sku:'FRES-BR-30D', unit:'ea', retail:19.50, trade:12.80, stock:'in'},
+  {cat:'Breakers', name:'50A Double-Pole Breaker', sub:'Square D QO, EV/range', sku:'FRES-BR-50D', unit:'ea', retail:24.99, trade:16.40, stock:'in'},
+  {cat:'Breakers', name:'AFCI Breaker 20A', sub:'Square D QO plug-on', sku:'FRES-AFCI-20', unit:'ea', retail:44.00, trade:29.50, stock:'low'},
+  {cat:'Breakers', name:'GFCI Breaker 20A', sub:'Square D QO', sku:'FRES-GFCIB-20', unit:'ea', retail:51.00, trade:34.75, stock:'in'},
+
+  {cat:'Wire & Cable', name:'Romex 14-2 NM-B', sub:'Southwire, per ft', sku:'FRES-RX-142', unit:'ft', retail:0.72, trade:0.48, stock:'in'},
+  {cat:'Wire & Cable', name:'Romex 12-2 NM-B', sub:'Southwire, per ft', sku:'FRES-RX-122', unit:'ft', retail:0.98, trade:0.66, stock:'in'},
+  {cat:'Wire & Cable', name:'Romex 10-2 NM-B', sub:'Southwire, per ft', sku:'FRES-RX-102', unit:'ft', retail:1.45, trade:0.98, stock:'in'},
+  {cat:'Wire & Cable', name:'Romex 6-3 NM-B', sub:'Range/dryer, per ft', sku:'FRES-RX-63', unit:'ft', retail:2.95, trade:2.05, stock:'in'},
+  {cat:'Wire & Cable', name:'THHN 12 AWG Stranded', sub:'Per ft, black', sku:'FRES-THHN-12', unit:'ft', retail:0.32, trade:0.19, stock:'in'},
+
+  {cat:'Panels & Load Centers', name:'200A Main Panel', sub:'Square D QO, 40-space', sku:'FRES-PNL-200', unit:'ea', retail:389.00, trade:268.00, stock:'low'},
+  {cat:'Panels & Load Centers', name:'100A Subpanel', sub:'Eaton, 20-space', sku:'FRES-PNL-100', unit:'ea', retail:142.00, trade:96.00, stock:'in'},
+  {cat:'Panels & Load Centers', name:'Whole-Home Surge Protector', sub:'Panel-mount, Type 2', sku:'FRES-SPD', unit:'ea', retail:89.00, trade:58.00, stock:'in'},
+
+  {cat:'Boxes & Accessories', name:'1-Gang Old-Work Box', sub:'Plastic, 18 cu in', sku:'FRES-BX-1G', unit:'ea', retail:2.10, trade:1.15, stock:'in'},
+  {cat:'Boxes & Accessories', name:'Weatherproof Outlet Box', sub:'In-use cover incl.', sku:'FRES-BX-WP', unit:'ea', retail:12.50, trade:8.20, stock:'in'},
+  {cat:'Boxes & Accessories', name:'Ceiling Fan Brace & Box', sub:'Old-work rated', sku:'FRES-FAN-BR', unit:'ea', retail:17.25, trade:11.40, stock:'in'},
+  {cat:'Boxes & Accessories', name:'Wire Connectors (assorted)', sub:'Ideal, 100-pk', sku:'FRES-WN-100', unit:'pk', retail:9.50, trade:5.75, stock:'in'},
+  {cat:'Boxes & Accessories', name:'1" EMT Conduit', sub:'Per 10 ft stick', sku:'FRES-EMT-1', unit:'10ft', retail:11.50, trade:7.60, stock:'in'},
+];
+
+const CATS = ['All', ...Array.from(new Set(PARTS.map(p => p.cat)))];
+let activeCat = 'All';
+
+function renderCats(){
+  document.getElementById('cat-filter').innerHTML = CATS.map(c =>
+    `<button class="cat-btn${c===activeCat?' active':''}" onclick="setCat('${c.replace(/'/g,"\\'")}')">${c}</button>`
+  ).join('');
+}
+function setCat(c){ activeCat=c; renderCats(); renderParts(); }
+
+function renderParts(){
+  const q = (document.getElementById('parts-search').value||'').toLowerCase();
+  const trade = document.getElementById('trade-toggle').checked;
+  const list = PARTS.filter(p =>
+    (activeCat==='All' || p.cat===activeCat) &&
+    (!q || (p.name+' '+p.sub+' '+p.cat+' '+p.sku).toLowerCase().includes(q))
+  );
+  const grid = document.getElementById('parts-grid');
+  if(!list.length){ grid.innerHTML = '<div class="no-results">No parts match your search.</div>'; return; }
+  grid.innerHTML = list.map(p => {
+    const price = trade ? p.trade : p.retail;
+    const showSave = trade && p.retail > p.trade;
+    const savePct = showSave ? Math.round((1 - p.trade/p.retail)*100) : 0;
+    const fmt = n => '$'+n.toFixed(2);
+    return `<div class="part-card">
+      <div class="part-cat">${p.cat}</div>
+      <div class="part-name">${p.name}</div>
+      <div class="part-sub">${p.sub}</div>
+      <div class="part-sku">${p.sku}</div>
+      <div class="part-price-row">
+        <div>
+          <span class="part-price">${fmt(price)}<span class="unit">/${p.unit}</span></span>
+          ${showSave ? `<div><span class="part-retail">${fmt(p.retail)}</span> <span class="part-save">Save ${savePct}%</span></div>` : ''}
+        </div>
+      </div>
+      <span class="part-stock ${p.stock==='low'?'low':''}"><i class="ti ti-${p.stock==='low'?'alert-triangle':'circle-check'}"></i> ${p.stock==='low'?'Low stock':'In stock'}</span>
+    </div>`;
+  }).join('');
+}
+
+renderCats();
+renderParts();
+</script>
+</body>
+</html>
