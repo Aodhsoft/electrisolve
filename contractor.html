@@ -30,6 +30,18 @@
     .auth-toggle button.active{background:var(--blue);color:white}
     .pricing-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
     .plan-tag{font-size:11px;font-weight:700;background:var(--blue);color:white;padding:3px 10px;border-radius:20px;letter-spacing:.04em}
+    /* Billing-cycle toggle (multi-month prepay discount) */
+    .billing-toggle{display:inline-flex;gap:4px;background:var(--off);border:1px solid var(--border);border-radius:999px;padding:4px;margin:0 auto 1.75rem;flex-wrap:wrap;justify-content:center}
+    .billing-toggle button{border:none;background:none;font-family:var(--font);font-size:13.5px;font-weight:700;color:var(--muted);padding:.5rem 1.1rem;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .12s}
+    .billing-toggle button:hover{color:var(--text)}
+    .billing-toggle button.active{background:var(--white);color:var(--blue);box-shadow:var(--shadow)}
+    .bt-save{font-size:10.5px;font-weight:800;background:var(--green-light);color:var(--green);padding:1px 7px;border-radius:999px;letter-spacing:.02em}
+    .billing-toggle button.active .bt-save{background:var(--green);color:white}
+    .billing-toggle.compact{margin-bottom:1rem;display:flex;width:100%}
+    .billing-toggle.compact button{flex:1;justify-content:center;padding:.45rem .5rem;font-size:12.5px}
+    .pricing-billing{font-size:12.5px;font-weight:600;color:var(--muted);margin:-.05rem 0 .9rem;line-height:1.4;min-height:1.2em}
+    .pricing-billing .pb-save{color:var(--green);font-weight:800}
+    .pricing-was{font-size:15px;font-weight:600;color:var(--hint);text-decoration:line-through;margin-left:6px}
     .calc-section{background:var(--off);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;margin:2.5rem 0}
     .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start}
     .calc-inputs{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1rem}
@@ -215,11 +227,12 @@
       <div class="value-card"><div class="icon"><i class="ti ti-calculator"></i></div><h3>Labor rate calculator</h3><p>Built-in tool to calculate your true cost per hour based on wages, burden, overhead, and your local area cost index.</p></div>
       <div class="value-card"><div class="icon"><i class="ti ti-trending-up"></i></div><h3>Bid analytics</h3><p>Track your win rate, average bid value, and which job types you land most — Pro and Company plans included.</p></div>
     </div>
-    <div style="text-align:center;margin:3rem 0 2rem"><h2 style="font-size:1.6rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.35rem">Simple, flat pricing</h2><p style="font-size:16px;color:var(--muted)">Cancel anytime. No contracts, no setup fees.</p></div>
+    <div style="text-align:center;margin:3rem 0 1.5rem"><h2 style="font-size:1.6rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.35rem">Simple, flat pricing</h2><p style="font-size:16px;color:var(--muted)">Cancel anytime. No contracts, no setup fees. <strong style="color:var(--text)">Prepay and save up to 20%.</strong></p></div>
+    <div style="text-align:center"><div class="billing-toggle" id="billing-toggle-main"></div></div>
     <div class="pricing-grid-3">
-      <div class="pricing-card"><div class="pricing-name">Starter</div><div class="pricing-price">$79<span>/mo</span></div><div class="pricing-desc">One service area. Great for solo operators.</div><ul class="pricing-features"><li><i class="ti ti-check"></i>1 service area (15-mile radius)</li><li><i class="ti ti-check"></i>Up to 20 job leads/month</li><li><i class="ti ti-check"></i>Basic contractor profile</li><li><i class="ti ti-check"></i>Email job alerts</li><li><i class="ti ti-check"></i>Labor rate calculator</li></ul><button class="btn btn-secondary btn-full" onclick="showPage('page-signup')">Get started</button></div>
-      <div class="pricing-card featured"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem"><div class="pricing-name">Pro</div><span class="plan-tag">MOST POPULAR</span></div><div class="pricing-price">$179<span>/mo</span></div><div class="pricing-desc">Unlimited leads. Priority placement.</div><ul class="pricing-features"><li><i class="ti ti-check"></i>3 service areas (25-mile radius each)</li><li><i class="ti ti-check"></i>Unlimited job leads</li><li><i class="ti ti-check"></i>Priority listing placement</li><li><i class="ti ti-check"></i>Enhanced profile + reviews</li><li><i class="ti ti-check"></i>SMS + email job alerts</li><li><i class="ti ti-check"></i>Full bid analytics</li><li><i class="ti ti-check"></i>Labor rate calculator</li></ul><button class="btn btn-primary btn-full" onclick="showPage('page-signup')">Get started</button></div>
-      <div class="pricing-card"><div class="pricing-name">Company</div><div class="pricing-price">$349<span>/mo</span></div><div class="pricing-desc">Multi-truck. Full metro coverage.</div><ul class="pricing-features"><li><i class="ti ti-check"></i>Unlimited service areas</li><li><i class="ti ti-check"></i>Up to 5 technician profiles</li><li><i class="ti ti-check"></i>Top priority placement</li><li><i class="ti ti-check"></i>Dedicated account manager</li><li><i class="ti ti-check"></i>Custom reporting &amp; exports</li><li><i class="ti ti-check"></i>Labor rate calculator (all roles)</li></ul><button class="btn btn-secondary btn-full" onclick="showPage('page-signup')">Get started</button></div>
+      <div class="pricing-card"><div class="pricing-name">Starter</div><div class="pricing-price" data-plan="starter">$79<span>/mo</span></div><div class="pricing-billing" data-plan="starter"></div><div class="pricing-desc">One service area. Great for solo operators.</div><ul class="pricing-features"><li><i class="ti ti-check"></i>1 service area (15-mile radius)</li><li><i class="ti ti-check"></i>Up to 20 job leads/month</li><li><i class="ti ti-check"></i>Basic contractor profile</li><li><i class="ti ti-check"></i>Email job alerts</li><li><i class="ti ti-check"></i>Labor rate calculator</li></ul><button class="btn btn-secondary btn-full" onclick="showPage('page-signup')">Get started</button></div>
+      <div class="pricing-card featured"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem"><div class="pricing-name">Pro</div><span class="plan-tag">MOST POPULAR</span></div><div class="pricing-price" data-plan="pro">$179<span>/mo</span></div><div class="pricing-billing" data-plan="pro"></div><div class="pricing-desc">Unlimited leads. Priority placement.</div><ul class="pricing-features"><li><i class="ti ti-check"></i>3 service areas (25-mile radius each)</li><li><i class="ti ti-check"></i>Unlimited job leads</li><li><i class="ti ti-check"></i>Priority listing placement</li><li><i class="ti ti-check"></i>Enhanced profile + reviews</li><li><i class="ti ti-check"></i>SMS + email job alerts</li><li><i class="ti ti-check"></i>Full bid analytics</li><li><i class="ti ti-check"></i>Labor rate calculator</li></ul><button class="btn btn-primary btn-full" onclick="showPage('page-signup')">Get started</button></div>
+      <div class="pricing-card"><div class="pricing-name">Company</div><div class="pricing-price" data-plan="company">$349<span>/mo</span></div><div class="pricing-billing" data-plan="company"></div><div class="pricing-desc">Multi-truck. Full metro coverage.</div><ul class="pricing-features"><li><i class="ti ti-check"></i>Unlimited service areas</li><li><i class="ti ti-check"></i>Up to 5 technician profiles</li><li><i class="ti ti-check"></i>Top priority placement</li><li><i class="ti ti-check"></i>Dedicated account manager</li><li><i class="ti ti-check"></i>Custom reporting &amp; exports</li><li><i class="ti ti-check"></i>Labor rate calculator (all roles)</li></ul><button class="btn btn-secondary btn-full" onclick="showPage('page-signup')">Get started</button></div>
     </div>
     <div style="text-align:center;margin-top:2rem">
       <button class="btn btn-primary btn-lg" onclick="showPage('page-signup')">Create your contractor account</button>
@@ -356,12 +369,13 @@
       </div>
       <div>
         <h3 style="font-size:16px;font-weight:800;margin-bottom:1rem">Choose your plan</h3>
+        <div class="billing-toggle compact" id="billing-toggle-signup"></div>
         <div style="display:flex;flex-direction:column;gap:12px">
-          <div class="pricing-card"><div class="pricing-name">Starter</div><div class="pricing-price">$79<span>/mo</span></div><div class="pricing-desc">1 service area · Up to 20 leads/month</div><button class="btn btn-secondary btn-full" style="margin-top:.75rem" onclick="alert('Starter plan — connects to Stripe in production')">Select Starter</button></div>
-          <div class="pricing-card featured"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem"><div class="pricing-name">Pro</div><span class="plan-tag">MOST POPULAR</span></div><div class="pricing-price">$179<span>/mo</span></div><div class="pricing-desc">3 service areas · Unlimited leads · Priority</div><button class="btn btn-primary btn-full" style="margin-top:.75rem" onclick="alert('Pro plan — connects to Stripe in production')">Select Pro</button></div>
-          <div class="pricing-card"><div class="pricing-name">Company</div><div class="pricing-price">$349<span>/mo</span></div><div class="pricing-desc">Unlimited areas · 5 techs · Account manager</div><button class="btn btn-secondary btn-full" style="margin-top:.75rem" onclick="alert('Company plan — connects to Stripe in production')">Select Company</button></div>
+          <div class="pricing-card"><div class="pricing-name">Starter</div><div class="pricing-price" data-plan="starter">$79<span>/mo</span></div><div class="pricing-billing" data-plan="starter"></div><div class="pricing-desc">1 service area · Up to 20 leads/month</div><button class="btn btn-secondary btn-full" style="margin-top:.75rem" onclick="selectPlan('Starter')">Select Starter</button></div>
+          <div class="pricing-card featured"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem"><div class="pricing-name">Pro</div><span class="plan-tag">MOST POPULAR</span></div><div class="pricing-price" data-plan="pro">$179<span>/mo</span></div><div class="pricing-billing" data-plan="pro"></div><div class="pricing-desc">3 service areas · Unlimited leads · Priority</div><button class="btn btn-primary btn-full" style="margin-top:.75rem" onclick="selectPlan('Pro')">Select Pro</button></div>
+          <div class="pricing-card"><div class="pricing-name">Company</div><div class="pricing-price" data-plan="company">$349<span>/mo</span></div><div class="pricing-billing" data-plan="company"></div><div class="pricing-desc">Unlimited areas · 5 techs · Account manager</div><button class="btn btn-secondary btn-full" style="margin-top:.75rem" onclick="selectPlan('Company')">Select Company</button></div>
         </div>
-        <p style="font-size:12px;color:var(--hint);margin-top:1rem;text-align:center">Cancel anytime · No setup fees · Billed monthly</p>
+        <p style="font-size:12px;color:var(--hint);margin-top:1rem;text-align:center" id="signup-billing-note">Cancel anytime · No setup fees · Billed monthly</p>
         <div style="margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem"><button class="btn btn-ghost btn-full" onclick="showPage('page-calc')" style="font-size:13px"><i class="ti ti-calculator"></i> Calculate my labor rate first</button></div>
       </div>
     </div>
@@ -489,6 +503,59 @@
 
 <script>
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+
+/* ── Subscription billing cycles — multi-month prepay discount ── */
+const SUB_PLANS={starter:{name:'Starter',monthly:79},pro:{name:'Pro',monthly:179},company:{name:'Company',monthly:349}};
+const SUB_CYCLES=[
+  {id:'monthly',label:'Monthly',months:1,discount:0},
+  {id:'quarterly',label:'Quarterly',months:3,discount:0.10},
+  {id:'annual',label:'Annual',months:12,discount:0.20},
+];
+let billingCycle='monthly';
+function cycleById(id){return SUB_CYCLES.find(c=>c.id===id)||SUB_CYCLES[0];}
+function planMath(monthly,cyc){
+  const billed=Math.round(monthly*cyc.months*(1-cyc.discount));
+  const perMo=Math.round(billed/cyc.months);
+  const save=Math.round(monthly*cyc.months)-billed;
+  return {billed,perMo,save};
+}
+function buildBillingToggles(){
+  const html=SUB_CYCLES.map(c=>`<button type="button" data-cycle="${c.id}" onclick="setBillingCycle('${c.id}')">${c.label}${c.discount?` <span class="bt-save">Save ${Math.round(c.discount*100)}%</span>`:''}</button>`).join('');
+  ['billing-toggle-main','billing-toggle-signup'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=html;});
+}
+function setBillingCycle(id){billingCycle=id;renderPricing();}
+function renderPricing(){
+  const cyc=cycleById(billingCycle);
+  document.querySelectorAll('.billing-toggle button').forEach(b=>b.classList.toggle('active',b.dataset.cycle===billingCycle));
+  document.querySelectorAll('.pricing-price[data-plan]').forEach(el=>{
+    const p=SUB_PLANS[el.dataset.plan];if(!p)return;
+    const m=planMath(p.monthly,cyc);
+    el.innerHTML=`$${m.perMo}<span>/mo</span>`+(cyc.discount?`<span class="pricing-was">$${p.monthly}</span>`:'');
+  });
+  document.querySelectorAll('.pricing-billing[data-plan]').forEach(el=>{
+    const p=SUB_PLANS[el.dataset.plan];if(!p)return;
+    const m=planMath(p.monthly,cyc);
+    if(cyc.id==='monthly'){el.innerHTML='Billed monthly · cancel anytime';}
+    else{
+      const term=cyc.id==='annual'?'billed yearly':`billed every ${cyc.months} months`;
+      const span=cyc.id==='annual'?'yr':'term';
+      el.innerHTML=`$${m.billed.toLocaleString()} ${term} · <span class="pb-save">save $${m.save.toLocaleString()}/${span}</span>`;
+    }
+  });
+  const note=document.getElementById('signup-billing-note');
+  if(note){note.textContent=cyc.id==='monthly'?'Cancel anytime · No setup fees · Billed monthly':`Cancel anytime · No setup fees · ${cyc.label} billing — ${Math.round(cyc.discount*100)}% off vs monthly`;}
+}
+function selectPlan(name){
+  const p=SUB_PLANS[name.toLowerCase()];const cyc=cycleById(billingCycle);
+  if(!p)return;
+  const m=planMath(p.monthly,cyc);
+  const msg=cyc.id==='monthly'
+    ?`${name} plan — $${p.monthly}/mo, billed monthly.\nConnects to Stripe in production.`
+    :`${name} plan — ${cyc.label}: $${m.billed.toLocaleString()} billed ${cyc.id==='annual'?'yearly':'every '+cyc.months+' months'}\n($${m.perMo}/mo · save $${m.save.toLocaleString()} vs paying monthly).\nConnects to Stripe in production.`;
+  alert(msg);
+}
+buildBillingToggles();
+renderPricing();
 document.getElementById('signup-tab').addEventListener('click',()=>{document.getElementById('signup-tab').classList.add('active');document.getElementById('login-tab').classList.remove('active');document.getElementById('signup-form').style.display='block';document.getElementById('login-form').style.display='none';});
 document.getElementById('login-tab').addEventListener('click',()=>{document.getElementById('login-tab').classList.add('active');document.getElementById('signup-tab').classList.remove('active');document.getElementById('login-form').style.display='block';document.getElementById('signup-form').style.display='none';});
 document.getElementById('signup-btn').addEventListener('click',()=>showPage('page-dash'));
