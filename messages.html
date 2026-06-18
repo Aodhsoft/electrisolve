@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Messages — ElectriSolve</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .page-hero{padding:2rem 0 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
+    .page-hero h1{font-size:1.75rem;font-weight:800;letter-spacing:-.025em;margin-bottom:.25rem}
+    .page-hero p{font-size:15px;color:var(--muted)}
+    /* Messaging (homeowner view) */
+    .msg-layout{display:grid;grid-template-columns:300px 1fr;gap:0;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:white;height:620px;box-shadow:var(--shadow)}
+    .msg-list{border-right:1px solid var(--border);overflow-y:auto;background:var(--off)}
+    .msg-list-head{padding:.85rem 1rem;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--hint);text-transform:uppercase;letter-spacing:.05em;background:white}
+    .msg-list-item{display:flex;gap:11px;padding:.9rem 1rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;position:relative}
+    .msg-list-item:hover{background:white}
+    .msg-list-item.active{background:white;box-shadow:inset 3px 0 0 var(--blue)}
+    .msg-list-item.unread .mli-name{font-weight:800}
+    .mli-avatar{width:42px;height:42px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:white}
+    .mli-body{flex:1;min-width:0}
+    .mli-top{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:2px}
+    .mli-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mli-time{font-size:11px;color:var(--hint);flex-shrink:0}
+    .mli-job{font-size:11px;color:var(--blue);font-weight:600;margin-bottom:2px}
+    .mli-preview{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mli-verified{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--green);font-weight:700;margin-top:2px}
+    .mli-dot{position:absolute;top:1rem;right:1rem;width:8px;height:8px;background:var(--blue);border-radius:50%}
+    .msg-thread{display:flex;flex-direction:column;min-width:0}
+    .msg-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--hint)}
+    .msg-empty i{font-size:48px;opacity:.4}
+    .msg-conversation{display:flex;flex-direction:column;height:100%}
+    .msg-thread-header{display:flex;align-items:center;gap:11px;padding:.85rem 1.1rem;border-bottom:1px solid var(--border);flex-shrink:0}
+    .mth-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:white;flex-shrink:0}
+    .mth-info{flex:1;min-width:0}
+    .mth-name{font-size:15px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px}
+    .mth-job{font-size:12px;color:var(--blue);font-weight:600}
+    .msg-scroll{flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:10px;background:var(--off)}
+    .bubble{max-width:74%;padding:.65rem .9rem;border-radius:14px;font-size:14px;line-height:1.5;word-wrap:break-word}
+    .bubble-them{align-self:flex-start;background:white;border:1px solid var(--border);color:var(--text);border-bottom-left-radius:4px}
+    .bubble-me{align-self:flex-end;background:var(--blue);color:white;border-bottom-right-radius:4px}
+    .bubble-time{font-size:10px;opacity:.6;margin-top:3px;display:block}
+    .bubble-img{max-width:74%;align-self:flex-start;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+    .bubble-img.me{align-self:flex-end}
+    .bubble-img img,.bubble-img svg{width:100%;display:block}
+    .bubble-img .cap{padding:.5rem .75rem;background:white;font-size:12px;color:var(--muted)}
+    /* Quote card — homeowner can accept/decline */
+    .quote-card{align-self:flex-start;max-width:82%;background:white;border:2px solid var(--blue);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-md)}
+    .quote-head{background:var(--blue);color:white;padding:.7rem 1rem;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+    .quote-body{padding:1rem}
+    .quote-line{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border);color:var(--muted)}
+    .quote-line span:last-child{font-weight:600;color:var(--text)}
+    .quote-total{display:flex;justify-content:space-between;padding-top:.6rem;margin-top:.3rem;font-size:16px;font-weight:800;color:var(--text)}
+    .quote-total span:last-child{color:var(--blue)}
+    .quote-actions{display:flex;gap:8px;padding:0 1rem 1rem}
+    .quote-status{margin:0 1rem 1rem;padding:.5rem;border-radius:var(--radius);text-align:center;font-size:13px;font-weight:700}
+    .quote-status.accepted{background:var(--green-light);color:var(--green)}
+    .quote-status.declined{background:var(--red-light);color:var(--red)}
+    .msg-composer{border-top:1px solid var(--border);padding:.75rem;flex-shrink:0;background:white}
+    .composer-actions{display:flex;gap:6px;margin-bottom:.6rem}
+    .composer-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--blue);background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:20px;padding:5px 11px;cursor:pointer;font-family:var(--font);transition:background .12s}
+    .composer-chip:hover{background:var(--blue-mid)}
+    .composer-input{display:flex;gap:8px;align-items:flex-end}
+    .composer-input textarea{flex:1;border:1.5px solid var(--border2);border-radius:var(--radius);padding:.6rem .8rem;font-family:var(--font);font-size:14px;resize:none;min-height:42px;max-height:120px;color:var(--text)}
+    .composer-input textarea:focus{outline:none;border-color:var(--blue)}
+    .composer-send{flex-shrink:0;width:42px;height:42px;border-radius:var(--radius);background:var(--blue);color:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px}
+    .composer-send:hover{background:#1d4ed8}
+    .on-platform-note{display:flex;align-items:center;gap:6px;justify-content:center;font-size:11px;color:var(--hint);padding:.5rem;background:var(--off);border-top:1px solid var(--border)}
+    @media(max-width:768px){.msg-layout{grid-template-columns:1fr;height:auto}.msg-list{max-height:200px}.msg-thread{height:500px}}
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon"><i class="ti ti-bolt"></i></div>
+      <span class="logo-text">Electri<span>Solve</span></span>
+    </a>
+    <nav class="header-nav">
+      <a href="jobs.html" class="nav-link">Browse jobs</a>
+      <a href="estimate.html" class="nav-link">Estimate costs</a>
+      <a href="messages.html" class="nav-link" style="color:var(--blue)">Messages</a>
+      <a href="post-job.html" class="btn btn-primary">Get free estimates</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero">
+    <div class="container">
+      <h1>Your messages</h1>
+      <p>Chat directly with the electricians bidding on your job — everything in one place.</p>
+    </div>
+  </div>
+
+  <div class="container" style="padding-bottom:4rem">
+    <div class="msg-layout">
+      <div class="msg-list">
+        <div class="msg-list-head">Your conversations</div>
+        <div id="msg-list"></div>
+      </div>
+      <div class="msg-thread">
+        <div class="msg-empty" id="msg-empty">
+          <i class="ti ti-messages"></i>
+          <div style="font-weight:700;color:var(--text);margin-top:.5rem">Select a conversation</div>
+          <div style="font-size:13px;color:var(--hint);margin-top:.25rem">Messages from your electricians appear here</div>
+        </div>
+        <div class="msg-conversation" id="msg-conversation" style="display:none">
+          <div class="msg-thread-header" id="msg-thread-header"></div>
+          <div class="msg-scroll" id="msg-scroll"></div>
+          <div class="msg-composer" id="msg-composer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span style="font-weight:700;color:var(--text)">ElectriSolve</span>
+    <span>Free for homeowners · Licensed contractors only</span>
+  </div>
+</footer>
+
+<script>
+const AVATAR_COLORS=['#2563eb','#16a34a','#d97706','#7c3aed','#db2777','#0891b2'];
+function avatarColor(name){let h=0;for(let i=0;i<name.length;i++)h=name.charCodeAt(i)+((h<<5)-h);return AVATAR_COLORS[Math.abs(h)%AVATAR_COLORS.length];}
+function initials(name){return name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}
+
+// Homeowner (Sarah) view — same conversations the contractor sees, flipped perspective.
+// 'me' = the homeowner. 'them' = the contractor.
+const CONVERSATIONS=[
+  {
+    id:'c1', name:'Mike Torres', company:'Torres Electric LLC', job:'Your panel upgrade · Lakewood', verified:true, unread:true, lastTime:'10:42 AM',
+    messages:[
+      {from:'them',type:'text',text:"Hi Sarah — I saw your panel upgrade request come through. I'm a master electrician based in Lakewood, 12 years doing Federal Pacific replacements specifically. Happy to take a look.",time:'Yesterday 4:15 PM'},
+      {from:'me',type:'text',text:"Oh great, thank you! Yeah our home inspector flagged the FPE panel as a fire risk. How worried should I be?",time:'Yesterday 4:31 PM'},
+      {from:'them',type:'text',text:"It's worth addressing but you don't need to panic. FPE breakers are known to not trip reliably, so replacing the panel is the right call. I'd swap it for a 200A Square D QO panel. Can I send you a quote?",time:'Yesterday 4:38 PM'},
+      {from:'me',type:'text',text:"Yes please!",time:'Yesterday 4:40 PM'},
+      {from:'them',type:'quote',title:'Panel Upgrade — 100A to 200A',lines:[['Square D QO 200A panel','$420'],['Labor (master electrician, ~8 hrs)','$1,360'],['Permit + utility coordination','$185'],['Misc. materials & breakers','$240']],total:'$2,205',status:'accepted',time:'Yesterday 4:52 PM'},
+      {from:'me',type:'text',text:"That works and it's right in the range the AI estimate showed me. When could you start?",time:'10:40 AM'},
+      {from:'me',type:'text',text:"Also — do I need to be home the whole time?",time:'10:42 AM'},
+    ]
+  },
+  {
+    id:'c2', name:'Rosa Delgado', company:'Bright Spark Electric', job:'Your panel upgrade · Lakewood', verified:true, unread:false, lastTime:'Yesterday',
+    messages:[
+      {from:'them',type:'text',text:"Hello Sarah! I also bid on your panel upgrade. We're a family-owned shop in Wheat Ridge, 15 years in business. I'd love to earn your trust on this one.",time:'Yesterday 5:30 PM'},
+      {from:'them',type:'quote',title:'200A Panel Upgrade',lines:[['Eaton 200A panel','$390'],['Labor','$1,450'],['Permit','$185']],total:'$2,025',status:'pending',time:'Yesterday 5:34 PM'},
+      {from:'me',type:'text',text:"Thank you Rosa! I'm comparing a couple quotes — will circle back soon.",time:'Yesterday 6:01 PM'},
+    ]
+  },
+];
+
+let activeConv=null;
+
+function renderConvList(){
+  const el=document.getElementById('msg-list');
+  el.innerHTML=CONVERSATIONS.map(c=>{
+    const last=c.messages[c.messages.length-1];
+    let preview=last.type==='text'?last.text:last.type==='quote'?'📋 Sent you a quote · '+last.total:last.type==='image'?'📷 Photo':'';
+    return `<div class="msg-list-item${c.unread?' unread':''}${activeConv===c.id?' active':''}" onclick="openConv('${c.id}')">
+      <div class="mli-avatar" style="background:${avatarColor(c.name)}">${initials(c.name)}</div>
+      <div class="mli-body">
+        <div class="mli-top"><span class="mli-name">${c.name}</span><span class="mli-time">${c.lastTime}</span></div>
+        <div class="mli-job">${c.company}</div>
+        <div class="mli-preview">${preview}</div>
+        ${c.verified?'<span class="mli-verified"><i class="ti ti-shield-check"></i> Licensed & verified</span>':''}
+      </div>
+      ${c.unread?'<span class="mli-dot"></span>':''}
+    </div>`;
+  }).join('');
+}
+
+function openConv(id){
+  activeConv=id;
+  const c=CONVERSATIONS.find(x=>x.id===id);
+  if(c.unread){c.unread=false;}
+  renderConvList();
+  document.getElementById('msg-empty').style.display='none';
+  document.getElementById('msg-conversation').style.display='flex';
+  document.getElementById('msg-thread-header').innerHTML=`
+    <div class="mth-avatar" style="background:${avatarColor(c.name)}">${initials(c.name)}</div>
+    <div class="mth-info">
+      <div class="mth-name">${c.name} ${c.verified?'<i class="ti ti-rosette-discount-check-filled" style="color:var(--blue);font-size:16px" title="Verified electrician"></i>':''}</div>
+      <div class="mth-job">${c.company} · ${c.job}</div>
+    </div>`;
+  renderMessages(c);
+  document.getElementById('msg-composer').innerHTML=`
+    <div class="composer-input">
+      <textarea id="composer-text" placeholder="Message ${c.name.split(' ')[0]}..." oninput="autoGrow(this)" onkeydown="composerKey(event)"></textarea>
+      <button class="composer-send" onclick="sendMessage()"><i class="ti ti-send"></i></button>
+    </div>
+    <div class="on-platform-note"><i class="ti ti-shield-lock"></i> Your contact info stays private until you choose to share it</div>`;
+}
+
+function renderMessages(c){
+  const el=document.getElementById('msg-scroll');
+  el.innerHTML=c.messages.map((m,idx)=>renderBubble(m,c.id,idx)).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+function renderBubble(m,convId,idx){
+  if(m.type==='text'){
+    return `<div class="bubble bubble-${m.from==='me'?'me':'them'}">${m.text}<span class="bubble-time">${m.time}</span></div>`;
+  }
+  if(m.type==='image'){
+    return `<div class="bubble-img ${m.from==='me'?'me':''}">${genericPhotoSVG()}${m.caption?`<div class="cap">${m.caption}</div>`:''}</div>`;
+  }
+  if(m.type==='quote'){
+    const lines=m.lines.map(l=>`<div class="quote-line"><span>${l[0]}</span><span>${l[1]}</span></div>`).join('');
+    let footer='';
+    if(m.status==='accepted'){
+      footer=`<div class="quote-status accepted"><i class="ti ti-circle-check"></i> You accepted this quote</div>`;
+    }else if(m.status==='declined'){
+      footer=`<div class="quote-status declined"><i class="ti ti-circle-x"></i> You declined this quote</div>`;
+    }else{
+      // pending — homeowner can act
+      footer=`<div class="quote-actions">
+        <button class="btn btn-secondary" style="flex:1" onclick="declineQuote('${convId}',${idx})">Decline</button>
+        <button class="btn btn-primary" style="flex:1" onclick="acceptQuote('${convId}',${idx})"><i class="ti ti-check"></i> Accept</button>
+      </div>`;
+    }
+    return `<div class="quote-card">
+      <div class="quote-head"><i class="ti ti-file-dollar"></i> ${m.title}</div>
+      <div class="quote-body">${lines}<div class="quote-total"><span>Total</span><span>${m.total}</span></div></div>
+      ${footer}<span class="bubble-time" style="display:block;text-align:left;padding:0 1rem .6rem;color:var(--hint)">${m.time}</span>
+    </div>`;
+  }
+  return '';
+}
+
+function genericPhotoSVG(){
+  return `<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" style="background:#475569"><rect x="60" y="20" width="120" height="120" rx="4" fill="#64748b"/><rect x="68" y="28" width="104" height="104" fill="#1e293b"/></svg>`;
+}
+
+function acceptQuote(convId,idx){
+  const c=CONVERSATIONS.find(x=>x.id===convId);
+  c.messages[idx].status='accepted';
+  c.messages.push({from:'me',type:'text',text:"I'd like to accept your quote — let's move forward! 🎉",time:'Just now'});
+  renderMessages(c);renderConvList();
+  setTimeout(()=>{
+    c.messages.push({from:'them',type:'text',text:"Fantastic! I'll get the permit started and reach out to schedule. Thanks for trusting me with this, Sarah.",time:'Just now'});
+    renderMessages(c);renderConvList();
+  },1600);
+}
+function declineQuote(convId,idx){
+  const c=CONVERSATIONS.find(x=>x.id===convId);
+  c.messages[idx].status='declined';
+  renderMessages(c);renderConvList();
+}
+
+function autoGrow(t){t.style.height='42px';t.style.height=Math.min(t.scrollHeight,120)+'px';}
+function composerKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+
+function sendMessage(){
+  const ta=document.getElementById('composer-text');
+  const text=ta.value.trim();if(!text)return;
+  const c=CONVERSATIONS.find(x=>x.id===activeConv);
+  c.messages.push({from:'me',type:'text',text,time:'Just now'});
+  ta.value='';autoGrow(ta);renderMessages(c);renderConvList();
+  // contractor auto-reply
+  const replies=["Thanks Sarah! I'll get back to you shortly with details.","Sounds good — appreciate the quick response.","Perfect. Let me know if any other questions come up.","Got it, thank you!"];
+  const scroll=document.getElementById('msg-scroll');
+  setTimeout(()=>{
+    const typing=document.createElement('div');
+    typing.className='bubble bubble-them';typing.id='typing-ind';
+    typing.innerHTML='<span style="opacity:.6">'+c.name.split(' ')[0]+' is typing…</span>';
+    scroll.appendChild(typing);scroll.scrollTop=scroll.scrollHeight;
+    setTimeout(()=>{
+      document.getElementById('typing-ind')?.remove();
+      c.messages.push({from:'them',type:'text',text:replies[Math.floor(Math.random()*replies.length)],time:'Just now'});
+      renderMessages(c);renderConvList();
+    },1700);
+  },700);
+}
+
+renderConvList();
+// Auto-open the first conversation so the demo lands on a populated thread
+openConv('c1');
+</script>
+</body>
+</html>
