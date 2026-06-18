@@ -66,6 +66,76 @@
     .bid-form.open{display:block}
     .bid-locked{background:var(--off);border:1.5px dashed var(--border2);border-radius:var(--radius);padding:1rem;text-align:center;margin-top:.9rem}
     @media(max-width:768px){.auth-layout{grid-template-columns:1fr}.pricing-grid-3{grid-template-columns:1fr}.calc-grid{grid-template-columns:1fr}.calc-results{position:static}.onboard-step{padding:.5rem 1rem}}
+    /* ── Messaging ── */
+    .nav-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;background:var(--red);color:white;font-size:11px;font-weight:800;border-radius:9px;margin-left:6px;vertical-align:middle}
+    .msg-layout{display:grid;grid-template-columns:300px 1fr;gap:0;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:white;height:600px}
+    .msg-list{border-right:1px solid var(--border);overflow-y:auto;background:var(--off)}
+    .msg-list-item{display:flex;gap:11px;padding:.9rem 1rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;position:relative}
+    .msg-list-item:hover{background:white}
+    .msg-list-item.active{background:white;box-shadow:inset 3px 0 0 var(--blue)}
+    .msg-list-item.unread .mli-name{font-weight:800}
+    .mli-avatar{width:42px;height:42px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:white}
+    .mli-body{flex:1;min-width:0}
+    .mli-top{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:2px}
+    .mli-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mli-time{font-size:11px;color:var(--hint);flex-shrink:0}
+    .mli-job{font-size:11px;color:var(--blue);font-weight:600;margin-bottom:2px}
+    .mli-preview{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mli-dot{position:absolute;top:1rem;right:1rem;width:8px;height:8px;background:var(--blue);border-radius:50%}
+    .msg-thread{display:flex;flex-direction:column;min-width:0}
+    .msg-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--hint)}
+    .msg-empty i{font-size:48px;opacity:.4}
+    .msg-conversation{display:flex;flex-direction:column;height:100%}
+    .msg-thread-header{display:flex;align-items:center;gap:11px;padding:.85rem 1.1rem;border-bottom:1px solid var(--border);flex-shrink:0}
+    .mth-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:white;flex-shrink:0}
+    .mth-info{flex:1;min-width:0}
+    .mth-name{font-size:15px;font-weight:700;color:var(--text)}
+    .mth-job{font-size:12px;color:var(--blue);font-weight:600}
+    .mth-actions{display:flex;gap:6px}
+    .msg-scroll{flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:10px;background:var(--off)}
+    .msg-day{text-align:center;font-size:11px;font-weight:700;color:var(--hint);text-transform:uppercase;letter-spacing:.05em;margin:.5rem 0}
+    .bubble{max-width:74%;padding:.65rem .9rem;border-radius:14px;font-size:14px;line-height:1.5;position:relative;word-wrap:break-word}
+    .bubble-them{align-self:flex-start;background:white;border:1px solid var(--border);color:var(--text);border-bottom-left-radius:4px}
+    .bubble-me{align-self:flex-end;background:var(--blue);color:white;border-bottom-right-radius:4px}
+    .bubble-time{font-size:10px;opacity:.6;margin-top:3px;display:block}
+    .bubble-img{max-width:74%;align-self:flex-start;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+    .bubble-img.me{align-self:flex-end}
+    .bubble-img img{width:100%;display:block}
+    .bubble-img .cap{padding:.5rem .75rem;background:white;font-size:12px;color:var(--muted)}
+    /* Quote card */
+    .quote-card{align-self:flex-end;max-width:80%;background:white;border:2px solid var(--blue);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-md)}
+    .quote-card.them{align-self:flex-start}
+    .quote-head{background:var(--blue);color:white;padding:.7rem 1rem;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+    .quote-body{padding:1rem}
+    .quote-line{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border);color:var(--muted)}
+    .quote-line span:last-child{font-weight:600;color:var(--text)}
+    .quote-total{display:flex;justify-content:space-between;padding-top:.6rem;margin-top:.3rem;font-size:16px;font-weight:800;color:var(--text)}
+    .quote-total span:last-child{color:var(--blue)}
+    .quote-actions{display:flex;gap:8px;padding:0 1rem 1rem}
+    .quote-status{margin:0 1rem 1rem;padding:.5rem;border-radius:var(--radius);text-align:center;font-size:13px;font-weight:700}
+    .quote-status.accepted{background:var(--green-light);color:var(--green)}
+    .msg-composer{border-top:1px solid var(--border);padding:.75rem;flex-shrink:0;background:white}
+    .composer-actions{display:flex;gap:6px;margin-bottom:.6rem}
+    .composer-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--blue);background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:20px;padding:5px 11px;cursor:pointer;font-family:var(--font);transition:background .12s}
+    .composer-chip:hover{background:var(--blue-mid)}
+    .composer-input{display:flex;gap:8px;align-items:flex-end}
+    .composer-input textarea{flex:1;border:1.5px solid var(--border2);border-radius:var(--radius);padding:.6rem .8rem;font-family:var(--font);font-size:14px;resize:none;min-height:42px;max-height:120px;color:var(--text)}
+    .composer-input textarea:focus{outline:none;border-color:var(--blue)}
+    .composer-send{flex-shrink:0;width:42px;height:42px;border-radius:var(--radius);background:var(--blue);color:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px}
+    .composer-send:hover{background:#1d4ed8}
+    .on-platform-note{display:flex;align-items:center;gap:6px;justify-content:center;font-size:11px;color:var(--hint);padding:.5rem;background:var(--off);border-top:1px solid var(--border)}
+    /* Quote builder modal */
+    .qb-overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;z-index:100;padding:1rem}
+    .qb-overlay.open{display:flex}
+    .qb-modal{background:white;border-radius:var(--radius-lg);max-width:440px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+    .qb-head{padding:1.1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+    .qb-head h3{font-size:16px;font-weight:800}
+    .qb-body{padding:1.25rem}
+    .qb-line{display:grid;grid-template-columns:1fr 90px 30px;gap:8px;margin-bottom:8px}
+    .qb-line input{padding:7px 9px;border:1.5px solid var(--border2);border-radius:6px;font-size:13px;font-family:var(--font)}
+    .qb-line input:focus{outline:none;border-color:var(--blue)}
+    .qb-rm{background:none;border:none;color:var(--hint);cursor:pointer;font-size:16px}
+    @media(max-width:768px){.msg-layout{grid-template-columns:1fr;height:auto}.msg-list{max-height:200px}.msg-thread{height:480px}}
   </style>
 </head>
 <body>
@@ -284,6 +354,7 @@
         <div class="card">
           <ul class="dash-nav">
             <li><a href="#" class="active" onclick="showDTab('available',this)"><i class="ti ti-bolt"></i> Available jobs</a></li>
+            <li><a href="#" onclick="showDTab('messages',this)"><i class="ti ti-messages"></i> Messages <span class="nav-badge" id="msg-unread-badge">2</span></a></li>
             <li><a href="#" onclick="showDTab('bids',this)"><i class="ti ti-file-invoice"></i> My bids</a></li>
             <li><a href="#" onclick="showDTab('calc-tab',this)"><i class="ti ti-calculator"></i> Labor calculator</a></li>
             <li><a href="#" onclick="showDTab('profile',this)"><i class="ti ti-user"></i> My profile</a></li>
@@ -301,6 +372,24 @@
         <div id="dtab-available">
           <div class="section-header"><h2>Jobs in your area</h2><span class="badge badge-blue">7 new</span></div>
           <div class="jobs-list" id="dash-jobs"></div>
+        </div>
+        <div id="dtab-messages" style="display:none">
+          <div class="section-header"><h2>Messages</h2><span style="font-size:13px;color:var(--hint)">Chat directly with homeowners — keep it all on ElectriSolve</span></div>
+          <div class="msg-layout">
+            <div class="msg-list" id="msg-list"></div>
+            <div class="msg-thread" id="msg-thread">
+              <div class="msg-empty" id="msg-empty">
+                <i class="ti ti-messages"></i>
+                <div style="font-weight:700;color:var(--text);margin-top:.5rem">Select a conversation</div>
+                <div style="font-size:13px;color:var(--hint);margin-top:.25rem">Your messages with homeowners appear here</div>
+              </div>
+              <div class="msg-conversation" id="msg-conversation" style="display:none">
+                <div class="msg-thread-header" id="msg-thread-header"></div>
+                <div class="msg-scroll" id="msg-scroll"></div>
+                <div class="msg-composer" id="msg-composer"></div>
+              </div>
+            </div>
+          </div>
         </div>
         <div id="dtab-bids" style="display:none">
           <div class="section-header"><h2>My bids</h2></div>
@@ -331,6 +420,30 @@
   </div>
 </div>
 
+<!-- Quote builder modal -->
+<div class="qb-overlay" id="qb-overlay">
+  <div class="qb-modal">
+    <div class="qb-head">
+      <h3>Send a quote</h3>
+      <button class="qb-rm" style="font-size:22px" onclick="closeQuoteBuilder()">×</button>
+    </div>
+    <div class="qb-body">
+      <div class="form-group" style="margin-bottom:1rem">
+        <label>Quote title</label>
+        <input type="text" id="qb-title" placeholder="e.g. Panel Upgrade — 100A to 200A">
+      </div>
+      <label style="font-size:13px;font-weight:600;color:var(--text);display:block;margin-bottom:8px">Line items</label>
+      <div id="qb-lines"></div>
+      <button class="composer-chip" style="margin-top:4px" onclick="qbAddLine()"><i class="ti ti-plus"></i> Add line item</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1.25rem;padding-top:1rem;border-top:2px solid var(--border)">
+        <span style="font-size:16px;font-weight:800">Total</span>
+        <span style="font-size:22px;font-weight:800;color:var(--blue)" id="qb-total">$0</span>
+      </div>
+      <button class="btn btn-primary btn-full btn-lg" style="margin-top:1.25rem" onclick="sendQuote()"><i class="ti ti-send"></i> Send quote to homeowner</button>
+    </div>
+  </div>
+</div>
+
 <footer class="site-footer">
   <div class="container footer-inner">
     <span style="font-weight:700;color:var(--text)">ElectriSolve</span>
@@ -346,13 +459,231 @@ document.getElementById('login-tab').addEventListener('click',()=>{document.getE
 document.getElementById('signup-btn').addEventListener('click',()=>showPage('page-dash'));
 document.getElementById('login-btn').addEventListener('click',()=>showPage('page-dash'));
 document.getElementById('logout-btn').addEventListener('click',e=>{e.preventDefault();showPage('page-onboard');});
-function showDTab(name,el){event.preventDefault();['available','bids','calc-tab','profile'].forEach(t=>{const e=document.getElementById('dtab-'+t);if(e)e.style.display='none';});document.getElementById('dtab-'+name).style.display='block';document.querySelectorAll('.dash-nav a').forEach(a=>a.classList.remove('active'));if(el)el.classList.add('active');}
+function showDTab(name,el){event.preventDefault();['available','messages','bids','calc-tab','profile'].forEach(t=>{const e=document.getElementById('dtab-'+t);if(e)e.style.display='none';});document.getElementById('dtab-'+name).style.display='block';document.querySelectorAll('.dash-nav a').forEach(a=>a.classList.remove('active'));if(el)el.classList.add('active');if(name==='messages')initMessages();}
 const DASH_JOBS=[{id:1,title:"Panel upgrade · Lakewood",sev:"high",desc:"Federal Pacific replacement. Est. $1,800–2,400. Permit required.",est:"$1,800–2,400",bids:3,posted:"2h ago"},{id:7,title:"Flickering lights · Centennial",sev:"high",desc:"Possible loose neutral. Only 1 bid.",est:"$200–600",bids:1,posted:"3h ago"},{id:2,title:"GFCI outlets · Aurora",sev:"medium",desc:"6 outlets, 2–4 hrs.",est:"$280–420",bids:5,posted:"5h ago"},{id:3,title:"EV charger · Denver",sev:"low",desc:"60A circuit, 35 ft run.",est:"$450–700",bids:4,posted:"8h ago"}];
 let activeBid=null;
 function renderDashJobs(){document.getElementById('dash-jobs').innerHTML=DASH_JOBS.map(j=>`<div class="job-card${j.sev==='high'?' urgent':''}"><div class="job-meta"><span class="badge badge-${j.sev==='high'?'red':j.sev==='medium'?'amber':'green'}">${j.sev==='high'?'Urgent':j.sev==='medium'?'Standard':'Minor'}</span><span class="job-stat"><i class="ti ti-users"></i>${j.bids} bid${j.bids!==1?'s':''}</span></div><div class="job-title">${j.title}</div><div class="job-footer"><span class="job-stat"><i class="ti ti-currency-dollar"></i>${j.est}</span><button class="btn btn-primary" style="padding:8px 16px;font-size:13px" onclick="toggleBid(${j.id})"><i class="ti ti-send"></i> Bid</button></div><div class="bid-form" id="bid-${j.id}"><div class="form-row" style="margin-bottom:.75rem"><div class="form-group" style="margin-bottom:0"><label>Your bid ($)</label><input type="number" placeholder="450" id="amt-${j.id}"></div><div class="form-group" style="margin-bottom:0"><label>Est. hours</label><input type="number" placeholder="4" id="hrs-${j.id}"></div></div><div class="form-group" style="margin-bottom:.75rem"><label>Note to homeowner</label><textarea placeholder="Brief intro..." id="note-${j.id}" style="min-height:60px"></textarea></div><div style="display:flex;gap:8px"><button class="btn btn-ghost" onclick="toggleBid(${j.id})">Cancel</button><button class="btn btn-primary" style="flex:1" onclick="submitBid(${j.id})">Submit bid</button></div></div></div>`).join('');}
 function toggleBid(id){if(activeBid&&activeBid!==id)document.getElementById('bid-'+activeBid).classList.remove('open');const f=document.getElementById('bid-'+id);f.classList.toggle('open');activeBid=f.classList.contains('open')?id:null;}
 function submitBid(id){const amt=document.getElementById('amt-'+id).value;if(!amt){alert('Enter a bid amount.');return;}document.getElementById('bid-'+id).innerHTML=`<p style="color:var(--green);font-size:14px;font-weight:600;padding:.4rem 0;display:flex;align-items:center;gap:7px"><i class="ti ti-circle-check" style="font-size:18px"></i>Bid of $${amt} submitted!</p>`;}
 renderDashJobs();
+
+/* ══════════════════════════════════════════
+   MESSAGING SYSTEM (demo prototype)
+══════════════════════════════════════════ */
+const AVATAR_COLORS=['#2563eb','#16a34a','#d97706','#7c3aed','#db2777','#0891b2'];
+function avatarColor(name){let h=0;for(let i=0;i<name.length;i++)h=name.charCodeAt(i)+((h<<5)-h);return AVATAR_COLORS[Math.abs(h)%AVATAR_COLORS.length];}
+function initials(name){return name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}
+
+// Seeded conversations — written to look like a real, active marketplace
+const CONVERSATIONS=[
+  {
+    id:'c1', name:'Sarah Mitchell', job:'Panel upgrade · Lakewood', unread:true, lastTime:'10:42 AM',
+    messages:[
+      {from:'me',type:'text',text:"Hi Sarah — I saw your panel upgrade request come through. I'm a master electrician based in Lakewood, 12 years doing Federal Pacific replacements specifically. Happy to take a look.",time:'Yesterday 4:15 PM'},
+      {from:'them',type:'text',text:"Oh great, thank you! Yeah our home inspector flagged the FPE panel as a fire risk. How worried should I be?",time:'Yesterday 4:31 PM'},
+      {from:'me',type:'text',text:"It's worth addressing but you don't need to panic. FPE breakers are known to not trip reliably, so replacing the panel is the right call. I'd swap it for a 200A Square D QO panel. Can I send you a quote?",time:'Yesterday 4:38 PM'},
+      {from:'them',type:'text',text:"Yes please!",time:'Yesterday 4:40 PM'},
+      {from:'me',type:'quote',title:'Panel Upgrade — 100A to 200A',lines:[['Square D QO 200A panel','$420'],['Labor (master electrician, ~8 hrs)','$1,360'],['Permit + utility coordination','$185'],['Misc. materials & breakers','$240']],total:'$2,205',status:'accepted',time:'Yesterday 4:52 PM'},
+      {from:'them',type:'text',text:"That works and it's right in the range the AI estimate showed me. When could you start?",time:'10:40 AM'},
+      {from:'them',type:'text',text:"Also — do I need to be home the whole time?",time:'10:42 AM'},
+    ]
+  },
+  {
+    id:'c2', name:'David Okafor', job:'EV charger · Denver', unread:true, lastTime:'9:18 AM',
+    messages:[
+      {from:'me',type:'text',text:"Hi David — saw your Level 2 EV charger request. I install these all the time, mostly Tesla and ChargePoint units. What charger did you go with?",time:'Yesterday 6:02 PM'},
+      {from:'them',type:'text',text:"Hey! It's a ChargePoint Home Flex. Panel's in the garage, car parks maybe 20 feet away.",time:'Yesterday 6:20 PM'},
+      {from:'them',type:'image',caption:'Here\'s my panel',img:'panel',time:'Yesterday 6:21 PM'},
+      {from:'me',type:'text',text:"Perfect, that's an easy run. You've got open slots and the panel looks healthy. A 50A circuit will give you full charging speed. Let me put together a quote tonight.",time:'9:18 AM'},
+    ]
+  },
+  {
+    id:'c3', name:'Jennifer Park', job:'GFCI outlets · Aurora', unread:false, lastTime:'Mon',
+    messages:[
+      {from:'me',type:'text',text:"Hi Jennifer — I can knock out all 6 GFCI outlets in one visit. About 2-3 hours of work.",time:'Mon 11:00 AM'},
+      {from:'them',type:'text',text:"Perfect. The kitchen ones keep tripping so those are priority.",time:'Mon 11:15 AM'},
+      {from:'me',type:'quote',title:'GFCI Outlet Replacement (x6)',lines:[['6x 20A GFCI outlets','$108'],['Labor (2.5 hrs)','$240'],['Service call','$0 (waived)']],total:'$348',status:'pending',time:'Mon 11:22 AM'},
+      {from:'them',type:'text',text:"Let me talk to my husband and get back to you tonight 👍",time:'Mon 2:45 PM'},
+    ]
+  },
+];
+
+let activeConv=null, msgInited=false;
+
+function initMessages(){
+  if(msgInited)return; msgInited=true;
+  renderConvList();
+}
+
+function renderConvList(){
+  const el=document.getElementById('msg-list');
+  el.innerHTML=CONVERSATIONS.map(c=>{
+    const last=c.messages[c.messages.length-1];
+    let preview=last.type==='text'?last.text:last.type==='quote'?'📋 Sent a quote · '+last.total:last.type==='image'?'📷 Photo':'';
+    return `<div class="msg-list-item${c.unread?' unread':''}${activeConv===c.id?' active':''}" onclick="openConv('${c.id}')">
+      <div class="mli-avatar" style="background:${avatarColor(c.name)}">${initials(c.name)}</div>
+      <div class="mli-body">
+        <div class="mli-top"><span class="mli-name">${c.name}</span><span class="mli-time">${c.lastTime}</span></div>
+        <div class="mli-job">${c.job}</div>
+        <div class="mli-preview">${preview}</div>
+      </div>
+      ${c.unread?'<span class="mli-dot"></span>':''}
+    </div>`;
+  }).join('');
+}
+
+function openConv(id){
+  activeConv=id;
+  const c=CONVERSATIONS.find(x=>x.id===id);
+  if(c.unread){c.unread=false;updateUnreadBadge();}
+  renderConvList();
+  document.getElementById('msg-empty').style.display='none';
+  document.getElementById('msg-conversation').style.display='flex';
+  document.getElementById('msg-thread-header').innerHTML=`
+    <div class="mth-avatar" style="background:${avatarColor(c.name)}">${initials(c.name)}</div>
+    <div class="mth-info"><div class="mth-name">${c.name}</div><div class="mth-job">${c.job}</div></div>
+    <div class="mth-actions"><button class="btn btn-ghost" style="padding:6px 10px;font-size:13px" title="View job details"><i class="ti ti-clipboard-text"></i></button></div>`;
+  renderMessages(c);
+  document.getElementById('msg-composer').innerHTML=`
+    <div class="composer-actions">
+      <button class="composer-chip" onclick="openQuoteBuilder()"><i class="ti ti-file-dollar"></i> Send quote</button>
+      <button class="composer-chip" onclick="sendDemoPhoto()"><i class="ti ti-camera"></i> Photo</button>
+      <button class="composer-chip" onclick="insertTemplate()"><i class="ti ti-message-2"></i> Quick reply</button>
+    </div>
+    <div class="composer-input">
+      <textarea id="composer-text" placeholder="Type a message to ${c.name.split(' ')[0]}..." oninput="autoGrow(this)" onkeydown="composerKey(event)"></textarea>
+      <button class="composer-send" onclick="sendMessage()"><i class="ti ti-send"></i></button>
+    </div>
+    <div class="on-platform-note"><i class="ti ti-shield-lock"></i> Messages stay on ElectriSolve — protected for both sides</div>`;
+}
+
+function renderMessages(c){
+  const el=document.getElementById('msg-scroll');
+  el.innerHTML=c.messages.map(m=>renderBubble(m)).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+function renderBubble(m){
+  if(m.type==='text'){
+    return `<div class="bubble bubble-${m.from==='me'?'me':'them'}">${m.text}<span class="bubble-time">${m.time}</span></div>`;
+  }
+  if(m.type==='image'){
+    // Demo image — a simple SVG placeholder of an electrical panel
+    const svg=m.img==='panel'?panelSVG():genericPhotoSVG();
+    return `<div class="bubble-img ${m.from==='me'?'me':''}">${svg}${m.caption?`<div class="cap">${m.caption}</div>`:''}</div>`;
+  }
+  if(m.type==='quote'){
+    const lines=m.lines.map(l=>`<div class="quote-line"><span>${l[0]}</span><span>${l[1]}</span></div>`).join('');
+    let footer='';
+    if(m.status==='accepted'){footer=`<div class="quote-status accepted"><i class="ti ti-circle-check"></i> Accepted by homeowner</div>`;}
+    else if(m.status==='pending'&&m.from==='me'){footer=`<div class="quote-status" style="background:var(--amber-light);color:var(--amber)"><i class="ti ti-clock"></i> Awaiting response</div>`;}
+    return `<div class="quote-card ${m.from==='me'?'':'them'}">
+      <div class="quote-head"><i class="ti ti-file-dollar"></i> ${m.title}</div>
+      <div class="quote-body">${lines}<div class="quote-total"><span>Total</span><span>${m.total}</span></div></div>
+      ${footer}<span class="bubble-time" style="display:block;text-align:right;padding:0 1rem .6rem;color:var(--hint)">${m.time}</span>
+    </div>`;
+  }
+  return '';
+}
+
+function panelSVG(){
+  return `<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;background:#475569">
+    <rect x="60" y="20" width="120" height="120" rx="4" fill="#64748b" stroke="#334155" stroke-width="2"/>
+    <rect x="68" y="28" width="104" height="104" fill="#1e293b"/>
+    ${Array.from({length:12}).map((_,i)=>`<rect x="${74+(i%2)*50}" y="${34+Math.floor(i/2)*16}" width="44" height="12" rx="2" fill="#94a3b8"/>`).join('')}
+    <rect x="110" y="34" width="20" height="92" fill="#334155"/>
+  </svg>`;
+}
+function genericPhotoSVG(){
+  return `<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;background:#e2e8f0"><circle cx="120" cy="70" r="28" fill="#94a3b8"/><rect x="50" y="110" width="140" height="40" fill="#cbd5e1"/></svg>`;
+}
+
+function autoGrow(t){t.style.height='42px';t.style.height=Math.min(t.scrollHeight,120)+'px';}
+function composerKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+
+function sendMessage(){
+  const ta=document.getElementById('composer-text');
+  const text=ta.value.trim();
+  if(!text)return;
+  const c=CONVERSATIONS.find(x=>x.id===activeConv);
+  c.messages.push({from:'me',type:'text',text,time:'Just now'});
+  ta.value='';autoGrow(ta);
+  renderMessages(c);
+  renderConvList();
+  // Simulate a realistic homeowner reply after a short delay
+  maybeAutoReply(c);
+}
+
+const AUTO_REPLIES=["Sounds good, thank you!","Okay perfect — that makes sense.","Great, I appreciate you explaining that.","Let me check my schedule and confirm.","That works for me 👍"];
+function maybeAutoReply(c){
+  const scroll=document.getElementById('msg-scroll');
+  setTimeout(()=>{
+    const typing=document.createElement('div');
+    typing.className='bubble bubble-them';typing.id='typing-ind';
+    typing.innerHTML='<span style="opacity:.6">'+c.name.split(' ')[0]+' is typing…</span>';
+    scroll.appendChild(typing);scroll.scrollTop=scroll.scrollHeight;
+    setTimeout(()=>{
+      document.getElementById('typing-ind')?.remove();
+      c.messages.push({from:'them',type:'text',text:AUTO_REPLIES[Math.floor(Math.random()*AUTO_REPLIES.length)],time:'Just now'});
+      renderMessages(c);renderConvList();
+    },1800);
+  },700);
+}
+
+function insertTemplate(){
+  const ta=document.getElementById('composer-text');
+  const templates=["Hi! I'm available this week and can come take a look. What days work best for you?","Thanks for the details. Based on what you've described, I'd estimate this is a 2-3 hour job. I'll send a formal quote shortly.","I just sent over a quote — let me know if you have any questions about the line items."];
+  ta.value=templates[Math.floor(Math.random()*templates.length)];autoGrow(ta);ta.focus();
+}
+
+function sendDemoPhoto(){
+  const c=CONVERSATIONS.find(x=>x.id===activeConv);
+  c.messages.push({from:'me',type:'image',caption:'Finished work — clean install',img:'generic',time:'Just now'});
+  renderMessages(c);renderConvList();
+}
+
+function updateUnreadBadge(){
+  const count=CONVERSATIONS.filter(c=>c.unread).length;
+  const badge=document.getElementById('msg-unread-badge');
+  if(count>0){badge.textContent=count;badge.style.display='';}else{badge.style.display='none';}
+}
+
+/* Quote builder */
+let qbLines=[];
+function openQuoteBuilder(){
+  qbLines=[{desc:'',amt:''}];
+  document.getElementById('qb-overlay').classList.add('open');
+  renderQbLines();
+}
+function closeQuoteBuilder(){document.getElementById('qb-overlay').classList.remove('open');}
+function renderQbLines(){
+  document.getElementById('qb-lines').innerHTML=qbLines.map((l,i)=>`
+    <div class="qb-line">
+      <input type="text" placeholder="Description (e.g. Labor, 3 hrs)" value="${l.desc}" oninput="qbUpdate(${i},'desc',this.value)">
+      <input type="text" placeholder="$0" value="${l.amt}" oninput="qbUpdate(${i},'amt',this.value)">
+      <button class="qb-rm" onclick="qbRemove(${i})">×</button>
+    </div>`).join('');
+  updateQbTotal();
+}
+function qbUpdate(i,k,v){qbLines[i][k]=v;if(k==='amt')updateQbTotal();}
+function qbRemove(i){qbLines.splice(i,1);if(!qbLines.length)qbLines.push({desc:'',amt:''});renderQbLines();}
+function qbAddLine(){qbLines.push({desc:'',amt:''});renderQbLines();}
+function updateQbTotal(){
+  let total=0;qbLines.forEach(l=>{const n=parseFloat(String(l.amt).replace(/[^0-9.]/g,''));if(!isNaN(n))total+=n;});
+  document.getElementById('qb-total').textContent='$'+total.toLocaleString();
+}
+function sendQuote(){
+  const title=document.getElementById('qb-title').value.trim()||'Quote';
+  const lines=qbLines.filter(l=>l.desc&&l.amt).map(l=>[l.desc,l.amt.startsWith('$')?l.amt:'$'+l.amt]);
+  if(!lines.length){alert('Add at least one line item.');return;}
+  let total=0;lines.forEach(l=>{const n=parseFloat(l[1].replace(/[^0-9.]/g,''));if(!isNaN(n))total+=n;});
+  const c=CONVERSATIONS.find(x=>x.id===activeConv);
+  c.messages.push({from:'me',type:'quote',title,lines,total:'$'+total.toLocaleString(),status:'pending',time:'Just now'});
+  closeQuoteBuilder();renderMessages(c);renderConvList();
+}
+
+updateUnreadBadge();
+
 
 /* LABOR CALCULATOR */
 const AREA_CONFIG={rural:{label:'Rural / small town',color:'green',multiplier:0.82,desc:'Lower cost of living means lower prevailing wages and overhead. Your competitive rate is lower, but so are your costs.'},suburban:{label:'Suburban / mid-size city',color:'blue',multiplier:1.00,desc:'Baseline cost index. Most contractors in mid-size Colorado markets fall in this range.'},urban:{label:'Urban / large metro',color:'amber',multiplier:1.18,desc:'Higher wages, insurance, and shop costs. Both your rate and your overhead are elevated.'},premium:{label:'Premium metro (Denver / Boulder)',color:'red',multiplier:1.32,desc:'Top-tier labor market. Significantly higher wages and overhead — but homeowners in this market expect to pay more.'}};
