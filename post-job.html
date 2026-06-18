@@ -69,6 +69,16 @@
     .verify-modal input:focus{outline:none;border-color:var(--blue)}
     .verify-error{color:var(--red);font-size:13px;font-weight:600;margin-top:.6rem;display:flex;align-items:center;justify-content:center;gap:5px}
     .verify-demo-note{font-size:11px!important;color:var(--hint)!important;margin:1rem 0 0!important;font-style:italic}
+    /* Local contractor cards on success screen */
+    .lc-card{display:flex;align-items:center;gap:12px;padding:.85rem;border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:.6rem;background:white}
+    .lc-avatar{width:44px;height:44px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:white}
+    .lc-info{flex:1;min-width:0}
+    .lc-name{font-size:15px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:5px}
+    .lc-area{font-size:12px;color:var(--muted);margin:1px 0}
+    .lc-meta{font-size:11.5px;color:var(--hint)}
+    .lc-meta span{white-space:nowrap}
+    .lc-badge{flex-shrink:0;display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:var(--green);background:var(--green-light);padding:3px 8px;border-radius:10px}
+    @media(max-width:480px){.lc-badge{display:none}}
   </style>
 </head>
 <body>
@@ -216,46 +226,37 @@
           </div>
         </div>
 
-        <!-- SUCCESS → B&B REDIRECT -->
+        <!-- SUCCESS → JOB POSTED, LOCAL CONTRACTORS -->
         <div class="step-panel" id="step-success">
           <div class="bb-card">
             <div class="bb-header">
               <div style="font-size:48px;margin-bottom:.5rem">⚡</div>
-              <h2>Request received!</h2>
-              <p>We're connecting you with a licensed electrician now</p>
+              <h2>Your job is live!</h2>
+              <p>Posted to the ElectriSolve board — verified local electricians can now pick it up</p>
             </div>
             <div class="bb-body">
-              <div class="bb-badge"><i class="ti ti-shield-check"></i> Verified · Licensed · Insured</div>
-              <div style="font-size:18px;font-weight:800;color:var(--text);margin-bottom:.25rem">B&amp;B Electrical</div>
-              <div style="font-size:14px;color:var(--muted);margin-bottom:1.25rem">Frederick, CO · Serving Northern Colorado</div>
-
               <div id="job-summary-display" style="margin-bottom:1.25rem"></div>
 
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem">
+                <div style="flex:1;height:1px;background:var(--border)"></div>
+                <span style="font-size:12px;font-weight:700;color:var(--hint);text-transform:uppercase;letter-spacing:.04em">Licensed electricians near you</span>
+                <div style="flex:1;height:1px;background:var(--border)"></div>
+              </div>
+
               <p style="font-size:14px;color:var(--muted);margin-bottom:1.1rem;line-height:1.6">
-                B&amp;B Electrical is your assigned local electrician for this inquiry. Contact them directly to schedule — they typically respond within a few hours.
+                These verified pros serve your area and may reach out about your job. <strong>You'll talk to them right here on ElectriSolve</strong> — compare quotes side by side, no phone tag, your contact info stays private until you choose to share it.
               </p>
 
-              <div class="bb-contact-row">
-                <i class="ti ti-phone"></i>
-                <div><div style="font-size:12px;color:var(--hint);font-weight:600;margin-bottom:2px">CALL OR TEXT</div><a href="tel:7205018715">(720) 501-8715</a></div>
-              </div>
-              <div class="bb-contact-row">
-                <i class="ti ti-mail"></i>
-                <div><div style="font-size:12px;color:var(--hint);font-weight:600;margin-bottom:2px">EMAIL</div><a href="mailto:info@bbelectricalco.com">info@bbelectricalco.com</a></div>
-              </div>
-              <div class="bb-contact-row">
-                <i class="ti ti-map-pin"></i>
-                <div><div style="font-size:12px;color:var(--hint);font-weight:600;margin-bottom:2px">ADDRESS</div><span style="color:var(--text);font-weight:500">3752 Imperial St Unit C, Frederick, CO</span></div>
-              </div>
-              <div class="bb-contact-row">
-                <i class="ti ti-world"></i>
-                <div><div style="font-size:12px;color:var(--hint);font-weight:600;margin-bottom:2px">WEBSITE</div><a href="https://www.bbelectricalco.com" target="_blank" rel="noopener">bbelectricalco.com</a></div>
-              </div>
+              <div id="local-contractors"></div>
 
-              <a href="https://www.bbelectricalco.com" target="_blank" rel="noopener" class="btn btn-primary btn-full btn-lg" style="margin-top:1.5rem">
-                Visit B&amp;B Electrical <i class="ti ti-external-link"></i>
+              <a href="messages.html" class="btn btn-primary btn-full btn-lg" style="margin-top:1.5rem">
+                <i class="ti ti-messages"></i> Go to my messages
               </a>
               <a href="index.html" class="btn btn-secondary btn-full" style="margin-top:.75rem">Back to home</a>
+
+              <p style="font-size:11px;color:var(--hint);text-align:center;margin-top:1rem;line-height:1.5">
+                Everything stays on ElectriSolve — quotes, messages, and payment milestones in one place, protected for both sides.
+              </p>
             </div>
           </div>
         </div>
@@ -465,8 +466,32 @@ function completeSubmission(){
     d.severity?`<span class="badge badge-${d.severity==='high'?'red':d.severity==='medium'?'amber':'green'}" style="margin:3px">${d.severity==='high'?'Urgent':d.severity==='medium'?'Standard':'Minor'}</span>`:'',
   ].filter(Boolean).join('');
   if(pills)document.getElementById('job-summary-display').innerHTML=`<div style="margin-bottom:.25rem;font-size:12px;font-weight:700;color:var(--hint);letter-spacing:.04em">YOUR JOB</div><div style="display:flex;flex-wrap:wrap;gap:2px">${pills}</div>`;
+  renderLocalContractors();
   setStep('success');
   [1,2,3].forEach(i=>{document.getElementById('ps-'+i).className='progress-step done';const l=document.getElementById('pl-'+i);if(l)l.className='progress-line done';});
+}
+
+// Verified local electricians who can pick up the job — all on-platform, no external email.
+const LOCAL_CONTRACTORS=[
+  {name:'B&B Electrical',area:'Frederick, CO · Northern Colorado',rating:'4.9',jobs:94,years:12,tag:'Master Electrician',color:'#2563eb'},
+  {name:'Torres Electric LLC',area:'Lakewood, CO · Denver Metro',rating:'4.9',jobs:87,years:12,tag:'Master Electrician',color:'#16a34a'},
+  {name:'Bright Spark Electric',area:'Wheat Ridge, CO · Denver Metro',rating:'4.8',jobs:112,years:15,tag:'Electrical Contractor',color:'#d97706'},
+];
+function renderLocalContractors(){
+  const el=document.getElementById('local-contractors');
+  if(!el)return;
+  el.innerHTML=LOCAL_CONTRACTORS.map(c=>{
+    const initials=c.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    return `<div class="lc-card">
+      <div class="lc-avatar" style="background:${c.color}">${initials}</div>
+      <div class="lc-info">
+        <div class="lc-name">${c.name} <i class="ti ti-rosette-discount-check-filled" style="color:var(--blue);font-size:15px" title="Verified"></i></div>
+        <div class="lc-area">${c.area}</div>
+        <div class="lc-meta"><span><i class="ti ti-star-filled" style="color:#f59e0b"></i> ${c.rating}</span> · <span>${c.jobs} jobs</span> · <span>${c.tag}</span></div>
+      </div>
+      <span class="lc-badge"><i class="ti ti-shield-check"></i> Verified</span>
+    </div>`;
+  }).join('');
 }
 
 document.getElementById('post-btn').addEventListener('click',()=>{
